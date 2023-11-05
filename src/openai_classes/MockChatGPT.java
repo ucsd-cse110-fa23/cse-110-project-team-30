@@ -1,5 +1,7 @@
 package openai_classes;
 
+import team30.meal.MealType;
+
 import java.io.File;
 
 /**

@@ -1,3 +1,5 @@
+import team30.meal.*;
+
 /**
  * Representation of a recipe.
  */

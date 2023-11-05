@@ -1,5 +1,7 @@
 package openai_classes;
 
+import team30.meal.*;
+
 /**
  * An interface for ChatGPT
  * The class is meant to make a call to ChatGPT to return a recipe.

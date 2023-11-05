@@ -1,3 +1,8 @@
+import team30.meal.*;
+import openai_classes.*;
+
+import java.io.File;
+
 /**
  * This class handles the creation of Recipes.
  * Given a recipe generator through IChatGPT,
