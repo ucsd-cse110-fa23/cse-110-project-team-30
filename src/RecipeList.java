@@ -12,7 +12,7 @@ public class RecipeList extends Application {
         primaryStage.setScene(new Scene(root, 500, 600));
         primaryStage.setResizable(false);
         primaryStage.show();
-        
+
     }
 
     public static void main(String[] args) {

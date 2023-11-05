@@ -1,6 +1,6 @@
 package team30.meal;
 
-import team30.meal.Breakfirst;
+import team30.meal.Breakfast;
 import team30.meal.MealType;
 import team30.meal.Lunch;
 import team30.meal.Dinner;
@@ -12,21 +12,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-
 public class MealTypeTest {
     private MealType mt;
-    
+
     @BeforeEach
     void setUp() {
         mt = null;
     }
-    
+
     @Test
     void testBreakfirst() {
-        mt = new Breakfirst();
-        assertEquals("Breakfirst", mt.getMealType());
+        mt = new Breakfast();
+        assertEquals("Breakfast", mt.getMealType());
     }
-    
+
     @Test
     void testLunch() {
         mt = new Lunch();
@@ -38,5 +37,5 @@ public class MealTypeTest {
         mt = new Dinner();
         assertEquals("Dinner", mt.getMealType());
     }
-    
+
 }
