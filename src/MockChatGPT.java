@@ -1,4 +1,4 @@
-import java.nio.file;
+import java.io.File;
 
 /**
  * A mock version of IChatGPT classes.
