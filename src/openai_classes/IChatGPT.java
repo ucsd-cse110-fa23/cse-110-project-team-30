@@ -1,3 +1,5 @@
+package openai_classes;
+
 /**
  * An interface for ChatGPT
  * The class is meant to make a call to ChatGPT to return a recipe.
