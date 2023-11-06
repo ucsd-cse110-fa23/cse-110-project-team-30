@@ -18,7 +18,7 @@ public class MockWhisper implements IWhisper {
      * @param input - audio file to decipher into a text
      * @return the value of result
      */
-    public String getResults(File input) throws IllegalArgumentException{
+    public String extractSpeechFromFile(File input) throws IllegalArgumentException{
         return result;
     }
 }

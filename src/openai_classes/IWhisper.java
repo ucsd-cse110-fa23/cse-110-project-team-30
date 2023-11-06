@@ -14,5 +14,5 @@ public interface IWhisper {
      * @throws IllegalArgumentException if the file given is not supported.
      * @return the text representation of what is said in the file.
      */
-    public String getResult(File input) throws IllegalArgumentException;
+    public String extractSpeechFromFile(File input) throws IllegalArgumentException;
 }
