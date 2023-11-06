@@ -23,11 +23,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 
-
 class Recipe extends HBox {
 
     private Label index;
-
     private Button recipe_title;
 
     Recipe(String recipe_name) {
@@ -43,7 +41,7 @@ class Recipe extends HBox {
         index.setPadding(new Insets(10, 5, 10, 0)); // adds some padding to the task
         this.getChildren().add(index); // add index label to task
 
-        //  button
+        // button
         recipe_title = new Button(recipe_name);
         recipe_title.setPrefSize(280, 55);
         recipe_title.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;");
@@ -83,14 +81,28 @@ class List extends VBox {
 }
 
 class Header extends HBox {
+
+    private Button addButton;
+
     Header() {
         this.setPrefSize(500, 60);
         this.setStyle("-fx-background-color: #F0F8FF;");
+
+        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
 
         Text titleText = new Text("PantryPal");
         titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
         this.getChildren().add(titleText);
         this.setAlignment(Pos.TOP_LEFT);
+
+        addButton = new Button("Generate Recipe");
+        addButton.setStyle(defaultButtonStyle);
+        this.getChildren().add(addButton);
+
+    }
+
+    public Button getAddButton() {
+        return addButton;
     }
 }
 
@@ -100,6 +112,8 @@ class AppFrame extends BorderPane {
     private List recipeList;
 
     private ScrollPane scrollPane;
+
+    private Button addButton;
 
     AppFrame() {
         header = new Header();
@@ -112,40 +126,16 @@ class AppFrame extends BorderPane {
         this.setTop(header);
         this.setCenter(scrollPane);
 
-        // addButton = footer.getAddButton();
+        addButton = header.getAddButton();
 
         addListeners();
     }
 
     public void addListeners() {
-    //     addButton.setOnAction(e -> {
-    //         Contact contact = new Contact();
-    //         contactList.getChildren().add(contact);
-    //         Button picButton = contact.getPicButton();
-    //         picButton.setOnAction(e1 -> {
-    //             contact.uploadPic();
-    //         });
-    //         Button selectButton = contact.getSelectButton();
-    //         selectButton.setOnAction(e2 -> {
-    //             contact.toggleSelect();
-    //         });
-    //         contactList.updateTaskIndices();
-    //     });
-    //     clearButton.setOnAction(e -> {
-    //         contactList.removeSelectedContacts();
-    //     });
-
-    //     loadButton.setOnAction(e -> {
-    //         contactList.loadContacts();
-    //     });
-
-    //     saveButton.setOnAction(e -> {
-    //         contactList.saveContacts();
-    //     });
-
-    //     sortButton.setOnAction(e -> {
-    //         contactList.sortNames();
-    //     });
+        addButton.setOnAction(e -> {
+            Recipe recipe = new Recipe("example");
+            recipeList.getChildren().add(recipe);
+        });
     }
 }
 
