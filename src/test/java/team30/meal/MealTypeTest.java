@@ -1,6 +1,6 @@
 package team30.meal;
 
-import team30.meal.Breakfirst;
+import team30.meal.Breakfast;
 import team30.meal.MealType;
 import team30.meal.Lunch;
 import team30.meal.Dinner;
@@ -22,9 +22,9 @@ public class MealTypeTest {
     }
     
     @Test
-    void testBreakfirst() {
-        mt = new Breakfirst();
-        assertEquals("Breakfirst", mt.getMealType());
+    void testBreakfast() {
+        mt = new Breakfast();
+        assertEquals("Breakfast", mt.getMealType());
     }
     
     @Test
