@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
 }
 
 java {
@@ -10,6 +12,11 @@ java {
 
 repositories {
     mavenCentral()
+}
+
+javafx {
+    version = "19"
+    modules = [ 'javafx.controls' ]
 }
 
 dependencies {
@@ -24,3 +31,4 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+mainClassName = 'team30.meal.recipeList.RecipeList'
