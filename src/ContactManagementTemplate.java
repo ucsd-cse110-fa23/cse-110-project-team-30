@@ -1,4 +1,5 @@
 //from contact management app mini project
+//package team30.recipeList;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -47,7 +48,8 @@ class Contact extends HBox {
 
     Contact() {
         this.setPrefSize(500, 50); // sets size of task
-        this.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0; -fx-font-weight: bold;"); // sets background color of task
+        this.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0; -fx-font-weight: bold;"); // sets background
+                                                                                                     // color of task
         selected = false;
 
         contactName = new HBox();
@@ -56,7 +58,7 @@ class Contact extends HBox {
         contactInfo = new VBox();
         buttons = new VBox();
 
-        //index number
+        // index number
         index = new Label();
         index.setText(""); // create index label
         index.setPrefSize(40, 20); // set size of Index label
@@ -64,7 +66,7 @@ class Contact extends HBox {
         index.setPadding(new Insets(10, 5, 10, 0)); // adds some padding to the task
         this.getChildren().add(index); // add index label to task
 
-        //add profile image
+        // add profile image
         profilePic = new ImageView();
         profilePic.setFitWidth(110);
         Rectangle2D viewportRect = new Rectangle2D(200, 200, 1200, 1200);
@@ -72,45 +74,46 @@ class Contact extends HBox {
         profilePic.setPreserveRatio(true);
         this.getChildren().add(profilePic);
 
-        //contact name
+        // contact name
         contactNameText = new TextField(); // create task name text field
         contactNameText.setPrefSize(380, 20); // set size of text field
-        contactNameText.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
+        contactNameText.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of
+                                                                                         // texfield
         index.setTextAlignment(TextAlignment.LEFT); // set alignment of text field
         contactNameText.setPadding(new Insets(10, 0, 10, 10)); // adds some padding to the text field
         contactName.getChildren().add(contactNameText); // add textlabel to task
 
-        //contact email
+        // contact email
         emailAddressText = new TextField();
-        emailAddressText.setPrefSize(380, 20); 
-        emailAddressText.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); 
-        index.setTextAlignment(TextAlignment.RIGHT); 
-        emailAddressText.setPadding(new Insets(10, 0, 10, 10)); 
-        emailAddress.getChildren().add(emailAddressText); 
+        emailAddressText.setPrefSize(380, 20);
+        emailAddressText.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;");
+        index.setTextAlignment(TextAlignment.RIGHT);
+        emailAddressText.setPadding(new Insets(10, 0, 10, 10));
+        emailAddress.getChildren().add(emailAddressText);
 
-        //phone number
+        // phone number
         phoneNumberText = new TextField();
-        phoneNumberText.setPrefSize(380, 20); 
-        phoneNumberText.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); 
-        index.setTextAlignment(TextAlignment.RIGHT); 
-        phoneNumberText.setPadding(new Insets(10, 0, 10, 10)); 
+        phoneNumberText.setPrefSize(380, 20);
+        phoneNumberText.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;");
+        index.setTextAlignment(TextAlignment.RIGHT);
+        phoneNumberText.setPadding(new Insets(10, 0, 10, 10));
         phoneNumber.getChildren().add(phoneNumberText);
-        
+
         contactInfo.getChildren().add(contactName);
         contactInfo.getChildren().add(emailAddress);
         contactInfo.getChildren().add(phoneNumber);
         this.getChildren().add(contactInfo);
 
-        //upload button
+        // upload button
         picButton = new Button("Upload Image");
         picButton.setPrefSize(280, 55);
-        picButton.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); 
+        picButton.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;");
         buttons.getChildren().add(picButton);
 
-        //selection button
+        // selection button
         selectButton = new Button("Select Contact");
         selectButton.setPrefSize(280, 55);
-        selectButton.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); 
+        selectButton.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;");
         buttons.getChildren().add(selectButton);
 
         this.getChildren().add(buttons);
@@ -161,12 +164,11 @@ class Contact extends HBox {
     public void toggleSelect() {
         if (!selected) {
             selected = true;
-            selectButton.setStyle("-fx-border-color: #000000; -fx-border-width: 0; -fx-font-weight: bold;"); 
+            selectButton.setStyle("-fx-border-color: #000000; -fx-border-width: 0; -fx-font-weight: bold;");
             selectButton.setStyle("-fx-background-color: #BCE29E; -fx-border-width: 0;");
-        }
-        else {
+        } else {
             selected = false;
-            selectButton.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); 
+            selectButton.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;");
         }
     }
 }
@@ -201,14 +203,14 @@ class ContactList extends VBox {
                 nameList.add((Contact) this.getChildren().get(i));
             }
         }
-        Collections.sort(nameList, new Comparator<Contact>() { //sorted list of contacts
+        Collections.sort(nameList, new Comparator<Contact>() { // sorted list of contacts
             public int compare(Contact a, Contact b) {
                 return a.getContactName().getText().compareTo(b.getContactName().getText());
             }
         });
-        this.getChildren().clear(); //empty list
-        for (int i = 0; i < nameList.size(); i++) { //add all contacts back into official list
-            Contact contact = (Contact)nameList.get(i);
+        this.getChildren().clear(); // empty list
+        for (int i = 0; i < nameList.size(); i++) { // add all contacts back into official list
+            Contact contact = (Contact) nameList.get(i);
             this.getChildren().add(contact);
             Button picButton = contact.getPicButton();
             picButton.setOnAction(e1 -> {
@@ -223,13 +225,13 @@ class ContactList extends VBox {
     }
 
     // public String convertToCSV(String[] data) {
-    //     return Stream.of(data)
-    //     .map(this::escapeSpecialCharacters)
-    //     .collect(Collectors.joining(","));
+    // return Stream.of(data)
+    // .map(this::escapeSpecialCharacters)
+    // .collect(Collectors.joining(","));
     // }
 
     public void loadContacts() {
-        //wip
+        // wip
         try {
             FileReader fr = new FileReader("src/contacts.csv");
             BufferedReader br = new BufferedReader(fr);
@@ -243,19 +245,15 @@ class ContactList extends VBox {
                 int count = 0;
                 String name = "", email = "", phone = "";
                 for (int i = 0; i < str.length(); i++) {
-                    if (str.substring(i, i+1).equals(",")) {
+                    if (str.substring(i, i + 1).equals(",")) {
                         count++;
-                    }
-                    else if (count == 0) {
-                        name += str.substring(i, i+1);
-                    }
-                    else if (count == 1) {
-                        email += str.substring(i, i+1);
-                    }
-                    else if (count == 2) {
-                        phone += str.substring(i, i+1);
-                    }
-                    else {
+                    } else if (count == 0) {
+                        name += str.substring(i, i + 1);
+                    } else if (count == 1) {
+                        email += str.substring(i, i + 1);
+                    } else if (count == 2) {
+                        phone += str.substring(i, i + 1);
+                    } else {
                         System.out.println("too many commas!");
                     }
                 }
@@ -272,16 +270,16 @@ class ContactList extends VBox {
                 selectButton.setOnAction(e2 -> {
                     cur.toggleSelect();
                 });
-                
+
                 this.updateTaskIndices();
             }
             fr.close();
             br.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("no 'contacts.csv' file found!");
         }
     }
+
     public void saveContacts() {
         try {
             FileWriter fw = new FileWriter("src/contacts.csv", false);
@@ -295,13 +293,11 @@ class ContactList extends VBox {
                 }
             }
             fw.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("unable to save to 'contacts.csv' file!");
         }
     }
 }
-
 
 class Footer extends HBox {
 
@@ -318,9 +314,9 @@ class Footer extends HBox {
 
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
 
-        addButton = new Button("Add Contact"); 
-        addButton.setStyle(defaultButtonStyle); 
-        clearButton = new Button("Clear Selected"); 
+        addButton = new Button("Add Contact");
+        addButton.setStyle(defaultButtonStyle);
+        clearButton = new Button("Clear Selected");
         clearButton.setStyle(defaultButtonStyle);
 
         loadButton = new Button("Load");
@@ -331,22 +327,26 @@ class Footer extends HBox {
         sortButton.setStyle(defaultButtonStyle);
 
         this.getChildren().addAll(addButton, clearButton, loadButton, saveButton, sortButton);
-        this.setAlignment(Pos.CENTER); 
+        this.setAlignment(Pos.CENTER);
 
     }
 
     public Button getAddButton() {
         return addButton;
     }
+
     public Button getClearButton() {
         return clearButton;
     }
+
     public Button getLoadButton() {
         return loadButton;
     }
+
     public Button getSaveButton() {
         return saveButton;
     }
+
     public Button getSortButton() {
         return sortButton;
     }
@@ -360,11 +360,11 @@ class Header extends HBox {
         Text titleText = new Text("Contacts");
         titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
         this.getChildren().add(titleText);
-        this.setAlignment(Pos.CENTER); 
+        this.setAlignment(Pos.CENTER);
     }
 }
 
-class AppFrame extends BorderPane{
+class AppFrame extends BorderPane {
 
     private Header header;
     private Footer footer;
@@ -375,13 +375,11 @@ class AppFrame extends BorderPane{
     private Button addButton;
     private Button clearButton;
 
-    
     private Button loadButton;
     private Button saveButton;
     private Button sortButton;
 
-    AppFrame()
-    {
+    AppFrame() {
         header = new Header();
         contactList = new ContactList();
         footer = new Footer();
@@ -403,8 +401,7 @@ class AppFrame extends BorderPane{
         addListeners();
     }
 
-    public void addListeners()
-    {
+    public void addListeners() {
         addButton.setOnAction(e -> {
             Contact contact = new Contact();
             contactList.getChildren().add(contact);
@@ -436,7 +433,7 @@ class AppFrame extends BorderPane{
     }
 }
 
-//edited from public class Main
+// edited from public class Main
 public class ContactManagementTemplate extends Application {
 
     @Override
@@ -447,7 +444,7 @@ public class ContactManagementTemplate extends Application {
         primaryStage.setScene(new Scene(root, 500, 600));
         primaryStage.setResizable(false);
         primaryStage.show();
-        
+
     }
 
     public static void main(String[] args) {
