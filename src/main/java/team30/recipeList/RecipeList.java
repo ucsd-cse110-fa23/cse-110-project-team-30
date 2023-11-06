@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import javafx.scene.paint.Color;
 
 class Recipe extends HBox {
 
@@ -29,22 +30,25 @@ class Recipe extends HBox {
     private Button recipe_title;
 
     Recipe(String recipe_name) {
-        this.setPrefSize(500, 50); // sets size of task
-        this.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0; -fx-font-weight: bold;"); // sets background
+        this.setPrefSize(450, 40); // sets size of task
+        this.setSpacing(10);
+        // this.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 5px; -fx-border-color: black; -fx-border-width: 0; -fx-font-weight: bold; -fx-background-radius: 10"); // sets background
                                                                                                      // color of task
 
         // index number
         index = new Label();
+        index.setStyle("-fx-background-color: #e5da3e; -fx-background-radius: 20");
         index.setText(""); // create index label
-        index.setPrefSize(40, 20); // set size of Index label
+        index.setPrefSize(40, 40); // set size of Index label
         index.setTextAlignment(TextAlignment.CENTER); // Set alignment of index label
-        index.setPadding(new Insets(10, 5, 10, 0)); // adds some padding to the task
+        index.setAlignment(Pos.CENTER);
+        index.setPadding(new Insets(0, 0, 0, 0)); // adds some padding to the task
         this.getChildren().add(index); // add index label to task
 
         // button
         recipe_title = new Button(recipe_name);
-        recipe_title.setPrefSize(280, 55);
-        recipe_title.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;");
+        recipe_title.setPrefSize(400, 40);
+        recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10");
         this.getChildren().add(recipe_title);
     }
 
@@ -64,9 +68,10 @@ class Recipe extends HBox {
 class List extends VBox {
 
     List() {
-        this.setSpacing(5); // sets spacing between tasks
+        this.setSpacing(10); // sets spacing between tasks
+        
         this.setPrefSize(500, 560);
-        this.setStyle("-fx-background-color: #F0F8FF;");
+        this.setStyle("-fx-background-color: #f8f3c9;-fx-padding: 10;");
     }
 
     public void updateTaskIndices() {
@@ -82,22 +87,26 @@ class List extends VBox {
 
 class Header extends HBox {
 
+    Text titleText;
     private Button addButton;
 
     Header() {
         this.setPrefSize(500, 60);
-        this.setStyle("-fx-background-color: #F0F8FF;");
+        this.setStyle("-fx-background-color: #f8f3c9;");
 
-        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10";
 
-        Text titleText = new Text("PantryPal");
-        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
+        titleText = new Text("PantryPal");
+        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 40;");
         this.getChildren().add(titleText);
-        this.setAlignment(Pos.TOP_LEFT);
+        titleText.setFill(Color.GRAY); // Set the font color
+        
+        this.setSpacing(200);   // set spacing between text and generate button
 
         addButton = new Button("Generate Recipe");
         addButton.setStyle(defaultButtonStyle);
         this.getChildren().add(addButton);
+        this.setAlignment(Pos.CENTER_LEFT);
 
     }
 
@@ -135,6 +144,7 @@ class AppFrame extends BorderPane {
         addButton.setOnAction(e -> {
             Recipe recipe = new Recipe("example");
             recipeList.getChildren().add(recipe);
+            recipeList.updateTaskIndices();
         });
     }
 }
