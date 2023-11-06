@@ -1,6 +1,6 @@
 package openai_classes;
 
-import team30.meal.*;
+import team30.meal.MealType;
 
 /**
  * An interface for ChatGPT
