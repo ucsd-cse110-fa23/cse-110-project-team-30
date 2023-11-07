@@ -1,3 +1,5 @@
+package team30.server;
+
 import com.sun.net.httpserver.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
