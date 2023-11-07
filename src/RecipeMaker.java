@@ -35,7 +35,18 @@ public class RecipeMaker {
      * @return the mealType that matches what's said in the file, or null if the word generated is invalid.
      */
     private MealType getMealType(File file){
-        return null;
+        String spokenWords = this.whisper.extractSpeechFromFile(file);
+        //Too inefficient. Replace this once a way to get mealTypes is confirmed.
+        switch(spokenWords.toLowerCase()){
+            case "breakfast":
+                return new Breakfast();
+            case "lunch":
+                return new Lunch();
+            case "dinner":
+                return new Dinner();
+            default:
+                return null;
+        }
     }
 
     /**
