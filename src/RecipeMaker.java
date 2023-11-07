@@ -64,9 +64,16 @@ public class RecipeMaker {
      * Given two files, creates a recipe out of the information in both files.
      * @param mealTypeFile - an audio file containing a spoken type of meal.
      * @param ingredientsFile - an audio file containing a spoken list of ingredients.
-     * @return a recipe of the meal type spoken in mealTypeFile and of ingredients spoken in ingredientsFile.
+     * @return a recipe of the meal type spoken in mealTypeFile and of ingredients spoken in ingredientsFile, or null if an invalid input is given.
      */
     Recipe createRecipe(File mealTypeFile, File ingredientsFile){
-        return null;
+
+        MealType mealType = this.whisper.extractSpeechFromFile(mealTypeFile);
+        if(mealtype == null)
+            return null;
+        String ingredients = this.whisper.extractSpeechFromFile(ingredientsFile);
+        String instructions = this.chatGPT.generateMeal(mealType.getMealType,ingredients);
+
+        return this.combineIntoRecipe(mealType, instructions, ingredients, instructions);
     }
 }
