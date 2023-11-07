@@ -2,11 +2,11 @@ package team30.client;
 
 import javafx.event.ActionEvent;
 
-public class Controller {
-    private View view;
-    private Model model;
+public class RecipeController {
+    private RecipeView view;
+    private RecipeModel model;
 
-    public Controller(View view, Model model) {
+    public RecipeController(RecipeView view, RecipeModel model) {
         this.view = view;
         this.model = model;
 

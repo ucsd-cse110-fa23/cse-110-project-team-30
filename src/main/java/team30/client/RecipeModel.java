@@ -7,7 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URI;
 
-public class Model {
+public class RecipeModel {
     public String performRequest(String method, String language, String year, String query) {
         // Implement your HTTP request logic here and return the response
 

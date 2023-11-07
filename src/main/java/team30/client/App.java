@@ -13,9 +13,9 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         
-        View view = new View();
-        Model model = new Model();
-        Controller controller = new Controller(view, model);
+        RecipeView view = new RecipeView();
+        RecipeModel model = new RecipeModel();
+        RecipeController controller = new RecipeController(view, model);
 
         Scene scene = new Scene(view.getGrid(), 400, 200);
         primaryStage.setScene(scene);
