@@ -14,6 +14,10 @@ public class MockChatGPT implements IChatGPT {
     MockChatGPT(String result){
         this.result = result;
     }
+
+    void setResult(String result){
+        this.result = result;
+    }
     
     /**
      * Given a type of meal and ingredients, simply returns the value of result.
@@ -21,7 +25,7 @@ public class MockChatGPT implements IChatGPT {
      * @param ingredients - type of ingredients to add
      * @return the value of result
      */
-    public String generateMeal(MealType type, String ingredients){
+    public String generateMeal(String type, String ingredients){
         return this.result;
     }
 }
