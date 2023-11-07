@@ -1,6 +1,7 @@
 package team30.recipeList;
 
 import javafx.application.Application;
+import javafx.collections.ArrayChangeListener;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
@@ -18,6 +19,8 @@ import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
 import java.io.*;
 import javafx.util.Pair;
+import team30.meal.MealType;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,6 +31,9 @@ class Recipe extends HBox {
 
     private Label index;
     private Button recipe_title;
+    private ArrayList<String> ingredients;
+    private ArrayList<String> steps;
+    private MealType mealtype;
 
     Recipe(String recipe_name) {
         this.setPrefSize(450, 40); // sets size of task
@@ -58,7 +64,55 @@ class Recipe extends HBox {
         recipe_title.setOnMousePressed(e -> recipe_title.setStyle("-fx-background-color: #b4a918; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
         recipe_title.setOnMouseReleased(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
         this.getChildren().add(recipe_title);
+
+        ingredients = null;
+        steps = null;
+        mealtype = null;
     }
+
+    Recipe(String recipe_name, ArrayList<String> ingredients, ArrayList<String> steps, MealType mealType) {
+        this.setPrefSize(450, 40); // sets size of task
+        this.setSpacing(10);
+        // this.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 5px; -fx-border-color: black; -fx-border-width: 0; -fx-font-weight: bold; -fx-background-radius: 10"); // sets background
+                                                                                                     // color of task
+
+        // index number
+        index = new Label();
+        index.setStyle("-fx-background-color: #e5da3e; -fx-background-radius: 20");
+        index.setText(""); // create index label
+        index.setPrefSize(40, 40); // set size of Index label
+        index.setTextAlignment(TextAlignment.CENTER); // Set alignment of index label
+        index.setAlignment(Pos.CENTER);
+        index.setPadding(new Insets(0, 0, 0, 0)); // adds some padding to the task
+        this.getChildren().add(index); // add index label to task
+
+        // button
+        recipe_title = new Button(recipe_name);
+        recipe_title.setPrefSize(400, 40);
+        recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10");
+
+        // Adding hover effect
+        recipe_title.setOnMouseEntered(e -> recipe_title.setStyle("-fx-background-color: #dccf1e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
+        recipe_title.setOnMouseExited(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
+        
+        // Adding click effect
+        recipe_title.setOnMousePressed(e -> recipe_title.setStyle("-fx-background-color: #b4a918; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
+        recipe_title.setOnMouseReleased(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
+        this.getChildren().add(recipe_title);
+
+        // deep copy initializing ingredients
+        for (int i = 0; i < ingredients.size(); ++i) {
+            this.ingredients.add(new String(ingredients.get(i)));
+        }
+        
+        // deep copy initializing steps
+        for (int i = 0; i < steps.size(); ++i) {
+            this.steps.add(new String(steps.get(i)));
+        }
+
+        this.mealtype = mealType;
+    }
+
 
     public void setTaskIndex(int num) {
         this.index.setText(num + ""); // num to String
@@ -70,7 +124,6 @@ class Recipe extends HBox {
     public Button getRecipeTitle() {
         return this.recipe_title;
     }
-
 }
 
 class List extends VBox {
@@ -162,13 +215,39 @@ class AppFrame extends BorderPane {
             Recipe recipe = new Recipe("example");
             recipeList.getChildren().add(recipe);
             recipeList.updateTaskIndices();
+            
+            // set button action for open detail windown button
+            recipe.getRecipeTitle().setOnAction(f -> {
+                OpenRecipeDetail ord = new OpenRecipeDetail(new Button(), new Button(), new Button(), new Button());
+                ord.openDetailWindow(recipe, this);
+
+                // set button actions for save, edit, back, delete button
+                ord.getSaveButton().setOnAction(g -> {
+
+                });
+                ord.getBackButton().setOnAction(g -> {
+
+                });
+                ord.getEditButton().setOnAction(g -> {
+
+                });
+                ord.getDeleteButton().setOnAction(g -> {
+
+                });
+            });
         });
     }
 
     public Header getHeader() {return header;}
+    public Footer getFooter() {return footer;}
     public List getRecipeList() {return recipeList;}
     public ScrollPane getScrollPane() {return scrollPane;}
     public Button getAddButton() {return addButton;}
+
+    // public void setHeader(Header hd) {header = hd;}
+    // public void setRecipeList(List rl) {recipeList = rl;}
+    // public void set(Header hd) {header = hd;}
+    // public void setHeader(Header hd) {header = hd;}
 }
 
 // edited from public class Main
