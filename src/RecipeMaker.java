@@ -11,6 +11,7 @@ import java.io.File;
  *  and generates a recipe through that.
  */
 public class RecipeMaker {
+
     IWhisper whisper;
     IChatGPT chatGPT;
 
@@ -25,7 +26,7 @@ public class RecipeMaker {
      * @return a string containing the speech within the given audio file, expected to be a list of ingredients.
      */
     private String getIngredients(File file){
-        return null;
+        return this.whisper.extractSpeechFromFile(file);
     }
 
     /**
@@ -56,7 +57,7 @@ public class RecipeMaker {
      * @return a string containing step by step instructions to create the recipe.
      */
     private String getInstructions(String mealType, String ingredients){
-        return null;
+        return this.chatGPT.generateMeal(mealType,ingredients);
     }
 
     /**
