@@ -81,7 +81,7 @@ public class RecipeMaker {
     Recipe createRecipe(File mealTypeFile, File ingredientsFile){
 
         MealType mealType = this.whisper.extractSpeechFromFile(mealTypeFile);
-        if(mealtype == null)
+        if(mealType == null)
             return null;
         String ingredients = this.whisper.extractSpeechFromFile(ingredientsFile);
         String instructions = this.chatGPT.generateMeal(mealType,ingredients);
