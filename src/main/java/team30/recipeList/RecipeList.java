@@ -87,7 +87,7 @@ class List extends VBox {
 
 class Header extends HBox {
 
-    Text titleText;
+    private Text titleText;
     private Button addButton;
 
     Header() {
@@ -109,6 +109,8 @@ class Header extends HBox {
         this.setAlignment(Pos.CENTER_LEFT);
 
     }
+
+    public Text getTitleText() {return titleText;}
 
     public Button getAddButton() {
         return addButton;
@@ -147,20 +149,24 @@ class AppFrame extends BorderPane {
             recipeList.updateTaskIndices();
         });
     }
+
+    public Header getHeader() {return header;}
+    public List getRecipeList() {return recipeList;}
+    public ScrollPane getScrollPane() {return scrollPane;}
+    public Button getAddButton() {return addButton;}
 }
 
 // edited from public class Main
 public class RecipeList extends Application {
+    private AppFrame root;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        AppFrame root = new AppFrame();
-
+        root = new AppFrame();
         primaryStage.setTitle("PantryPal");
         primaryStage.setScene(new Scene(root, 500, 600));
         primaryStage.setResizable(false);
         primaryStage.show();
-
     }
 
     public static void main(String[] args) {
