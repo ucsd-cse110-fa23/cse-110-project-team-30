@@ -1,4 +1,4 @@
-package client;
+package team30.client;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -6,7 +6,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URI;
-
 
 public class Model {
     public String performRequest(String method, String language, String year, String query) {

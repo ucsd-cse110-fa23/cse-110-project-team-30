@@ -1,4 +1,4 @@
-package client;
+package team30.client;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
