@@ -49,6 +49,14 @@ class Recipe extends HBox {
         recipe_title = new Button(recipe_name);
         recipe_title.setPrefSize(400, 40);
         recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10");
+
+        // Adding hover effect
+        recipe_title.setOnMouseEntered(e -> recipe_title.setStyle("-fx-background-color: #dccf1e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
+        recipe_title.setOnMouseExited(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
+        
+        // Adding click effect
+        recipe_title.setOnMousePressed(e -> recipe_title.setStyle("-fx-background-color: #b4a918; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
+        recipe_title.setOnMouseReleased(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
         this.getChildren().add(recipe_title);
     }
 
@@ -105,6 +113,13 @@ class Header extends HBox {
 
         addButton = new Button("Generate Recipe");
         addButton.setStyle(defaultButtonStyle);
+        // Adding hover effect
+        addButton.setOnMouseEntered(e -> addButton.setStyle("-fx-font-style: italic; -fx-background-color: #7dedb3;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
+        addButton.setOnMouseExited(e -> addButton.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
+        
+        // Adding click effect
+        addButton.setOnMousePressed(e -> addButton.setStyle("-fx-font-style: italic; -fx-background-color: #117e2c;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
+        addButton.setOnMouseReleased(e -> addButton.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
         this.getChildren().add(addButton);
         this.setAlignment(Pos.CENTER_LEFT);
 
