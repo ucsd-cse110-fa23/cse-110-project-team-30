@@ -3,10 +3,12 @@ package team30.recipeList;
 import team30.recipeList.RecipeList;
 
 import org.junit.jupiter.api.Test;
+import org.objenesis.instantiator.sun.MagicInstantiator;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,47 +17,54 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
-// class mockRecipe extends HBox{
-//     private Label index;
-//     private Button recipe_title;
+class mockRecipe extends HBox {
+    private String index;
+    private String recipe_title;
 
-//     mockRecipe() {
-//         index = mock(Label.class);
-//         recipe_title = mock(Button.class);
-//         this.getChildren().add(index);
-//         this.getChildren().add(recipe_title);
-//     }
+    mockRecipe(String s) {
+        recipe_title = s;
+    }    
 
-//     public void setTaskIndex(int num) {
-//         this.index.setText(num + ""); // num to String
-//         // this.contactNameText.setPromptText("Name");
-//         // this.emailAddressText.setPromptText("Email address");
-//         // this.phoneNumberText.setPromptText("Phone number");
-//     }
+    public String getIndex() {return index;}
+    public String getRecipeTitle() {return recipe_title;}
+    public void setIndex(String s) {index = s;}
+}
 
-//     public Button getRecipeTitle() {
-//         return this.recipe_title;
-//     }
-// }
+class mockList extends VBox {
+    private mockButton button;
+
+    mockList() {button = new mockButton();}
+
+    public void updateTaskIndices() {
+        int index = 1;
+        for (int i = 0; i < this.getChildren().size(); i++) {
+            if (this.getChildren().get(i) instanceof mockRecipe) {
+                ((mockRecipe)this.getChildren().get(i)).setIndex(Integer.toString(index));
+                index++;
+            }
+        }
+    }
+
+    public mockButton getButton() {return button;}
+}
+
+class mockButton {
+    public void fire(mockList ml, String s) {
+        mockRecipe recipe;
+        if (s == "") recipe = new mockRecipe("example");
+        else recipe = new mockRecipe(s);
+        ml.getChildren().add(recipe);
+        ml.updateTaskIndices();
+        System.out.println(recipe.getRecipeTitle());
+    }
+}
 
 public class RecipeListTest {
-    private List recipe_list;
-
-    /**
-     * mock method for testing addButton functionality.
-     * Create this coz I kept getting initialization error of creating a real button or get button from Header.
-     */
-    // void mockButton() {
-    //     Recipe recipe = new mockRecipeRecipe();
-    //     recipe_list.getChildren().add(recipe);
-    //     recipe_list.updateTaskIndices();
-    // }
-
-
+    private mockList recipe_list;
 
     @BeforeEach
     void setUp() {
-        recipe_list = new List();
+        recipe_list = new mockList();
     }
 
     @Test
@@ -64,13 +73,53 @@ public class RecipeListTest {
         assertEquals(0, count);
     }
 
-    // @Test
-    // void testAddButton() {
-    //     Recipe recipe = new Recipe("example");
-    //     recipe_list.getChildren().add(recipe);
-    //     recipe_list.updateTaskIndices();
-    //     int count = recipe_list.getChildren().size();
-    //     assertEquals(1, count);
-    // }
+    @Test
+    void testAddButton() {
+        recipe_list.getButton().fire(recipe_list, "");
+        int count = recipe_list.getChildren().size();
+        assertEquals(1, count);
+    }
 
+
+    @Test
+    void testAddMultipleRecipe() {
+        int numOfRecipes = 10;
+        for (int i = 0; i < numOfRecipes; ++i) {
+            recipe_list.getButton().fire(recipe_list, "");
+        }
+        int count = 0;
+        for (int i = 0; i < recipe_list.getChildren().size(); i++) {
+            if (recipe_list.getChildren().get(i) instanceof mockRecipe) {
+                 count++;
+            }
+        }
+        assertEquals(numOfRecipes, count);
+    }
+
+    @Test
+    void testRecipeConstructor() {
+        recipe_list.getButton().fire(recipe_list, "");
+        String title = "";
+        for (int i = 0; i < recipe_list.getChildren().size(); i++) {
+            if (recipe_list.getChildren().get(i) instanceof mockRecipe) {
+                title = ((mockRecipe)recipe_list.getChildren().get(i)).getRecipeTitle();
+                break;
+            }
+        }
+        assertEquals("example", title);
+    }
+
+    @Test
+    void testSetUpRecipeTitle() {
+        String testTitle = "My Recipe Name";
+        recipe_list.getButton().fire(recipe_list, testTitle);
+        String title = "";
+        for (int i = 0; i < recipe_list.getChildren().size(); i++) {
+            if (recipe_list.getChildren().get(i) instanceof mockRecipe) {
+                title = ((mockRecipe)recipe_list.getChildren().get(i)).getRecipeTitle();
+                break;
+            }
+        }
+        assertEquals(testTitle, title);
+    }
 }
