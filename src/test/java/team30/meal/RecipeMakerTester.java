@@ -10,7 +10,7 @@ public class RecipeMakerTester {
     private MockChatGPT chatGPT;
 
     @Before
-    public setUp(){
+    public void setUp(){
         whisper = new MockWhisper("");
         chatGPT = new MockChatGPT("");
         recipeMaker = new RecipeMaker(whisper,chatGPT);
@@ -20,7 +20,7 @@ public class RecipeMakerTester {
      * Standard test. It provides a test for all 3 valid mealTypes.
      */
     @Test
-    public testStandard(){
+    public void testStandard(){
 
         File fakeFile1;
         File fakeFile2;
@@ -85,7 +85,7 @@ public class RecipeMakerTester {
         chatGPT.setResult("I can't make a recipe without ingredients!");
 
         result = recipeMaker.createRecipe(fakeFile1,fakeFile2);
-
+        
         assertEquals(result.getIngredients(),"");
         assertEquals(result.getInstructions(),"I can't make a recipe without ingredients!");
         assertEquals(result.getMealType().getMealType(), "Breakfast");
