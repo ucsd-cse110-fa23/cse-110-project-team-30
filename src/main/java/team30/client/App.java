@@ -11,15 +11,16 @@ public class App extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
-
+    public void start(Stage primaryStage) throws Exception{
+        
         View view = new View();
         Model model = new Model();
         Controller controller = new Controller(view, model);
 
         Scene scene = new Scene(view.getGrid(), 400, 200);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("MyServerUI");
+        primaryStage.setTitle("PantryPal");
+        primaryStage.setResizable(false);
         primaryStage.show();
 
     }
