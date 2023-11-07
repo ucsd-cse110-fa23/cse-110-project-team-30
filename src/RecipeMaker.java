@@ -56,7 +56,7 @@ public class RecipeMaker {
      * @param ingredients - the type of ingredients to be used in the recipe created by ChatGPT.
      * @return a string containing step by step instructions to create the recipe.
      */
-    private String getInstructions(String mealType, String ingredients){
+    private String getInstructions(MealType mealType, String ingredients){
         return this.chatGPT.generateMeal(mealType,ingredients);
     }
 
@@ -84,7 +84,7 @@ public class RecipeMaker {
         if(mealtype == null)
             return null;
         String ingredients = this.whisper.extractSpeechFromFile(ingredientsFile);
-        String instructions = this.chatGPT.generateMeal(mealType.getMealType,ingredients);
+        String instructions = this.chatGPT.generateMeal(mealType,ingredients);
 
         return this.combineIntoRecipe(mealType, instructions, ingredients, instructions);
     }

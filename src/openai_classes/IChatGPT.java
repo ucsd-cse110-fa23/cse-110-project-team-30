@@ -14,5 +14,5 @@ public interface IChatGPT {
      * @param ingredients - the ingredients used in the recipe
      * @return a string with a name and step by step instructions.
      */
-    public String generateMeal(String type, String ingredients);
+    public String generateMeal(Mealtype type, String ingredients);
 }
