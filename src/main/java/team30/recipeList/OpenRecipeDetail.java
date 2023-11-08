@@ -27,12 +27,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import javafx.scene.paint.Color;
 
-class Footer extends HBox {
+class DetailFooter extends HBox {
 
     private Button edit;
     private Button delete;
 
-    Footer() {
+    DetailFooter() {
         this.setPrefSize(500, 60);
         this.setStyle("-fx-background-color: #F0F8FF;");
         this.setSpacing(15);
@@ -52,44 +52,60 @@ class Footer extends HBox {
     public Button getDelete() {return delete;}
 }
 
-public class OpenRecipeDetail {
+class DetailHeader extends HBox {
+
     private Button save;
     private Button back;
-    private Button edit;
-    private Button delete;
+
+    DetailHeader() {
+        this.setPrefSize(500, 60);
+        this.setStyle("-fx-background-color: #F0F8FF;");
+        this.setSpacing(15);
+
+        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+
+        save = new Button("Load");
+        save.setStyle(defaultButtonStyle);
+        back = new Button("Save");
+        back.setStyle(defaultButtonStyle);
+
+        this.getChildren().addAll(save, back);
+        this.setAlignment(Pos.CENTER);
+    }
+
+    public Button getSave() {return save;}
+    public Button getBack() {return back;}
+}
+
+public class OpenRecipeDetail {
     private AppFrame originalAF;
+    private RecipeList rl;
 
-    OpenRecipeDetail(Button save, Button back, Button edit, Button delete) {
-        this.save = save;
-        this.back = back;
-        this.edit = edit;
-        this.delete = delete;
-    };
+    OpenRecipeDetail() { };
 
-    public void openDetailWindow(Recipe recipe, AppFrame af) {
+    public void openDetailWindow(Recipe recipe, AppFrame af, RecipeList rl) {
         originalAF = af;
         af = createDetailView();
+
+        rl.getPrimStage().setScene(new Scene(af, 500, 600));
+        // TODO: go further
     }
 
     public void closeDetailWindow(List ls) {}
 
     private AppFrame createDetailView() {
         AppFrame detailView = new AppFrame();
-        Header detailHeader = detailView.getHeader();
-        List detaRecipList = detailView.getRecipeList();
-        ScrollPane detaiScrollPane = detailView.getScrollPane();
+        ScrollPane dScrollPane = new ScrollPane(new List());
+        DetailHeader dhead = new DetailHeader();
+        DetailFooter dfooter = new DetailFooter(); 
         
-        // remove the original "generate new Recipe Button"
-        detailHeader.getChildren().remove(detailHeader.getAddButton());
+        detailView.setTop(dhead);
+        detailView.setCenter(dScrollPane);
+        detailView.setBottom(dfooter);
 
-
-
+        
         return detailView;
     }
 
-    public Button getSaveButton() {return save;}
-    public Button getBackButton() {return back;}
-    public Button getEditButton() {return edit;}
-    public Button getDeleteButton() {return delete;}
     public AppFrame getOriginalAppFrame() {return originalAF;}
 }

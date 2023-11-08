@@ -194,6 +194,8 @@ class AppFrame extends BorderPane {
 
     private Button addButton;
 
+    private RecipeList rl;
+
     AppFrame() {
         header = new Header();
         recipeList = new List();
@@ -218,28 +220,28 @@ class AppFrame extends BorderPane {
             
             // set button action for open detail windown button
             recipe.getRecipeTitle().setOnAction(f -> {
-                OpenRecipeDetail ord = new OpenRecipeDetail(new Button(), new Button(), new Button(), new Button());
-                ord.openDetailWindow(recipe, this);
+                OpenRecipeDetail ord = new OpenRecipeDetail();
+                ord.openDetailWindow(recipe, this, rl);
 
                 // set button actions for save, edit, back, delete button
-                ord.getSaveButton().setOnAction(g -> {
+                // ord.getSaveButton().setOnAction(g -> {
 
-                });
-                ord.getBackButton().setOnAction(g -> {
+                // });
+                // ord.getBackButton().setOnAction(g -> {
 
-                });
-                ord.getEditButton().setOnAction(g -> {
+                // });
+                // ord.getEditButton().setOnAction(g -> {
 
-                });
-                ord.getDeleteButton().setOnAction(g -> {
+                // });
+                // ord.getDeleteButton().setOnAction(g -> {
 
-                });
+                // });
             });
         });
     }
 
+    public void setRecipeList(RecipeList rl) {this.rl = rl;}
     public Header getHeader() {return header;}
-    public Footer getFooter() {return footer;}
     public List getRecipeList() {return recipeList;}
     public ScrollPane getScrollPane() {return scrollPane;}
     public Button getAddButton() {return addButton;}
@@ -253,10 +255,13 @@ class AppFrame extends BorderPane {
 // edited from public class Main
 public class RecipeList extends Application {
     private AppFrame root;
+    private Stage primStage;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         root = new AppFrame();
+        this.primStage = primaryStage;
+        root.setRecipeList(this);
         primaryStage.setTitle("PantryPal");
         primaryStage.setScene(new Scene(root, 500, 600));
         primaryStage.setResizable(false);
@@ -266,4 +271,7 @@ public class RecipeList extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
+    public Stage getPrimStage() {return primStage;}
+    public void setAppFrame(AppFrame af) {root = af;}
 }
