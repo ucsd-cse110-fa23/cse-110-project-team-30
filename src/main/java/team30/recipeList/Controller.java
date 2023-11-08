@@ -1,27 +1,30 @@
-package team30.client;
+package team30.recipeList;
 
 import javafx.event.ActionEvent;
 
-public class RecipeController {
-    /*private RecipeView view;
-    private RecipeModel model;
+public class Controller {
+    private RecipeList view;
+    private Model model;
 
-    public RecipeController(RecipeView view, RecipeModel model) {
+    public Controller(RecipeList view, Model model) {
         this.view = view;
         this.model = model;
 
         this.view.setPostButtonAction(this::handlePostButton);
-        this.view.setGetButtonAction(this::handleGetButton);
-        this.view.setPutButtonAction(this::handlePutButton);
-        this.view.setDeleteButtonAction(this::handleDeleteButton);
+        // this.view.setGetButtonAction(this::handleGetButton);
+        // this.view.setPutButtonAction(this::handlePutButton);
+        // this.view.setDeleteButtonAction(this::handleDeleteButton);
     }
 
     private void handlePostButton(ActionEvent event) {
-        String language = view.getLanguage();
-        String year = view.getYear();
-        String response = model.performRequest("POST", language, year, null);
-        view.showAlert("Response", response);
+        // String language = view.getLanguage();
+        // String year = view.getYear();
+        // String response = model.performRequest("POST", language, year, null);
+        // view.showAlert("Response", response);
+        view.showAlert("Response", "POST");
+        System.out.println("POSTTTT");
     }
+    /*
 
     private void handleGetButton(ActionEvent event) {
         String query = view.getQuery();

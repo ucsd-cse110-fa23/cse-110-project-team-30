@@ -27,15 +27,18 @@ import javafx.scene.paint.Color;
 import java.util.List;
 
 public class AppFrame extends BorderPane {
+    /* 
     private Header header;
-    private List recipeList;
+    private List<RecipeView> recipeList;
     private RecipeView recipeView;
     private ScrollPane scrollPane;
     private Button addButton;
 
+    private RecipeController recipeController;
+
     AppFrame() {
-        header = new Header();
-        recipeList = new List();
+        header = new Header(recipeController);
+        recipeList = new ArrayList<>();
         recipeView = new RecipeView(recipes, this);
 
         scrollPane = new ScrollPane(recipeList);
@@ -52,9 +55,10 @@ public class AppFrame extends BorderPane {
 
     public void addListeners() {
         addButton.setOnAction(e -> {
-            Recipe recipe = new Recipe("example");
+            RecipeView recipe = new RecipeView("example");
             recipeList.getChildren().add(recipe);
             recipeList.updateTaskIndices();
         });
     }
+    */
 }

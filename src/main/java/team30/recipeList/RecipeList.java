@@ -1,9 +1,12 @@
 package team30.recipeList;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
@@ -147,10 +150,16 @@ class AppFrame extends BorderPane {
             recipeList.updateTaskIndices();
         });
     }
+
+    public Button getAddButton() {
+        return addButton;
+    }
 }
 
 // edited from public class Main
 public class RecipeList extends Application {
+
+    private Button postButton, getButton, putButton, deleteButton;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -160,10 +169,35 @@ public class RecipeList extends Application {
         primaryStage.setScene(new Scene(root, 500, 600));
         primaryStage.setResizable(false);
         primaryStage.show();
-
+        
+        postButton = root.getAddButton();
     }
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public void setPostButtonAction(EventHandler<ActionEvent> eventHandler) {
+        postButton.setOnAction(eventHandler);
+    }
+
+    // public void setGetButtonAction(EventHandler<ActionEvent> eventHandler) {
+    //     getButton.setOnAction(eventHandler);
+    // }
+
+    // public void setPutButtonAction(EventHandler<ActionEvent> eventHandler) {
+    //     putButton.setOnAction(eventHandler);
+    // }
+
+    // public void setDeleteButtonAction(EventHandler<ActionEvent> eventHandler) {
+    //     deleteButton.setOnAction(eventHandler);
+    // }
+
+    public void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

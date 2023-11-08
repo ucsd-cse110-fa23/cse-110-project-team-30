@@ -1,10 +1,10 @@
 package team30.client;
 
 import javafx.scene.layout.VBox;
-import team30.recipeList.model.RecipeModel;
+//import team30.recipeList.model.RecipeModel;
 
 public class List extends VBox {
-
+/* 
     public List() {
         this.setSpacing(10);
         this.setPrefSize(500, 560);
@@ -20,4 +20,5 @@ public class List extends VBox {
             }
         }
     }
+*/
 }

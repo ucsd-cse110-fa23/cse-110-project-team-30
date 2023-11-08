@@ -6,9 +6,10 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import team30.recipeList.controller.RecipeController;
+//import team30.recipeList.controller.RecipeController;
 
 public class Header extends HBox {
+    /* 
     private Text titleText;
     private Button addButton;
 
@@ -37,4 +38,5 @@ public class Header extends HBox {
     public Button getAddButton() {
         return addButton;
     }
+    */
 }
