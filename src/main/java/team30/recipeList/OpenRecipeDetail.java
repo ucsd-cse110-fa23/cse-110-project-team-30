@@ -27,23 +27,25 @@ import java.util.Collections;
 import java.util.Comparator;
 import javafx.scene.paint.Color;
 
-class DetailFooter extends HBox {
+class DetailFooter extends DetailHeader {
 
     private Button edit;
     private Button delete;
 
     DetailFooter() {
+        super();
         this.setPrefSize(500, 60);
         this.setStyle("-fx-background-color: #F0F8FF;");
-        this.setSpacing(15);
 
-        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+        edit = new Button("Edit");
+        delete = new Button("Delete");
+        this.setButtonStyle(edit);
+        this.setButtonStyle(delete);
 
-        edit = new Button("Load");
-        edit.setStyle(defaultButtonStyle);
-        delete = new Button("Save");
-        delete.setStyle(defaultButtonStyle);
-
+        this.getChildren().remove(this.getSave());
+        this.getChildren().remove(this.getBack());
+        this.getChildren().remove(this.getTitleText());
+        this.setMargin(edit, new Insets(0, 30, 0, 0));
         this.getChildren().addAll(edit, delete);
         this.setAlignment(Pos.CENTER);
     }
@@ -52,22 +54,29 @@ class DetailFooter extends HBox {
     public Button getDelete() {return delete;}
 }
 
-class DetailHeader extends HBox {
+class DetailRecipe {
+    private VBox details;
+    
+    DetailRecipe(Recipe recipe) {
 
+    }
+}
+
+class DetailHeader extends Header {
     private Button save;
     private Button back;
 
     DetailHeader() {
-        this.setPrefSize(500, 60);
-        this.setStyle("-fx-background-color: #F0F8FF;");
-        this.setSpacing(15);
+        super();
+        this.getChildren().remove(this.getAddButton());
+        
+        this.setMargin(this.getTitleText(), new Insets(0, 150, 0, 0));
 
-        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
-
-        save = new Button("Load");
-        save.setStyle(defaultButtonStyle);
-        back = new Button("Save");
-        back.setStyle(defaultButtonStyle);
+        this.setSpacing(10);
+        save = new Button("Save");
+        back = new Button("Back");
+        this.setButtonStyle(save);
+        this.setButtonStyle(back);
 
         this.getChildren().addAll(save, back);
         this.setAlignment(Pos.CENTER);
@@ -81,31 +90,47 @@ public class OpenRecipeDetail {
     private AppFrame originalAF;
     private RecipeList rl;
 
-    OpenRecipeDetail() { };
+    OpenRecipeDetail(RecipeList rl) {this.rl = rl;};
 
     public void openDetailWindow(Recipe recipe, AppFrame af, RecipeList rl) {
-        originalAF = af;
+        originalAF = new AppFrame(af.getHeader(), af.getRecipeList(), af.getScrollPane(), af.getAddButton(), rl);
         af = createDetailView();
-
+        
         rl.getPrimStage().setScene(new Scene(af, 500, 600));
-        // TODO: go further
+        rl.getPrimStage().show();
     }
 
-    public void closeDetailWindow(List ls) {}
+    public void closeDetailWindow() {
+        rl.getPrimStage().setScene(new Scene(originalAF,500, 600));
+        rl.getPrimStage().show();
+    }
 
     private AppFrame createDetailView() {
         AppFrame detailView = new AppFrame();
-        ScrollPane dScrollPane = new ScrollPane(new List());
         DetailHeader dhead = new DetailHeader();
         DetailFooter dfooter = new DetailFooter(); 
         
         detailView.setTop(dhead);
-        detailView.setCenter(dScrollPane);
+        // detailView.setCenter(new Recipe(null));
         detailView.setBottom(dfooter);
 
+        addListeners(dhead.getBack(), dhead.getSave(), dfooter.getEdit(), dfooter.getDelete());
         
         return detailView;
     }
 
     public AppFrame getOriginalAppFrame() {return originalAF;}
+
+    public void addListeners(Button back, Button save, Button edit, Button delete) {
+        // listener for Back
+        back.setOnAction(e -> {
+            closeDetailWindow();
+        });
+
+        // TODO: listener for save
+
+        // TODO: listener for edit
+
+        // TODO: listener for delete
+    }
 }

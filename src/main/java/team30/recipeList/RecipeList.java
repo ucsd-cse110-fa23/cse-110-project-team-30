@@ -37,6 +37,8 @@ class Recipe extends HBox {
 
     Recipe(String recipe_name) {
         this.setPrefSize(450, 40); // sets size of task
+        this.setMaxHeight(HBox.USE_PREF_SIZE); 
+        this.setMinHeight(HBox.USE_PREF_SIZE);
         this.setSpacing(10);
         // this.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 5px; -fx-border-color: black; -fx-border-width: 0; -fx-font-weight: bold; -fx-background-radius: 10"); // sets background
                                                                                                      // color of task
@@ -72,9 +74,9 @@ class Recipe extends HBox {
 
     Recipe(String recipe_name, ArrayList<String> ingredients, ArrayList<String> steps, MealType mealType) {
         this.setPrefSize(450, 40); // sets size of task
+        this.setMaxHeight(HBox.USE_PREF_SIZE); 
+        this.setMinHeight(HBox.USE_PREF_SIZE);
         this.setSpacing(10);
-        // this.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 5px; -fx-border-color: black; -fx-border-width: 0; -fx-font-weight: bold; -fx-background-radius: 10"); // sets background
-                                                                                                     // color of task
 
         // index number
         index = new Label();
@@ -155,24 +157,15 @@ class Header extends HBox {
         this.setPrefSize(500, 60);
         this.setStyle("-fx-background-color: #f8f3c9;");
 
-        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10";
-
         titleText = new Text("PantryPal");
         titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 40;");
         this.getChildren().add(titleText);
         titleText.setFill(Color.GRAY); // Set the font color
         
-        this.setSpacing(200);   // set spacing between text and generate button
+        this.setMargin(this.getTitleText(), new Insets(0, 200, 0, 0));
 
         addButton = new Button("Generate Recipe");
-        addButton.setStyle(defaultButtonStyle);
-        // Adding hover effect
-        addButton.setOnMouseEntered(e -> addButton.setStyle("-fx-font-style: italic; -fx-background-color: #7dedb3;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
-        addButton.setOnMouseExited(e -> addButton.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
-        
-        // Adding click effect
-        addButton.setOnMousePressed(e -> addButton.setStyle("-fx-font-style: italic; -fx-background-color: #117e2c;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
-        addButton.setOnMouseReleased(e -> addButton.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
+        setButtonStyle(addButton);
         this.getChildren().add(addButton);
         this.setAlignment(Pos.CENTER_LEFT);
 
@@ -182,6 +175,30 @@ class Header extends HBox {
 
     public Button getAddButton() {
         return addButton;
+    }
+
+    public void setButtonStyle(Button button) {
+        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10";
+        button.setStyle(defaultButtonStyle);
+        // Adding hover effect
+        button.setOnMouseEntered(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #7dedb3;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
+        button.setOnMouseExited(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
+        
+        // Adding click effect
+        button.setOnMousePressed(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #117e2c;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
+        button.setOnMouseReleased(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
+    }
+
+    public void setButtonStyle(Button button, String style, String hover_enter, String hover_exist, String click_press, String click_release) {
+        button.setStyle(style);
+
+        // Adding hover effect
+        button.setOnMouseEntered(e -> button.setStyle(hover_enter));
+        button.setOnMouseExited(e -> button.setStyle(hover_exist));
+        
+        // Adding click effect
+        button.setOnMousePressed(e -> button.setStyle(click_press));
+        button.setOnMouseReleased(e -> button.setStyle(click_release));
     }
 }
 
@@ -212,6 +229,21 @@ class AppFrame extends BorderPane {
         addListeners();
     }
 
+    AppFrame(Header hd, List ls, ScrollPane sp, Button button, RecipeList rl) {
+        header = hd;
+        recipeList = ls;
+        scrollPane = sp;
+        addButton = button;
+        this.rl = rl;
+
+        this.setTop(header);
+        this.setCenter(scrollPane);
+
+        addButton = header.getAddButton();
+
+        addListeners();
+    }
+
     public void addListeners() {
         addButton.setOnAction(e -> {
             Recipe recipe = new Recipe("example");
@@ -220,22 +252,8 @@ class AppFrame extends BorderPane {
             
             // set button action for open detail windown button
             recipe.getRecipeTitle().setOnAction(f -> {
-                OpenRecipeDetail ord = new OpenRecipeDetail();
+                OpenRecipeDetail ord = new OpenRecipeDetail(rl);
                 ord.openDetailWindow(recipe, this, rl);
-
-                // set button actions for save, edit, back, delete button
-                // ord.getSaveButton().setOnAction(g -> {
-
-                // });
-                // ord.getBackButton().setOnAction(g -> {
-
-                // });
-                // ord.getEditButton().setOnAction(g -> {
-
-                // });
-                // ord.getDeleteButton().setOnAction(g -> {
-
-                // });
             });
         });
     }
