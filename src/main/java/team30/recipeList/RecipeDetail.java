@@ -1,12 +1,14 @@
 package team30.recipeList;
 
 import javafx.application.Application;
+import javafx.scene.control.ComboBox;
 import javafx.collections.ArrayChangeListener;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -45,20 +47,30 @@ class DetailFooter extends DetailHeader {
         this.getChildren().remove(this.getSave());
         this.getChildren().remove(this.getBack());
         this.getChildren().remove(this.getTitleText());
-        this.setMargin(edit, new Insets(0, 30, 0, 0));
+        this.setMargin(delete, new Insets(0, 0, 0, 10));
         this.getChildren().addAll(edit, delete);
-        this.setAlignment(Pos.CENTER);
+        this.setAlignment(Pos.CENTER_RIGHT);
     }
 
     public Button getEdit() {return edit;}
     public Button getDelete() {return delete;}
 }
 
-class DetailRecipe {
-    private VBox details;
+class DetailRecipe extends Recipe{
     
-    DetailRecipe(Recipe recipe) {
+    DetailRecipe() {
 
+    }
+
+    DetailRecipe (Recipe recipe) {
+
+        ComboBox<String> mealtype = new ComboBox<>();
+        mealtype.setPromptText(recipe.getMealType().getMealType());
+        mealtype.getItems().addAll("Breakfast", "Lunch", "Dinner");
+        HBox title_mealtype = new HBox();
+        title_mealtype.getChildren().add(new TextField(recipe.getRecipeTitle().getText()));
+        title_mealtype.getChildren().add(mealtype);
+        this.getChildren().add(title_mealtype);
     }
 }
 
@@ -70,48 +82,50 @@ class DetailHeader extends Header {
         super();
         this.getChildren().remove(this.getAddButton());
         
-        this.setMargin(this.getTitleText(), new Insets(0, 150, 0, 0));
+        this.setMargin(this.getTitleText(), new Insets(0, 210, 0, 0));
 
-        this.setSpacing(10);
         save = new Button("Save");
         back = new Button("Back");
         this.setButtonStyle(save);
         this.setButtonStyle(back);
+        
+        this.setMargin(save, new Insets(0, 10, 0, 0));
 
         this.getChildren().addAll(save, back);
-        this.setAlignment(Pos.CENTER);
+        this.setAlignment(Pos.CENTER_LEFT);
     }
 
     public Button getSave() {return save;}
     public Button getBack() {return back;}
 }
 
-public class OpenRecipeDetail {
+public class RecipeDetail {
     private AppFrame originalAF;
     private RecipeList rl;
 
-    OpenRecipeDetail(RecipeList rl) {this.rl = rl;};
-
-    public void openDetailWindow(Recipe recipe, AppFrame af, RecipeList rl) {
+    RecipeDetail(RecipeList rl, AppFrame af) {
+        this.rl = rl;
         originalAF = new AppFrame(af.getHeader(), af.getRecipeList(), af.getScrollPane(), af.getAddButton(), rl);
-        af = createDetailView();
+    };
+
+    public void openDetailWindow(Recipe recipe) {
+        AppFrame af = createDetailView(recipe);
         
         rl.getPrimStage().setScene(new Scene(af, 500, 600));
-        rl.getPrimStage().show();
     }
 
     public void closeDetailWindow() {
         rl.getPrimStage().setScene(new Scene(originalAF,500, 600));
-        rl.getPrimStage().show();
     }
 
-    private AppFrame createDetailView() {
+    private AppFrame createDetailView(Recipe recipe) {
         AppFrame detailView = new AppFrame();
         DetailHeader dhead = new DetailHeader();
         DetailFooter dfooter = new DetailFooter(); 
         
         detailView.setTop(dhead);
-        // detailView.setCenter(new Recipe(null));
+        // TODO: uncomment this to test Detail Recipe
+        // detailView.setCenter(new DetailRecipe(recipe));
         detailView.setBottom(dfooter);
 
         addListeners(dhead.getBack(), dhead.getSave(), dfooter.getEdit(), dfooter.getDelete());

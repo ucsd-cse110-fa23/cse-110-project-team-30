@@ -31,17 +31,15 @@ class Recipe extends HBox {
 
     private Label index;
     private Button recipe_title;
-    private ArrayList<String> ingredients;
-    private ArrayList<String> steps;
+    private TextField ingredients;
+    private ArrayList<TextField> steps;
     private MealType mealtype;
 
-    Recipe(String recipe_name) {
+    Recipe() {
         this.setPrefSize(450, 40); // sets size of task
         this.setMaxHeight(HBox.USE_PREF_SIZE); 
         this.setMinHeight(HBox.USE_PREF_SIZE);
         this.setSpacing(10);
-        // this.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 5px; -fx-border-color: black; -fx-border-width: 0; -fx-font-weight: bold; -fx-background-radius: 10"); // sets background
-                                                                                                     // color of task
 
         // index number
         index = new Label();
@@ -54,7 +52,7 @@ class Recipe extends HBox {
         this.getChildren().add(index); // add index label to task
 
         // button
-        recipe_title = new Button(recipe_name);
+        recipe_title = new Button("example");
         recipe_title.setPrefSize(400, 40);
         recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10");
 
@@ -72,7 +70,7 @@ class Recipe extends HBox {
         mealtype = null;
     }
 
-    Recipe(String recipe_name, ArrayList<String> ingredients, ArrayList<String> steps, MealType mealType) {
+    Recipe(String recipe_name, TextField ingredients, ArrayList<TextField> steps, MealType mealType) {
         this.setPrefSize(450, 40); // sets size of task
         this.setMaxHeight(HBox.USE_PREF_SIZE); 
         this.setMinHeight(HBox.USE_PREF_SIZE);
@@ -103,13 +101,11 @@ class Recipe extends HBox {
         this.getChildren().add(recipe_title);
 
         // deep copy initializing ingredients
-        for (int i = 0; i < ingredients.size(); ++i) {
-            this.ingredients.add(new String(ingredients.get(i)));
-        }
+        this.ingredients.setText(ingredients.getText());
         
         // deep copy initializing steps
         for (int i = 0; i < steps.size(); ++i) {
-            this.steps.add(new String(steps.get(i)));
+            this.steps.add(new TextField(steps.get(i).getText()));
         }
 
         this.mealtype = mealType;
@@ -118,13 +114,14 @@ class Recipe extends HBox {
 
     public void setTaskIndex(int num) {
         this.index.setText(num + ""); // num to String
-        // this.contactNameText.setPromptText("Name");
-        // this.emailAddressText.setPromptText("Email address");
-        // this.phoneNumberText.setPromptText("Phone number");
     }
 
     public Button getRecipeTitle() {
         return this.recipe_title;
+    }
+
+    public MealType getMealType() {
+        return this.mealtype;
     }
 }
 
@@ -246,14 +243,14 @@ class AppFrame extends BorderPane {
 
     public void addListeners() {
         addButton.setOnAction(e -> {
-            Recipe recipe = new Recipe("example");
+            Recipe recipe = new Recipe();
             recipeList.getChildren().add(recipe);
             recipeList.updateTaskIndices();
             
             // set button action for open detail windown button
             recipe.getRecipeTitle().setOnAction(f -> {
-                OpenRecipeDetail ord = new OpenRecipeDetail(rl);
-                ord.openDetailWindow(recipe, this, rl);
+                RecipeDetail ord = new RecipeDetail(rl, this);
+                ord.openDetailWindow(recipe);
             });
         });
     }
@@ -263,11 +260,6 @@ class AppFrame extends BorderPane {
     public List getRecipeList() {return recipeList;}
     public ScrollPane getScrollPane() {return scrollPane;}
     public Button getAddButton() {return addButton;}
-
-    // public void setHeader(Header hd) {header = hd;}
-    // public void setRecipeList(List rl) {recipeList = rl;}
-    // public void set(Header hd) {header = hd;}
-    // public void setHeader(Header hd) {header = hd;}
 }
 
 // edited from public class Main
