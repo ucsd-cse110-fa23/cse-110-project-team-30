@@ -11,7 +11,6 @@ import java.net.URI;
 public class Model {
     public String performRequest(String method, String language, String year, String query) {
         // Implement your HTTP request logic here and return the response
-
         try {
             String urlString = "http://localhost:8100/";
             if (query != null) {

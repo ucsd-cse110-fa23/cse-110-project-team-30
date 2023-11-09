@@ -9,7 +9,7 @@ public class Controller {
     public Controller(RecipeList view, Model model) {
         this.view = view;
         this.model = model;
-
+        
         this.view.setPostButtonAction(this::handlePostButton);
         // this.view.setGetButtonAction(this::handleGetButton);
         // this.view.setPutButtonAction(this::handlePutButton);

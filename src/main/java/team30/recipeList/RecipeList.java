@@ -111,6 +111,7 @@ class Header extends HBox {
         this.getChildren().add(addButton);
         this.setAlignment(Pos.CENTER_LEFT);
 
+
     }
 
     public Button getAddButton() {
@@ -160,17 +161,21 @@ class AppFrame extends BorderPane {
 public class RecipeList extends Application {
 
     private Button postButton, getButton, putButton, deleteButton;
+    Controller controller;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         AppFrame root = new AppFrame();
+        Model model = new Model();
+        postButton = root.getAddButton();
+
+
+        controller = new Controller(this, model);
 
         primaryStage.setTitle("PantryPal");
         primaryStage.setScene(new Scene(root, 500, 600));
         primaryStage.setResizable(false);
         primaryStage.show();
-        
-        postButton = root.getAddButton();
     }
 
     public static void main(String[] args) {
