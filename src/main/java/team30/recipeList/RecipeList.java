@@ -128,6 +128,9 @@ class AppFrame extends BorderPane {
 
     private Button addButton;
 
+    //unseen buttons for HTTP functions
+    private Button postButton, getButton, putButton, deleteButton;
+
     AppFrame() {
         header = new Header();
         recipeList = new List();
@@ -141,6 +144,11 @@ class AppFrame extends BorderPane {
 
         addButton = header.getAddButton();
 
+        postButton = new Button("Post");
+        getButton = new Button("Get");
+        putButton = new Button("Put");
+        deleteButton = new Button("Delete");
+
         addListeners();
     }
 
@@ -149,27 +157,44 @@ class AppFrame extends BorderPane {
             Recipe recipe = new Recipe("example");
             recipeList.getChildren().add(recipe);
             recipeList.updateTaskIndices();
+            postButton.fire(); //click HTTP post button
         });
     }
 
-    public Button getAddButton() {
-        return addButton;
+    public Button getPostButton() {
+        return postButton;
+    }
+
+    public Button getGetButton() {
+        return getButton;
+    }
+
+    public Button getPutButton() {
+        return putButton;
+    }
+
+    public Button getDeleteButton() {
+        return deleteButton;
     }
 }
 
 // edited from public class Main
 public class RecipeList extends Application {
 
+    private AppFrame root;
     private Button postButton, getButton, putButton, deleteButton;
     Controller controller;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        AppFrame root = new AppFrame();
+        root = new AppFrame();
         Model model = new Model();
-        postButton = root.getAddButton();
-
-
+        
+        postButton = root.getPostButton();
+        getButton = root.getGetButton();
+        putButton = root.getPutButton();
+        deleteButton = root.getDeleteButton();
+        
         controller = new Controller(this, model);
 
         primaryStage.setTitle("PantryPal");
@@ -186,17 +211,17 @@ public class RecipeList extends Application {
         postButton.setOnAction(eventHandler);
     }
 
-    // public void setGetButtonAction(EventHandler<ActionEvent> eventHandler) {
-    //     getButton.setOnAction(eventHandler);
-    // }
+    public void setGetButtonAction(EventHandler<ActionEvent> eventHandler) {
+        getButton.setOnAction(eventHandler);
+    }
 
-    // public void setPutButtonAction(EventHandler<ActionEvent> eventHandler) {
-    //     putButton.setOnAction(eventHandler);
-    // }
+    public void setPutButtonAction(EventHandler<ActionEvent> eventHandler) {
+        putButton.setOnAction(eventHandler);
+    }
 
-    // public void setDeleteButtonAction(EventHandler<ActionEvent> eventHandler) {
-    //     deleteButton.setOnAction(eventHandler);
-    // }
+    public void setDeleteButtonAction(EventHandler<ActionEvent> eventHandler) {
+        deleteButton.setOnAction(eventHandler);
+    }
 
     public void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
