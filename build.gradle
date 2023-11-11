@@ -28,8 +28,10 @@ dependencies {
     // This provides the TestEngine to actually run the tests.
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 }
-
+dependencies {
+    testImplementation 'org.mockito:mockito-core:3.12.4'
+}
 test {
     useJUnitPlatform()
 }
-mainClassName = 'team30.recipeList.RecipeList'
+mainClassName = 'team30.meal.recipeList.RecipeList'

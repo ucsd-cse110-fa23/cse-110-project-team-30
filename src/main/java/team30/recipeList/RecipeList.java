@@ -3,6 +3,7 @@ package team30.recipeList;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.collections.ArrayChangeListener;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
@@ -112,6 +113,9 @@ class Recipe extends HBox {
 
         this.mealtype = mealType;
     }
+
+        
+
     public void setTaskIndex(int num) {
         this.index.setText(num + ""); // num to String
     }
@@ -146,14 +150,12 @@ class List extends VBox {
 
 class Header extends HBox {
 
-    Text titleText;
+    private Text titleText;
     private Button addButton;
 
     Header() {
         this.setPrefSize(500, 60);
         this.setStyle("-fx-background-color: #f8f3c9;");
-
-        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10";
 
         titleText = new Text("PantryPal");
         titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 40;");
@@ -163,7 +165,7 @@ class Header extends HBox {
         this.setMargin(this.getTitleText(), new Insets(0, 200, 0, 0));
 
         addButton = new Button("Generate Recipe");
-        addButton.setStyle(defaultButtonStyle);
+        setButtonStyle(addButton);
         this.getChildren().add(addButton);
         this.setAlignment(Pos.CENTER_LEFT);
 
@@ -217,6 +219,8 @@ class AppFrame extends BorderPane {
     //unseen buttons for HTTP functions
     private Button postButton, getButton, putButton, deleteButton;
 
+    private RecipeList rl;
+
     AppFrame() {
         header = new Header();
         recipeList = new List();
@@ -253,6 +257,21 @@ class AppFrame extends BorderPane {
         addListeners();
     }
 
+    AppFrame(Header hd, List ls, ScrollPane sp, Button button, RecipeList rl) {
+        header = hd;
+        recipeList = ls;
+        scrollPane = sp;
+        addButton = button;
+        this.rl = rl;
+
+        this.setTop(header);
+        this.setCenter(scrollPane);
+
+        addButton = header.getAddButton();
+
+        addListeners();
+    }
+
     public void addListeners() {
         addButton.setOnAction(e -> {
             recipeName = "example";
@@ -264,6 +283,8 @@ class AppFrame extends BorderPane {
             recipeList.updateTaskIndices();
             postButton.fire(); //click HTTP post button
 
+            
+            // set button action for open detail windown button
             recipe.getRecipeTitle().setOnAction(f -> {
                 RecipeDetail ord = new RecipeDetail(rl, this);
                 ord.openDetailWindow(recipe);
@@ -304,6 +325,8 @@ class AppFrame extends BorderPane {
 
 // edited from public class Main
 public class RecipeList extends Application {
+    private AppFrame root;
+    private Stage primStage;
 
     private AppFrame root;
     private Stage primStage;

@@ -1,8 +1,9 @@
 package team30.meal;
 
+import team30.meal.MealType;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MealTypeTest {
