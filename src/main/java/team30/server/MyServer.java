@@ -26,7 +26,6 @@ public class MyServer {
         0);
 
     HttpContext context = server.createContext("/", new RequestHandler(data));
-    HttpContext context1 = server.createContext("/name", new MyHandler(data));
     server.setExecutor(threadPoolExecutor);
     server.start();
 

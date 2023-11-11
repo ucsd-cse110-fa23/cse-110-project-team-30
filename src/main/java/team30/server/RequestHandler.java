@@ -45,10 +45,10 @@ public class RequestHandler implements HttpHandler {
         String query = uri.getRawQuery();
         if (query != null) {
             String value = query.substring(query.indexOf("=") + 1);
-            String year = data.get(value); // Retrieve data from hashmap
-            if (year != null) {
-                response = year;
-                System.out.println("Queried for " + value + " and found " + year);
+            String recipeDetails = data.get(value); // Retrieve data from hashmap
+            if (recipeDetails != null) {
+                response = recipeDetails;
+                System.out.println("Queried for " + value + " and found " + recipeDetails);
             } else {
                 response = "No data found for " + value;
             }
@@ -60,14 +60,14 @@ public class RequestHandler implements HttpHandler {
         InputStream inStream = httpExchange.getRequestBody();
         Scanner scanner = new Scanner(inStream);
         String postData = scanner.nextLine();
-        String language = postData.substring(
+        String recipeName = postData.substring(
                 0,
-                postData.indexOf(",")), year = postData.substring(postData.indexOf(",") + 1);
+                postData.indexOf(",")), recipeDetails = postData.substring(postData.indexOf(",") + 1);
 
         // Store data in hashmap
-        data.put(language, year);
+        data.put(recipeName, recipeDetails);
 
-        String response = "Posted entry {" + language + ", " + year + "}";
+        String response = "Posted entry {" + recipeName + ", " + recipeDetails + "}";
         System.out.println(response);
         scanner.close();
 
@@ -78,20 +78,20 @@ public class RequestHandler implements HttpHandler {
         InputStream inStream = httpExchange.getRequestBody();
         Scanner scanner = new Scanner(inStream);
         String postData = scanner.nextLine();
-        String language = postData.substring(
+        String recipeName = postData.substring(
                 0,
-                postData.indexOf(",")), year = postData.substring(postData.indexOf(",") + 1);
+                postData.indexOf(",")), recipeDetails = postData.substring(postData.indexOf(",") + 1);
 
         // Store data in hashmap
 
         String response;
 
-        if (data.get(language) != null) {
-            response = "Updated entry {" + language + ", " + year + "}";
-            data.put(language, year);
+        if (data.get(recipeName) != null) {
+            response = "Updated entry {" + recipeName + ", " + recipeDetails + "}";
+            data.put(recipeName, recipeDetails);
         } else {
-            response = "Added entry {" + language + ", " + year + "}";
-            data.put(language, year);
+            response = "Added entry {" + recipeName + ", " + recipeDetails + "}";
+            data.put(recipeName, recipeDetails);
         }
 
         System.out.println(response);
@@ -106,10 +106,10 @@ public class RequestHandler implements HttpHandler {
         String query = uri.getRawQuery();
         if (query != null) {
             String value = query.substring(query.indexOf("=") + 1);
-            String year = data.remove(value); // Retrieve data from hashmap
-            if (year != null) {
-                response = "Deleted entry {" + value + ", " + year + "}";
-                System.out.println("Queried for " + value + " and found " + year);
+            String recipeDetails = data.remove(value); // Retrieve data from hashmap
+            if (recipeDetails != null) {
+                response = "Deleted entry {" + value + ", " + recipeDetails + "}";
+                System.out.println("Queried for " + value + " and found " + recipeDetails);
             } else {
                 response = "No data found for " + value;
             }
