@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -15,7 +16,7 @@ import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
 import java.io.*;
 import javafx.util.Pair;
-import team30.meal.MealType;
+import team30.meal.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,14 +97,8 @@ class Recipe extends HBox {
         recipe_title.setOnMouseReleased(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
         this.getChildren().add(recipe_title);
 
-        // deep copy initializing ingredients
-        this.ingredients.setText(ingredients.getText());
-        
-        // deep copy initializing steps
-        for (int i = 0; i < steps.size(); ++i) {
-            this.steps.add(new TextField(steps.get(i).getText()));
-        }
-
+        this.ingredients = ingredients;
+        this.steps = steps;
         this.mealtype = mealType;
     }
 
@@ -118,6 +113,14 @@ class Recipe extends HBox {
 
     public MealType getMealType() {
         return this.mealtype;
+    }
+
+    public TextField getIngredients() {
+        return this.ingredients;
+    }
+
+    public ArrayList<TextField> getSteps() {
+        return this.steps;
     }
 }
 
@@ -239,7 +242,23 @@ class AppFrame extends BorderPane {
 
     public void addListeners() {
         addButton.setOnAction(e -> {
-            Recipe recipe = new Recipe();
+            // mock fake recipe for testing 
+            String recipe_name = new String("noodle");
+            TextField ingredients = new TextField("noodle, eggs, water, tomato, some other things, some other things, some other things, some other things.......");
+            ArrayList<TextField> steps = new ArrayList<>();
+            steps.add(new TextField("boil water"));
+            steps.add(new TextField("add noodle"));
+            steps.add(new TextField("add egg"));
+            steps.add(new TextField("add tomato"));
+            steps.add(new TextField("some other things"));
+            steps.add(new TextField("some other things"));
+            steps.add(new TextField("some other things"));
+            steps.add(new TextField("some other things"));
+            // MealType mt = new Breakfast();
+            MealType mt = new Lunch();
+            // MealType mt = new Dinner();
+
+            Recipe recipe = new Recipe(recipe_name, ingredients, steps, mt);
             recipeList.getChildren().add(recipe);
             recipeList.updateTaskIndices();
             
