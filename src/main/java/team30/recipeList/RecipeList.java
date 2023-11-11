@@ -126,6 +126,9 @@ class AppFrame extends BorderPane {
 
     private ScrollPane scrollPane;
 
+    private String recipeName;
+    private String[] recipeDetails = new String[3];
+
     private Button addButton;
 
     //unseen buttons for HTTP functions
@@ -154,11 +157,23 @@ class AppFrame extends BorderPane {
 
     public void addListeners() {
         addButton.setOnAction(e -> {
-            Recipe recipe = new Recipe("example");
+            recipeName = "example";
+            recipeDetails[0] = "meal type";
+            recipeDetails[1] = "ingredients";
+            recipeDetails[2] = "steps";
+            Recipe recipe = new Recipe(recipeName);
             recipeList.getChildren().add(recipe);
             recipeList.updateTaskIndices();
             postButton.fire(); //click HTTP post button
         });
+    }
+
+    public String getRecipeName() {
+        return recipeName;
+    }
+
+    public String[] getRecipeDetails() {
+        return recipeDetails;
     }
 
     public Button getPostButton() {
@@ -184,6 +199,9 @@ public class RecipeList extends Application {
     private AppFrame root;
     private Button postButton, getButton, putButton, deleteButton;
     Controller controller;
+
+    private String recipeName;
+    private String[] recipeDetails = new String[3];
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -221,6 +239,14 @@ public class RecipeList extends Application {
 
     public void setDeleteButtonAction(EventHandler<ActionEvent> eventHandler) {
         deleteButton.setOnAction(eventHandler);
+    }
+
+    public String getRecipeName() {
+        return root.getRecipeName();
+    }
+
+    public String[] getRecipeDetails() {
+        return root.getRecipeDetails();
     }
 
     public void showAlert(String title, String content) {
