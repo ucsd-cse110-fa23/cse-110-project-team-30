@@ -33,6 +33,8 @@ class DetailFooter extends DetailHeader {
 
     private Button edit;
     private Button delete;
+    private Button save;
+    private Button back;
 
     DetailFooter() {
         super();
@@ -41,19 +43,27 @@ class DetailFooter extends DetailHeader {
 
         edit = new Button("Edit");
         delete = new Button("Delete");
+        save = new Button("Save");
+        back = new Button("Back");
+        this.setButtonStyle(back);
         this.setButtonStyle(edit);
         this.setButtonStyle(delete);
+        this.setButtonStyle(save);
 
         this.getChildren().remove(this.getSave());
         this.getChildren().remove(this.getBack());
         this.getChildren().remove(this.getTitleText());
+        this.setMargin(save, new Insets(0, 0, 0, 10));
         this.setMargin(delete, new Insets(0, 0, 0, 10));
-        this.getChildren().addAll(edit, delete);
+        this.setMargin(back, new Insets(0, 0, 0, 10));
+        this.getChildren().addAll(back, edit, delete, save);
         this.setAlignment(Pos.CENTER_RIGHT);
     }
 
     public Button getEdit() {return edit;}
     public Button getDelete() {return delete;}
+    public Button getSave() {return save;}
+    public Button getBack() {return back;}
 }
 
 class DetailRecipe extends Recipe{
@@ -75,8 +85,6 @@ class DetailRecipe extends Recipe{
 }
 
 class DetailHeader extends Header {
-    private Button save;
-    private Button back;
 
     DetailHeader() {
         super();
@@ -84,19 +92,8 @@ class DetailHeader extends Header {
         
         this.setMargin(this.getTitleText(), new Insets(0, 210, 0, 0));
 
-        save = new Button("Save");
-        back = new Button("Back");
-        this.setButtonStyle(save);
-        this.setButtonStyle(back);
-        
-        this.setMargin(save, new Insets(0, 10, 0, 0));
-
-        this.getChildren().addAll(save, back);
         this.setAlignment(Pos.CENTER_LEFT);
     }
-
-    public Button getSave() {return save;}
-    public Button getBack() {return back;}
 }
 
 public class RecipeDetail {
@@ -128,7 +125,7 @@ public class RecipeDetail {
         // detailView.setCenter(new DetailRecipe(recipe));
         detailView.setBottom(dfooter);
 
-        addListeners(dhead.getBack(), dhead.getSave(), dfooter.getEdit(), dfooter.getDelete());
+        addListeners(dfooter.getBack(), dfooter.getSave(), dfooter.getEdit(), dfooter.getDelete());
         
         return detailView;
     }
