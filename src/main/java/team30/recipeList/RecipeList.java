@@ -219,7 +219,6 @@ class AppFrame extends BorderPane {
     //unseen buttons for HTTP functions
     private Button postButton, getButton, putButton, deleteButton;
 
-    private RecipeList rl;
 
     AppFrame() {
         header = new Header();
@@ -238,21 +237,6 @@ class AppFrame extends BorderPane {
         getButton = new Button("Get");
         putButton = new Button("Put");
         deleteButton = new Button("Delete");
-
-        addListeners();
-    }
-    
-    AppFrame(Header hd, List ls, ScrollPane sp, Button button, RecipeList rl) {
-        header = hd;
-        recipeList = ls;
-        scrollPane = sp;
-        addButton = button;
-        this.rl = rl;
-
-        this.setTop(header);
-        this.setCenter(scrollPane);
-
-        addButton = header.getAddButton();
 
         addListeners();
     }
@@ -325,9 +309,6 @@ class AppFrame extends BorderPane {
 
 // edited from public class Main
 public class RecipeList extends Application {
-    private AppFrame root;
-    private Stage primStage;
-
     private AppFrame root;
     private Stage primStage;
     private Button postButton, getButton, putButton, deleteButton;
