@@ -1,10 +1,13 @@
 package team30.recipeList;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.collections.ArrayChangeListener;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
@@ -94,7 +97,7 @@ class Recipe extends HBox {
         // Adding hover effect
         recipe_title.setOnMouseEntered(e -> recipe_title.setStyle("-fx-background-color: #dccf1e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
         recipe_title.setOnMouseExited(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        
+            
         // Adding click effect
         recipe_title.setOnMousePressed(e -> recipe_title.setStyle("-fx-background-color: #b4a918; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
         recipe_title.setOnMouseReleased(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
@@ -102,7 +105,7 @@ class Recipe extends HBox {
 
         // deep copy initializing ingredients
         this.ingredients.setText(ingredients.getText());
-        
+            
         // deep copy initializing steps
         for (int i = 0; i < steps.size(); ++i) {
             this.steps.add(new TextField(steps.get(i).getText()));
@@ -111,6 +114,7 @@ class Recipe extends HBox {
         this.mealtype = mealType;
     }
 
+        
 
     public void setTaskIndex(int num) {
         this.index.setText(num + ""); // num to String
@@ -124,7 +128,6 @@ class Recipe extends HBox {
         return this.mealtype;
     }
 }
-
 class List extends VBox {
 
     List() {
@@ -199,6 +202,7 @@ class Header extends HBox {
     }
 }
 
+
 class AppFrame extends BorderPane {
 
     private Header header;
@@ -206,9 +210,15 @@ class AppFrame extends BorderPane {
 
     private ScrollPane scrollPane;
 
-    private Button addButton;
+    private String recipeName;
+    private String[] recipeDetails = new String[3];
 
+    private Button addButton;
     private RecipeList rl;
+
+    //unseen buttons for HTTP functions
+    private Button postButton, getButton, putButton, deleteButton;
+
 
     AppFrame() {
         header = new Header();
@@ -222,6 +232,11 @@ class AppFrame extends BorderPane {
         this.setCenter(scrollPane);
 
         addButton = header.getAddButton();
+
+        postButton = new Button("Post");
+        getButton = new Button("Get");
+        putButton = new Button("Put");
+        deleteButton = new Button("Delete");
 
         addListeners();
     }
@@ -243,9 +258,15 @@ class AppFrame extends BorderPane {
 
     public void addListeners() {
         addButton.setOnAction(e -> {
+            recipeName = "example";
+            recipeDetails[0] = "meal type";
+            recipeDetails[1] = "ingredients";
+            recipeDetails[2] = "steps";
             Recipe recipe = new Recipe();
             recipeList.getChildren().add(recipe);
             recipeList.updateTaskIndices();
+            postButton.fire(); //click HTTP post button
+
             
             // set button action for open detail windown button
             recipe.getRecipeTitle().setOnAction(f -> {
@@ -253,6 +274,30 @@ class AppFrame extends BorderPane {
                 ord.openDetailWindow(recipe);
             });
         });
+    }
+
+    public String getRecipeName() {
+        return recipeName;
+    }
+
+    public String[] getRecipeDetails() {
+        return recipeDetails;
+    }
+
+    public Button getPostButton() {
+        return postButton;
+    }
+
+    public Button getGetButton() {
+        return getButton;
+    }
+
+    public Button getPutButton() {
+        return putButton;
+    }
+
+    public Button getDeleteButton() {
+        return deleteButton;
     }
 
     public void setRecipeList(RecipeList rl) {this.rl = rl;}
@@ -266,10 +311,24 @@ class AppFrame extends BorderPane {
 public class RecipeList extends Application {
     private AppFrame root;
     private Stage primStage;
+    private Button postButton, getButton, putButton, deleteButton;
+    Controller controller;
+
+    private String recipeName;
+    private String[] recipeDetails = new String[3];
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         root = new AppFrame();
+        Model model = new Model();
+        
+        postButton = root.getPostButton();
+        getButton = root.getGetButton();
+        putButton = root.getPutButton();
+        deleteButton = root.getDeleteButton();
+        
+        controller = new Controller(this, model);
+
         this.primStage = primaryStage;
         root.setRecipeList(this);
         primaryStage.setTitle("PantryPal");
@@ -284,4 +343,36 @@ public class RecipeList extends Application {
 
     public Stage getPrimStage() {return primStage;}
     public void setAppFrame(AppFrame af) {root = af;}
+
+    public void setPostButtonAction(EventHandler<ActionEvent> eventHandler) {
+        postButton.setOnAction(eventHandler);
+    }
+
+    public void setGetButtonAction(EventHandler<ActionEvent> eventHandler) {
+        getButton.setOnAction(eventHandler);
+    }
+
+    public void setPutButtonAction(EventHandler<ActionEvent> eventHandler) {
+        putButton.setOnAction(eventHandler);
+    }
+
+    public void setDeleteButtonAction(EventHandler<ActionEvent> eventHandler) {
+        deleteButton.setOnAction(eventHandler);
+    }
+
+    public String getRecipeName() {
+        return root.getRecipeName();
+    }
+
+    public String[] getRecipeDetails() {
+        return root.getRecipeDetails();
+    }
+
+    public void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
 }
