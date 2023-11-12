@@ -21,7 +21,6 @@ import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
 import java.io.*;
 import javafx.util.Pair;
-import team30.meal.MealType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,7 +64,7 @@ class DetailRecipe extends Recipe{
     DetailRecipe (Recipe recipe) {
 
         ComboBox<String> mealtype = new ComboBox<>();
-        mealtype.setPromptText(recipe.getMealType().getMealType());
+        mealtype.setPromptText(recipe.getMealType());
         mealtype.getItems().addAll("Breakfast", "Lunch", "Dinner");
         HBox title_mealtype = new HBox();
         title_mealtype.getChildren().add(new TextField(recipe.getRecipeTitle().getText()));

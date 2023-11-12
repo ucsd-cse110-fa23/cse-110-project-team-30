@@ -22,7 +22,6 @@ import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
 import java.io.*;
 import javafx.util.Pair;
-import team30.meal.MealType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +35,7 @@ class Recipe extends HBox {
     private Button recipe_title;
     private TextField ingredients;
     private ArrayList<TextField> steps;
-    private MealType mealtype;
+    private String meal_type;
 
     Recipe() {
         this.setPrefSize(450, 40); // sets size of task
@@ -70,10 +69,10 @@ class Recipe extends HBox {
 
         ingredients = null;
         steps = null;
-        mealtype = null;
+        meal_type = null;
     }
 
-    Recipe(String recipe_name, TextField ingredients, ArrayList<TextField> steps, MealType mealType) {
+    Recipe(String recipe_name, TextField ingredients, ArrayList<TextField> steps, String mealType) {
         this.setPrefSize(450, 40); // sets size of task
         this.setMaxHeight(HBox.USE_PREF_SIZE); 
         this.setMinHeight(HBox.USE_PREF_SIZE);
@@ -111,7 +110,7 @@ class Recipe extends HBox {
             this.steps.add(new TextField(steps.get(i).getText()));
         }
 
-        this.mealtype = mealType;
+        this.meal_type = mealType;
     }
 
         
@@ -124,8 +123,8 @@ class Recipe extends HBox {
         return this.recipe_title;
     }
 
-    public MealType getMealType() {
-        return this.mealtype;
+    public String getMealType() {
+        return this.meal_type;
     }
 }
 class List extends VBox {
