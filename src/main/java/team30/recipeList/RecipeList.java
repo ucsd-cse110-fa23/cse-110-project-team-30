@@ -103,12 +103,10 @@ class Recipe extends HBox {
         this.getChildren().add(recipe_title);
 
         // deep copy initializing ingredients
-        this.ingredients.setText(ingredients.getText());
+        this.ingredients = ingredients;
             
         // deep copy initializing steps
-        for (int i = 0; i < steps.size(); ++i) {
-            this.steps.add(new TextField(steps.get(i).getText()));
-        }
+        this.steps = steps;
 
         this.meal_type = mealType;
     }
@@ -125,6 +123,14 @@ class Recipe extends HBox {
 
     public String getMealType() {
         return this.meal_type;
+    }
+
+    public TextField getIngredients() {
+        return this.ingredients;
+    }
+
+    public ArrayList<TextField> getSteps() {
+        return this.steps;
     }
 }
 class List extends VBox {
@@ -261,7 +267,11 @@ class AppFrame extends BorderPane {
             recipeDetails[0] = "meal type";
             recipeDetails[1] = "ingredients";
             recipeDetails[2] = "steps";
-            Recipe recipe = new Recipe();
+            ArrayList<TextField> steps = new ArrayList<>();
+            steps.add(new TextField("Step 1...."));
+            steps.add(new TextField("Step 2...."));
+            steps.add(new TextField("Step 3...."));
+            Recipe recipe = new Recipe("example", new TextField("ingredients......"), steps, "Lunch");
             recipeList.getChildren().add(recipe);
             recipeList.updateTaskIndices();
             postButton.fire(); //click HTTP post button
