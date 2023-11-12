@@ -99,12 +99,64 @@ class DetailHeader extends Header {
     public Button getBack() {return back;}
 }
 
+class Ingredient extends HBox {
+    private TextField ingredient;
+
+    Ingredient(String string) {
+        ingredient = new TextField(string);
+        ingredient.setPrefSize(250, 20); // set size of text field
+        ingredient.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
+        //index.setTextAlignment(TextAlignment.LEFT); // set alignment of text field
+        ingredient.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
+        this.getChildren().add(ingredient); // add textlabel to contact
+        // this.getChildren().addAll(ingredient);
+
+        this.ingredient.setPromptText("Ingredient");
+    }
+
+    public TextField getIngredient() {return ingredient;}
+
+
+
+public void saveIngredient() {
+    try {
+            java.io.FileWriter outfile = new java.io.FileWriter("/Users/leahkuruvila/Desktop/pantrypal/cse-110-project-team-30/src/main/java/team30/recipeList/ingredient.csv", true); //true = append
+            for (int i = 0; i < this.getChildren().size(); i++) {   // Iterates through each contact
+                if (this.getChildren().get(i) instanceof Ingredient) {
+                    String line1 = ((Ingredient) this.getChildren().get(i)).getIngredient().getText();   // ingredient
+                
+                    outfile.write(line1 + " " + "\n");
+                    
+                }
+            }
+            //fw.close();
+            outfile.close();
+        }
+        catch (Exception e) {
+            e.getStackTrace();
+        }
+    }
+
+}
+
+
+
+
+
 public class RecipeDetail {
     private AppFrame originalAF;
     private RecipeList rl;
+    private ArrayList<Ingredient> ingredients;
 
     RecipeDetail(RecipeList rl, AppFrame af) {
         this.rl = rl;
+        // store ingredients
+        this.ingredients = new ArrayList<Ingredient>();
+        //adds new ingredient
+        this.ingredients.add(new Ingredient("carrot"));
+        this.ingredients.add(new Ingredient("onion"));
+        this.ingredients.add(new Ingredient("broccoli"));
+        this.ingredients.add(new Ingredient("rice"));
         originalAF = new AppFrame(af.getHeader(), af.getRecipeList(), af.getScrollPane(), af.getAddButton(), rl);
     };
 
@@ -126,6 +178,11 @@ public class RecipeDetail {
         detailView.setTop(dhead);
         // TODO: uncomment this to test Detail Recipe
         // detailView.setCenter(new DetailRecipe(recipe));
+         VBox vb = new VBox();
+        for (int i = 0; i < this.ingredients.size(); i++) {
+           vb.getChildren().add(this.ingredients.get(i));
+        }
+        detailView.setCenter(vb);
         detailView.setBottom(dfooter);
 
         addListeners(dhead.getBack(), dhead.getSave(), dfooter.getEdit(), dfooter.getDelete());
@@ -142,6 +199,11 @@ public class RecipeDetail {
         });
 
         // TODO: listener for save
+        save.setOnAction(e -> {
+        for (Ingredient ingredient : ingredients) {
+            ingredient.saveIngredient();
+        }
+    });
 
         // TODO: listener for edit
 
