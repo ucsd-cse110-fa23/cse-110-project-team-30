@@ -116,27 +116,6 @@ class Ingredient extends HBox {
 
     public TextField getIngredient() {return ingredient;}
 
-
-
-public void saveIngredient() {
-    try {
-            java.io.FileWriter outfile = new java.io.FileWriter("/Users/leahkuruvila/Desktop/pantrypal/cse-110-project-team-30/src/main/java/team30/recipeList/ingredient.csv", true); //true = append
-            for (int i = 0; i < this.getChildren().size(); i++) {   // Iterates through each contact
-                if (this.getChildren().get(i) instanceof Ingredient) {
-                    String line1 = ((Ingredient) this.getChildren().get(i)).getIngredient().getText();   // ingredient
-                
-                    outfile.write(line1 + " " + "\n");
-                    
-                }
-            }
-            //fw.close();
-            outfile.close();
-        }
-        catch (Exception e) {
-            e.getStackTrace();
-        }
-    }
-
 }
 
 
@@ -146,12 +125,11 @@ public void saveIngredient() {
 public class RecipeDetail {
     private AppFrame originalAF;
     private RecipeList rl;
-    private ArrayList<Ingredient> ingredients;
+    private ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
 
     RecipeDetail(RecipeList rl, AppFrame af) {
         this.rl = rl;
         // store ingredients
-        this.ingredients = new ArrayList<Ingredient>();
         //adds new ingredient
         this.ingredients.add(new Ingredient("carrot"));
         this.ingredients.add(new Ingredient("onion"));
@@ -192,6 +170,25 @@ public class RecipeDetail {
 
     public AppFrame getOriginalAppFrame() {return originalAF;}
 
+    public void saveIngredient() {
+    try {
+            java.io.FileWriter outfile = new java.io.FileWriter("/Users/leahkuruvila/Desktop/pantrypal/cse-110-project-team-30/src/main/java/team30/recipeList/ingredient.csv", true); //true = append
+            for (int i = 0; i < this.ingredients.size(); i++) {   // Iterates through each contact
+                if (this.ingredients.get(i) instanceof Ingredient) {
+                    String line1 = ((Ingredient) this.ingredients.get(i)).getIngredient().getText();   // ingredient
+                
+                    outfile.write(line1 + " " + "\n");
+                    
+                }
+            }
+            //fw.close();
+            outfile.close();
+        }
+        catch (Exception e) {
+            e.getStackTrace();
+        }
+    }
+
     public void addListeners(Button back, Button save, Button edit, Button delete) {
         // listener for Back
         back.setOnAction(e -> {
@@ -200,13 +197,14 @@ public class RecipeDetail {
 
         // TODO: listener for save
         save.setOnAction(e -> {
-        for (Ingredient ingredient : ingredients) {
-            ingredient.saveIngredient();
-        }
-    });
+        // for (Ingredient ingredient : ingredients) {
+        //     ingredient.saveIngredient();
+        // }
+        saveIngredient();
+        });
 
         // TODO: listener for edit
 
         // TODO: listener for delete
     }
-}
+    }
