@@ -163,7 +163,7 @@ class Header extends HBox {
         
         this.setMargin(this.getTitleText(), new Insets(0, 200, 0, 0));
 
-        addButton = new Button("Generate Recipe");
+        addButton = new Button("Generate");
         setButtonStyle(addButton);
         this.getChildren().add(addButton);
         this.setAlignment(Pos.CENTER_LEFT);

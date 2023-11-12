@@ -39,10 +39,10 @@ class DetailFooter extends DetailHeader {
         this.setStyle("-fx-background-color: #F0F8FF;");
 
         edit = new Button("Edit");
+        edit.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10");
         delete = new Button("Delete");
-        this.setButtonStyle(edit);
-        this.setButtonStyle(delete);
-
+        delete.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10");
+        
         this.getChildren().remove(this.getSave());
         this.getChildren().remove(this.getBack());
         this.getChildren().remove(this.getTitleText());
@@ -84,9 +84,9 @@ class DetailHeader extends Header {
         this.setMargin(this.getTitleText(), new Insets(0, 210, 0, 0));
 
         save = new Button("Save");
+        save.setStyle("-fx-background-color: #a1f2c8; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10");
         back = new Button("Back");
-        this.setButtonStyle(save);
-        this.setButtonStyle(back);
+        back.setStyle("-fx-background-color: #a1f2c8; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10");
         
         this.setMargin(save, new Insets(0, 10, 0, 0));
 
@@ -124,7 +124,7 @@ public class RecipeDetail {
         
         detailView.setTop(dhead);
         // TODO: uncomment this to test Detail Recipe
-        // detailView.setCenter(new DetailRecipe(recipe));
+        detailView.setCenter(new DetailRecipe(recipe));
         detailView.setBottom(dfooter);
 
         addListeners(dhead.getBack(), dhead.getSave(), dfooter.getEdit(), dfooter.getDelete());
