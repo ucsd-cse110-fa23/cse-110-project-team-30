@@ -218,10 +218,7 @@ public class RecipeDetail {
 
     RecipeDetail(RecipeList rl, AppFrame af, Recipe r) {
         this.rl = rl;
-<<<<<<< HEAD
-        originalAF = new AppFrame(af.getHeader(), af.getRecipeList(), af.getScrollPane(), af.getAddButton(), rl);
         this.recipe = r;
-=======
         // store ingredients
         //adds new ingredient
         this.ingredients.add(new Ingredient("carrot"));
@@ -229,7 +226,6 @@ public class RecipeDetail {
         this.ingredients.add(new Ingredient("broccoli"));
         this.ingredients.add(new Ingredient("rice"));
         originalAF = new AppFrame(af.getHeader(), af.getRecipeList(), af.getScrollPane(), af.getAddButton(), rl, af.getPostButton(), af.getGetButton(), af.getPutButton(), af.getDeleteButton());
->>>>>>> main
     };
 
     public void openDetailWindow(Recipe recipe) {
