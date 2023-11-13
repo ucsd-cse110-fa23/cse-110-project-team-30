@@ -249,6 +249,7 @@ class AppFrame extends BorderPane {
         steps.add(new TextField("Step 3...."));
         recipe = new Recipe(recipeName, ingredients, steps, mealType);
         
+
         loadRecipes();
         addListeners();
     }
