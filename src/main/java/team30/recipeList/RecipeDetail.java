@@ -273,13 +273,20 @@ public class RecipeDetail {
 
     public AppFrame getOriginalAppFrame() {return originalAF;}
 
+    public void updateRecipeList() {
+        recipe.getSteps().clear();
+        for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
+            recipe.getSteps().add(new TextField(dRecipe.getSteps().get(i).getText()));
+        }
+    }
+
     public void saveRecipe() {
-        String recipe_title = recipe.getRecipeTitle().getText();
-        String meal_type = recipe.getMealType();
-        String ingredients = recipe.getIngredients().getText();
+        String recipe_title = dRecipe.getRecipeName().getText();
+        String meal_type = dRecipe.getMealType().getText();
+        String ingredients = dRecipe.getIngredients().getText();
         ArrayList<String> steps = new ArrayList<String>();
         for (int i = 0; i < recipe.getSteps().size(); ++i) {
-            steps.add(recipe.getSteps().get(i).getText());
+            steps.add(dRecipe.getSteps().get(i).getText());
         }
         
         try {
@@ -310,6 +317,7 @@ public class RecipeDetail {
         //     ingredient.saveIngredient();
         // }
             disableEdit();
+            updateRecipeList();
             saveRecipe();
         });
 

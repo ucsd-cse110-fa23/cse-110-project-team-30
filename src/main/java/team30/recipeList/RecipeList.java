@@ -280,7 +280,7 @@ class AppFrame extends BorderPane {
             steps.add(new TextField("Step 1...."));
             steps.add(new TextField("Step 2...."));
             steps.add(new TextField("Step 3...."));
-            recipe = new Recipe(recipeName, ingredients, steps, mealType);
+            Recipe recipe = new Recipe(recipeName, ingredients, steps, mealType);
             recipeList.getChildren().add(recipe);
             recipeList.updateTaskIndices();
             postButton.fire(); //click HTTP post button
