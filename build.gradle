@@ -5,9 +5,8 @@ plugins {
 }
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
-    }
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 if (project.hasProperty("javaHome")) {
@@ -38,12 +37,7 @@ dependencies {
     // JavaFX dependencies
     implementation 'org.openjfx:javafx-controls:21.0.1'
     implementation 'org.openjfx:javafx-fxml:21.0.1'
-    
-    testImplementation 'org.mockito:mockito-core:3.12.4'
-}
-
-test {
-    useJUnitPlatform()
+    // Add other JavaFX dependencies as needed
 }
 
 jar {
