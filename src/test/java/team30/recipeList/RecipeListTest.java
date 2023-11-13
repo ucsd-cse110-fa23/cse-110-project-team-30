@@ -69,17 +69,21 @@ class mockList extends VBox {
 }
 
 class mockButton {
+    private String text;
     public void fire(mockList ml, String s) {
+        text = s;
         mockRecipe recipe = new mockRecipe();
         ml.getChildren().add(recipe);
         ml.updateTaskIndices();
         System.out.println(recipe.getRecipeTitle());
     }
+
+    public String getText() {return text;}
 }
 
-class mockHeader {
-    public String titleText;
-    public mockButton addButton;
+class mockHeader extends HBox{
+    private String titleText;
+    private mockButton addButton;
 
     mockHeader() {
         titleText = "PantryPal";
@@ -179,10 +183,10 @@ public class RecipeListTest {
 
     @Test
     void testHeaderTitle() {
-        assertEquals("PantryPal", header.titleText);
+        assertEquals("PantryPal", header.getTitleText());
     }
 
     @Test void testHeaderInitialization() {
-        assertNotEquals(null, header.addButton);
+        assertNotEquals(null, header.getAddButton());
     }
 }
