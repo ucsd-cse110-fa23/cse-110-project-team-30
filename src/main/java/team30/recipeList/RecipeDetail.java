@@ -214,6 +214,7 @@ class Ingredient extends HBox {
 public class RecipeDetail {
     private AppFrame originalAF;
     private RecipeList rl;
+    private ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
     private Recipe recipe;
 
     RecipeDetail(RecipeList rl, AppFrame af, Recipe r) {
