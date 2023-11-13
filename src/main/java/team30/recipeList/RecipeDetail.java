@@ -214,9 +214,11 @@ public class RecipeDetail {
     private RecipeList rl;
     private ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
     private DetailRecipe dRecipe;
+    private Recipe recipe;
 
-    RecipeDetail(RecipeList rl, AppFrame af) {
+    RecipeDetail(RecipeList rl, AppFrame af, Recipe r) {
         this.rl = rl;
+        this.recipe = r;
         // store ingredients
         //adds new ingredient
         this.ingredients.add(new Ingredient("carrot"));
@@ -261,14 +263,6 @@ public class RecipeDetail {
         scrollPane.setFitToWidth(true);
         
         detailView.setTop(dhead);
-      /*
-        // TODO: uncomment this to test Detail Recipe
-        // detailView.setCenter(new DetailRecipe(recipe));
-         VBox vb = new VBox();
-        for (int i = 0; i < this.ingredients.size(); i++) {
-           vb.getChildren().add(this.ingredients.get(i));
-        }
-        detailView.setCenter(vb);*/
         detailView.setCenter(scrollPane);
         detailView.setBottom(dfooter);
 
@@ -279,20 +273,24 @@ public class RecipeDetail {
 
     public AppFrame getOriginalAppFrame() {return originalAF;}
 
-    public DetailRecipe getDetailRecipe() {return dRecipe;}
-
-    public void saveIngredient() {
-    try {
-            java.io.FileWriter outfile = new java.io.FileWriter("/Users/leahkuruvila/Desktop/pantrypal/cse-110-project-team-30/src/main/java/team30/recipeList/ingredient.csv", true); //true = append
-            for (int i = 0; i < this.ingredients.size(); i++) {   // Iterates through each contact
-                if (this.ingredients.get(i) instanceof Ingredient) {
-                    String line1 = ((Ingredient) this.ingredients.get(i)).getIngredient().getText();   // ingredient
-                
-                    outfile.write(line1 + " " + "\n");
-                    
-                }
+    public void saveRecipe() {
+        String recipe_title = recipe.getRecipeTitle().getText();
+        String meal_type = recipe.getMealType();
+        String ingredients = recipe.getIngredients().getText();
+        ArrayList<String> steps = new ArrayList<String>();
+        for (int i = 0; i < recipe.getSteps().size(); ++i) {
+            steps.add(recipe.getSteps().get(i).getText());
+        }
+        
+        try {
+            java.io.FileWriter outfile = new java.io.FileWriter("src\\main\\java\\team30\\recipeList\\recipes.csv", true); //true = append
+            // Recipe,Meal Type,Ingredients,Steps
+            // format with semicolons in between different categories, like recipes.csv in Lab 6
+            outfile.write(recipe_title + ";" + meal_type + ";" + ingredients + ";");
+            for (String s : steps) {
+                outfile.write(s + ";");
             }
-            //fw.close();
+            outfile.write("\n");
             outfile.close();
         }
         catch (Exception e) {
@@ -306,13 +304,13 @@ public class RecipeDetail {
             closeDetailWindow();
         });
 
-        // TODO: listener for save
+        // listener for save
         save.setOnAction(e -> {
         // for (Ingredient ingredient : ingredients) {
         //     ingredient.saveIngredient();
         // }
-        disableEdit();
-        saveIngredient();
+            disableEdit();
+            saveRecipe();
         });
 
         edit.setOnAction(e -> {
