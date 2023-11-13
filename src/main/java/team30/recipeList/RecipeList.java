@@ -244,7 +244,7 @@ class AppFrame extends BorderPane {
         addListeners();
     }
 
-    AppFrame(Header hd, List ls, ScrollPane sp, Button button, RecipeList rl) {
+    AppFrame(Header hd, List ls, ScrollPane sp, Button button, RecipeList rl, Button postButton, Button getButton, Button putButton, Button deleteButton) {
         header = hd;
         recipeList = ls;
         scrollPane = sp;
@@ -257,10 +257,15 @@ class AppFrame extends BorderPane {
         addButton = header.getAddButton();
 
         
-        postButton = new Button("Post");
-        getButton = new Button("Get");
-        putButton = new Button("Put");
-        deleteButton = new Button("Delete");
+        // postButton = new Button("Post");
+        // getButton = new Button("Get");
+        // putButton = new Button("Put");
+        // deleteButton = new Button("Delete");
+
+        this.postButton = postButton;
+        this.getButton = getButton;
+        this.putButton = putButton;
+        this.deleteButton = deleteButton;
 
         addListeners();
     }
