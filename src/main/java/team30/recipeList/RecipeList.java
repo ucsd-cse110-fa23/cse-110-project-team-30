@@ -22,10 +22,6 @@ import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
 import java.io.*;
 import javafx.util.Pair;
-<<<<<<< HEAD
-
-=======
->>>>>>> main
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -292,12 +288,6 @@ class AppFrame extends BorderPane {
         addButton = header.getAddButton();
 
         
-<<<<<<< HEAD
-        postButton = new Button("Post");
-        getButton = new Button("Get");
-        putButton = new Button("Put");
-        deleteButton = new Button("Delete");
-=======
         // postButton = new Button("Post");
         // getButton = new Button("Get");
         // putButton = new Button("Put");
@@ -307,24 +297,12 @@ class AppFrame extends BorderPane {
         this.getButton = getButton;
         this.putButton = putButton;
         this.deleteButton = deleteButton;
->>>>>>> main
 
         addListeners();
     }
 
     public void addListeners() {
         addButton.setOnAction(e -> {
-<<<<<<< HEAD
-            recipeName = "example";
-            recipeDetails[0] = "meal type";
-            recipeDetails[1] = "ingredients";
-            recipeDetails[2] = "steps";
-            ArrayList<TextField> steps = new ArrayList<>();
-            steps.add(new TextField("Step 1...."));
-            steps.add(new TextField("Step 2...."));
-            steps.add(new TextField("Step 3...."));
-            Recipe recipe = new Recipe("example", new TextField("ingredients......"), steps, "Lunch");
-=======
             // (String recipe_name, TextField ingredients, ArrayList<TextField> steps, String mealType)
             String recipeName = "example";
             String mealType = "Lunch";
@@ -334,7 +312,6 @@ class AppFrame extends BorderPane {
             steps.add(new TextField("Step 2...."));
             steps.add(new TextField("Step 3...."));
             Recipe recipe = new Recipe(recipeName, ingredients, steps, mealType);
->>>>>>> main
             recipeList.getChildren().add(recipe);
             recipeList.updateTaskIndices();
             postButton.fire(); //click HTTP post button
