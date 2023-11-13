@@ -70,7 +70,10 @@ class DetailFooter extends DetailHeader {
 
 class DetailRecipe extends VBox{
     // recipe info
-    // private TextField recipe_name;
+    Label recipe_name;
+    Label ingredients;
+    ArrayList<Label> steps;
+    Label mealtype;
     // private TextField ingredients;
     // private ArrayList<TextField> steps;
     // private MealType mealtype;
@@ -82,14 +85,14 @@ class DetailRecipe extends VBox{
         this.setSpacing(15);
         this.setStyle("-fx-background-color: #f8f3c9;");
 
-        // initia recipe info
-        Label recipe_name = new Label(recipe.getRecipeTitle().getText());
-        Label ingredients = new Label(recipe.getIngredients().getText());
-        ArrayList<Label> steps = new ArrayList<>();
+        // initialize recipe info
+        recipe_name = new Label(recipe.getRecipeTitle().getText());
+        ingredients = new Label(recipe.getIngredients().getText());
+        steps = new ArrayList<>();
         for (int i = 0; i < recipe.getSteps().size(); ++i) {
             steps.add(new Label(recipe.getSteps().get(i).getText()));
         }
-        Label mealtype = new Label(recipe.getMealType());
+        mealtype = new Label(recipe.getMealType());
 
         // dropdown menu
         // ComboBox<String> mealtype = new ComboBox<>();
@@ -208,23 +211,15 @@ class Ingredient extends HBox {
 }
 
 
-
-
-
 public class RecipeDetail {
     private AppFrame originalAF;
     private RecipeList rl;
-    private ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
+    private Recipe recipe;
 
-    RecipeDetail(RecipeList rl, AppFrame af) {
+    RecipeDetail(RecipeList rl, AppFrame af, Recipe r) {
         this.rl = rl;
-        // store ingredients
-        //adds new ingredient
-        this.ingredients.add(new Ingredient("carrot"));
-        this.ingredients.add(new Ingredient("onion"));
-        this.ingredients.add(new Ingredient("broccoli"));
-        this.ingredients.add(new Ingredient("rice"));
         originalAF = new AppFrame(af.getHeader(), af.getRecipeList(), af.getScrollPane(), af.getAddButton(), rl);
+        this.recipe = r;
     };
 
     public void openDetailWindow(Recipe recipe) {
@@ -264,18 +259,24 @@ public class RecipeDetail {
 
     public AppFrame getOriginalAppFrame() {return originalAF;}
 
-    public void saveIngredient() {
-    try {
-            java.io.FileWriter outfile = new java.io.FileWriter("/Users/leahkuruvila/Desktop/pantrypal/cse-110-project-team-30/src/main/java/team30/recipeList/ingredient.csv", true); //true = append
-            for (int i = 0; i < this.ingredients.size(); i++) {   // Iterates through each contact
-                if (this.ingredients.get(i) instanceof Ingredient) {
-                    String line1 = ((Ingredient) this.ingredients.get(i)).getIngredient().getText();   // ingredient
-                
-                    outfile.write(line1 + " " + "\n");
-                    
-                }
+    public void saveRecipe() {
+        String recipe_title = recipe.getRecipeTitle().getText();
+        String meal_type = recipe.getMealType();
+        String ingredients = recipe.getIngredients().getText();
+        ArrayList<String> steps = new ArrayList<String>();
+        for (int i = 0; i < recipe.getSteps().size(); ++i) {
+            steps.add(recipe.getSteps().get(i).getText());
+        }
+        
+        try {
+            java.io.FileWriter outfile = new java.io.FileWriter("src\\main\\java\\team30\\recipeList\\recipes.csv", true); //true = append
+            // Recipe,Meal Type,Ingredients,Steps
+            // format with semicolons in between different categories, like recipes.csv in Lab 6
+            outfile.write(recipe_title + ";" + meal_type + ";" + ingredients + ";");
+            for (String s : steps) {
+                outfile.write(s + ";");
             }
-            //fw.close();
+            outfile.write("\n");
             outfile.close();
         }
         catch (Exception e) {
@@ -289,12 +290,9 @@ public class RecipeDetail {
             closeDetailWindow();
         });
 
-        // TODO: listener for save
+        // listener for save
         save.setOnAction(e -> {
-        // for (Ingredient ingredient : ingredients) {
-        //     ingredient.saveIngredient();
-        // }
-        saveIngredient();
+            saveRecipe();
         });
 
         // TODO: listener for edit

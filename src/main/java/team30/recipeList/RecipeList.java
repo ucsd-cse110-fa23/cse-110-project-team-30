@@ -22,7 +22,6 @@ import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
 import java.io.*;
 import javafx.util.Pair;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -215,8 +214,7 @@ class AppFrame extends BorderPane {
 
     private ScrollPane scrollPane;
 
-    private String recipeName;
-    private String[] recipeDetails = new String[3];
+    private Recipe recipe;
 
     private Button addButton;
     private RecipeList rl;
@@ -269,15 +267,15 @@ class AppFrame extends BorderPane {
 
     public void addListeners() {
         addButton.setOnAction(e -> {
-            recipeName = "example";
-            recipeDetails[0] = "meal type";
-            recipeDetails[1] = "ingredients";
-            recipeDetails[2] = "steps";
-            ArrayList<TextField> steps = new ArrayList<>();
+            // (String recipe_name, TextField ingredients, ArrayList<TextField> steps, String mealType)
+            String recipeName = "example";
+            String mealType = "Lunch";
+            TextField ingredients = new TextField("example ingredients");
+            ArrayList<TextField> steps = new ArrayList<TextField>();
             steps.add(new TextField("Step 1...."));
             steps.add(new TextField("Step 2...."));
             steps.add(new TextField("Step 3...."));
-            Recipe recipe = new Recipe("example", new TextField("ingredients......"), steps, "Lunch");
+            recipe = new Recipe(recipeName, ingredients, steps, mealType);
             recipeList.getChildren().add(recipe);
             recipeList.updateTaskIndices();
             postButton.fire(); //click HTTP post button
@@ -285,18 +283,25 @@ class AppFrame extends BorderPane {
             
             // set button action for open detail windown button
             recipe.getRecipeTitle().setOnAction(f -> {
-                RecipeDetail ord = new RecipeDetail(rl, this);
+                RecipeDetail ord = new RecipeDetail(rl, this, recipe);
                 ord.openDetailWindow(recipe);
             });
         });
     }
 
     public String getRecipeName() {
-        return recipeName;
+        return recipe.getRecipeTitle().getText();
     }
 
     public String[] getRecipeDetails() {
-        return recipeDetails;
+        String[] details = new String[3];
+        details[0] = recipe.getMealType();
+        details[1] = recipe.getIngredients().getText();
+        details[2] = "";
+        for (int i = 0; i < recipe.getSteps().size(); ++i) {
+            details[2] += recipe.getSteps().get(i).getText();
+        }
+        return details;
     }
 
     public Button getPostButton() {
