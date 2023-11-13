@@ -18,7 +18,7 @@ public class VoiceGeneration {
     private static final String TEXT_MODEL = "text-davinci-003";
     private static final String AUDIO_API_ENDPOINT = "https://api.openai.com/v1/audio/transcriptions";
     private static final String AUDIO_MODEL = "whisper-1";
-    private static final String FILE_PATH = "recording.wav";
+    private static final String FILE_PATH = "src\\main\\java\\team30\\recipeList\\recording.wav";
 
     // Helper method to write a parameter to the output stream in multipart form
     // data format

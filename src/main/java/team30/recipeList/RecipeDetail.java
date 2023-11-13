@@ -65,7 +65,7 @@ class DetailRecipe extends Recipe{
     DetailRecipe (Recipe recipe) {
 
         ComboBox<String> mealtype = new ComboBox<>();
-        mealtype.setPromptText(recipe.getMealType().getMealType());
+        mealtype.setPromptText(recipe.getMealType());
         mealtype.getItems().addAll("Breakfast", "Lunch", "Dinner");
         HBox title_mealtype = new HBox();
         title_mealtype.getChildren().add(new TextField(recipe.getRecipeTitle().getText()));
