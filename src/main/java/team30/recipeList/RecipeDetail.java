@@ -11,7 +11,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -20,8 +22,9 @@ import javafx.geometry.Insets;
 import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
 import java.io.*;
+import java.nio.file.StandardCopyOption;
+
 import javafx.util.Pair;
-import team30.meal.MealType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,79 +36,196 @@ class DetailFooter extends DetailHeader {
 
     private Button edit;
     private Button delete;
+    private Button save;
+    private Button back;
 
     DetailFooter() {
         super();
-        this.setPrefSize(500, 60);
-        this.setStyle("-fx-background-color: #F0F8FF;");
+        this.setPrefSize(500, 40);
+        this.setStyle("-fx-background-color: #f8f3c9;");
 
         edit = new Button("Edit");
         delete = new Button("Delete");
+        save = new Button("Save");
+        back = new Button("Back");
+        this.setButtonStyle(back);
         this.setButtonStyle(edit);
         this.setButtonStyle(delete);
+        this.setButtonStyle(save);
 
         this.getChildren().remove(this.getSave());
         this.getChildren().remove(this.getBack());
         this.getChildren().remove(this.getTitleText());
+        this.setMargin(save, new Insets(0, 0, 0, 10));
         this.setMargin(delete, new Insets(0, 0, 0, 10));
-        this.getChildren().addAll(edit, delete);
+        this.setMargin(edit, new Insets(0, 0, 0, 10));
+        this.getChildren().addAll(back, edit, delete, save);
         this.setAlignment(Pos.CENTER_RIGHT);
     }
 
     public Button getEdit() {return edit;}
     public Button getDelete() {return delete;}
+    public Button getSave() {return save;}
+    public Button getBack() {return back;}
 }
 
-class DetailRecipe extends Recipe{
-    
-    DetailRecipe() {
-
-    }
+class DetailRecipe extends VBox{
+    // recipe info
+    private Label recipe_name;
+    private Label ingredients;
+    private ArrayList<TextArea> steps;
+    private Label mealtype;
 
     DetailRecipe (Recipe recipe) {
+        this.setPrefSize(500, 560); // sets size of task
+        this.setMaxHeight(VBox.USE_PREF_SIZE); 
+        this.setMinHeight(VBox.USE_PREF_SIZE);
+        this.setSpacing(15);
+        this.setStyle("-fx-background-color: #f8f3c9;");
 
-        ComboBox<String> mealtype = new ComboBox<>();
-        mealtype.setPromptText(recipe.getMealType());
-        mealtype.getItems().addAll("Breakfast", "Lunch", "Dinner");
-        HBox title_mealtype = new HBox();
-        title_mealtype.getChildren().add(new TextField(recipe.getRecipeTitle().getText()));
-        title_mealtype.getChildren().add(mealtype);
-        this.getChildren().add(title_mealtype);
+        // initia recipe info
+        recipe_name = new Label(recipe.getRecipeTitle().getText());
+        ingredients = new Label(recipe.getIngredients().getText());
+        steps = new ArrayList<>();
+        for (int i = 0; i < recipe.getSteps().size(); ++i) {
+            steps.add(new TextArea(recipe.getSteps().get(i).getText()));
+        }
+        mealtype = new Label(recipe.getMealType());
+
+        // adding first recipe_name & mealtype row
+        HBox title_mealtype_HBox = new HBox();
+        title_mealtype_HBox.setPrefSize(450, 40); // sets size of task
+        title_mealtype_HBox.setMaxHeight(HBox.USE_PREF_SIZE); 
+        title_mealtype_HBox.setMinHeight(HBox.USE_PREF_SIZE);
+        title_mealtype_HBox.setSpacing(15);
+        title_mealtype_HBox.setAlignment(Pos.BASELINE_CENTER);
+
+        recipe_name.setPrefSize(315, 40);
+        recipe_name.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10;-fx-font-size: 40;-fx-alignment: CENTER;");
+
+        mealtype.setStyle("-fx-background-color: #EDDCF0; -fx-background-radius: 20;-fx-alignment: CENTER;-fx-font-size: 20");
+        mealtype.setPrefSize(120, 30);
+        
+        title_mealtype_HBox.getChildren().add(recipe_name);
+        title_mealtype_HBox.getChildren().add(mealtype);
+
+        // adding second row: ingredients
+        HBox ingredients_HBox = new HBox();
+        ingredients_HBox.setPrefSize(450, 70);
+        ingredients_HBox.setMaxHeight(HBox.USE_PREF_SIZE); 
+        ingredients_HBox.setMinHeight(HBox.USE_PREF_SIZE);
+        ingredients_HBox.setSpacing(20);
+        ingredients_HBox.setAlignment(Pos.BOTTOM_LEFT);
+        
+        Label ingredients_title = new Label("Ingredients");
+        ingredients_title.setStyle("-fx-background-color: #CDFADC; -fx-background-radius: 20; -fx-alignment: CENTER;-fx-font-size: 20");
+        ingredients_title.setPrefSize(130, 40);
+
+        ingredients.setPrefSize(300, 60);
+        ingredients.setStyle("-fx-padding: 0 0 0 20;-fx-background-color: #e5da3e; -fx-border-width: 1px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10;-fx-font-size: 13;-fx-alignment: TOP_LEFT;");
+        ingredients.setWrapText(true); 
+
+        ingredients_HBox.getChildren().add(ingredients_title);
+        ingredients_HBox.getChildren().add(ingredients);
+        
+        // adding steps
+        VBox steps_VBox = new VBox();
+        steps_VBox.setPrefSize(450, 460); // sets size of task
+        steps_VBox.setMaxHeight(VBox.USE_PREF_SIZE); 
+        steps_VBox.setMinHeight(VBox.USE_PREF_SIZE);
+        steps_VBox.setSpacing(5);
+        Label steps_title = new Label("Steps");
+        steps_title.setStyle("-fx-background-color: #CDF7FA; -fx-background-radius: 20; -fx-alignment: CENTER;-fx-font-size: 20");
+        steps_title.setPrefSize(80, 40);
+        steps_VBox.getChildren().add(steps_title);
+        
+        int index_num = 1;
+        for (int i = 0; i < steps.size(); ++i, index_num++) {
+            HBox individual_step_HBox = new HBox();
+            individual_step_HBox.setPrefSize(400, 30);
+            individual_step_HBox.setMaxHeight(HBox.USE_PREF_SIZE); 
+            individual_step_HBox.setMinHeight(HBox.USE_PREF_SIZE);
+            individual_step_HBox.setSpacing(20);
+            individual_step_HBox.setAlignment(Pos.CENTER);
+
+            // index number
+            Label index = new Label();
+            index.setStyle("-fx-background-color: #e5da3e; -fx-background-radius: 20");
+            index.setText(String.valueOf(index_num)); // create index label
+            index.setPrefSize(50, 30); // set size of Index label
+            index.setTextAlignment(TextAlignment.CENTER); // Set alignment of index label
+            index.setAlignment(Pos.CENTER);
+            index.setPadding(new Insets(0, 0, 0, 0)); // adds some padding to the task
+
+            steps.get(i).setPrefSize(350, 30);
+            steps.get(i).setStyle("-fx-padding: 0 0 0 20;-fx-background-color: #e5da3e; -fx-border-width: 1px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10;-fx-font-size: 12;-fx-alignment: TOP_LEFT;");
+            steps.get(i).setWrapText(true);
+            steps.get(i).setMouseTransparent(true);
+            steps.get(i).setEditable(false);
+
+
+            individual_step_HBox.getChildren().add(index);
+            individual_step_HBox.getChildren().add(steps.get(i));
+
+            steps_VBox.getChildren().add(individual_step_HBox);
+        }
+
+        this.getChildren().add(title_mealtype_HBox);
+        this.getChildren().add(ingredients_HBox);
+        this.getChildren().add(steps_VBox);
     }
+
+    public Label getRecipeName() {return recipe_name;}
+    public Label getIngredients() {return ingredients;}
+    public ArrayList<TextArea> getSteps() {return steps;}
+    public Label getMealType() {return mealtype;}
 }
 
 class DetailHeader extends Header {
-    private Button save;
-    private Button back;
 
     DetailHeader() {
         super();
         this.getChildren().remove(this.getAddButton());
-        
-        this.setMargin(this.getTitleText(), new Insets(0, 210, 0, 0));
-
-        save = new Button("Save");
-        back = new Button("Back");
-        this.setButtonStyle(save);
-        this.setButtonStyle(back);
-        
-        this.setMargin(save, new Insets(0, 10, 0, 0));
-
-        this.getChildren().addAll(save, back);
         this.setAlignment(Pos.CENTER_LEFT);
     }
+}
 
-    public Button getSave() {return save;}
-    public Button getBack() {return back;}
+class Ingredient extends HBox {
+    private TextField ingredient;
+
+    Ingredient(String string) {
+        ingredient = new TextField(string);
+        ingredient.setPrefSize(250, 20); // set size of text field
+        ingredient.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
+        //index.setTextAlignment(TextAlignment.LEFT); // set alignment of text field
+        ingredient.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
+        this.getChildren().add(ingredient); // add textlabel to contact
+        // this.getChildren().addAll(ingredient);
+
+        this.ingredient.setPromptText("Ingredient");
+    }
+
+    public TextField getIngredient() {return ingredient;}
+
 }
 
 public class RecipeDetail {
     private AppFrame originalAF;
     private RecipeList rl;
+    private ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
+    private DetailRecipe dRecipe;
+    private Recipe recipe;
 
-    RecipeDetail(RecipeList rl, AppFrame af) {
+    RecipeDetail(RecipeList rl, AppFrame af, Recipe r) {
         this.rl = rl;
-        originalAF = new AppFrame(af.getHeader(), af.getRecipeList(), af.getScrollPane(), af.getAddButton(), rl);
+        this.recipe = r;
+        // store ingredients
+        //adds new ingredient
+        this.ingredients.add(new Ingredient("carrot"));
+        this.ingredients.add(new Ingredient("onion"));
+        this.ingredients.add(new Ingredient("broccoli"));
+        this.ingredients.add(new Ingredient("rice"));
+        originalAF = new AppFrame(af.getHeader(), af.getRecipeList(),  af.getScrollPane(), af.getRecipe(), af.getAddButton(), rl, af.getPostButton(), af.getGetButton(), af.getPutButton(), af.getDeleteButton());
     };
 
     public void openDetailWindow(Recipe recipe) {
@@ -118,22 +238,72 @@ public class RecipeDetail {
         rl.getPrimStage().setScene(new Scene(originalAF,500, 600));
     }
 
+    public void enableEdit() {
+        for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
+            dRecipe.getSteps().get(i).setEditable(true);
+            dRecipe.getSteps().get(i).setMouseTransparent(false);
+        }
+    }
+
+    public void disableEdit() {
+        for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
+            dRecipe.getSteps().get(i).setEditable(false);
+            dRecipe.getSteps().get(i).setMouseTransparent(true);
+        }
+    }
+
     private AppFrame createDetailView(Recipe recipe) {
         AppFrame detailView = new AppFrame();
         DetailHeader dhead = new DetailHeader();
         DetailFooter dfooter = new DetailFooter(); 
+        dRecipe = new DetailRecipe(recipe);
+        ScrollPane scrollPane = new ScrollPane(dRecipe);
+        // ScrollPane scrollPane = new ScrollPane(new DetailRecipe(recipe));
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
         
         detailView.setTop(dhead);
-        // TODO: uncomment this to test Detail Recipe
-        // detailView.setCenter(new DetailRecipe(recipe));
+        detailView.setCenter(scrollPane);
         detailView.setBottom(dfooter);
 
-        addListeners(dhead.getBack(), dhead.getSave(), dfooter.getEdit(), dfooter.getDelete());
+        addListeners(dfooter.getBack(), dfooter.getSave(), dfooter.getEdit(), dfooter.getDelete());
         
         return detailView;
     }
 
     public AppFrame getOriginalAppFrame() {return originalAF;}
+
+    public void updateRecipeList() {
+        recipe.getSteps().clear();
+        for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
+            recipe.getSteps().add(new TextField(dRecipe.getSteps().get(i).getText()));
+        }
+    }
+
+    public void saveRecipe() {
+        String recipe_title = dRecipe.getRecipeName().getText();
+        String meal_type = dRecipe.getMealType().getText();
+        String ingredients = dRecipe.getIngredients().getText();
+        ArrayList<String> steps = new ArrayList<String>();
+        for (int i = 0; i < recipe.getSteps().size(); ++i) {
+            steps.add(dRecipe.getSteps().get(i).getText());
+        }
+        
+        try {
+            java.io.FileWriter outfile = new java.io.FileWriter("src\\main\\java\\team30\\recipeList\\recipes.csv", true); //true = append
+            // Recipe,Meal Type,Ingredients,Steps
+            // format with semicolons in between different categories, like recipes.csv in Lab 6
+            outfile.write(recipe_title + ";" + meal_type + ";" + ingredients + ";");
+            for (String s : steps) {
+                outfile.write(s + ";");
+            }
+            outfile.write("\n");
+            outfile.close();
+        }
+        catch (Exception e) {
+            e.getStackTrace();
+        }
+    }
 
     public void addListeners(Button back, Button save, Button edit, Button delete) {
         // listener for Back
@@ -141,9 +311,19 @@ public class RecipeDetail {
             closeDetailWindow();
         });
 
-        // TODO: listener for save
+        // listener for save
+        save.setOnAction(e -> {
+        // for (Ingredient ingredient : ingredients) {
+        //     ingredient.saveIngredient();
+        // }
+            disableEdit();
+            updateRecipeList();
+            saveRecipe();
+        });
 
-        // TODO: listener for edit
+        edit.setOnAction(e -> {
+            enableEdit();
+        });
 
         // TODO: listener for delete
     }
