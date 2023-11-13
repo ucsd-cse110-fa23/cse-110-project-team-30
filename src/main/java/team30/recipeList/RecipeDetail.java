@@ -3,6 +3,8 @@ package team30.recipeList;
 import javafx.application.Application;
 import javafx.scene.control.ComboBox;
 import javafx.collections.ArrayChangeListener;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
@@ -27,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+
 import javafx.scene.paint.Color;
 
 class DetailFooter extends DetailHeader {
@@ -131,10 +135,18 @@ public class RecipeDetail {
         this.rl = rl;
         // store ingredients
         //adds new ingredient
-        this.ingredients.add(new Ingredient("carrot"));
-        this.ingredients.add(new Ingredient("onion"));
-        this.ingredients.add(new Ingredient("broccoli"));
-        this.ingredients.add(new Ingredient("rice"));
+        // this.ingredients.add(new Ingredient("carrot"));
+        // this.ingredients.add(new Ingredient("onion"));
+        // this.ingredients.add(new Ingredient("broccoli"));
+        //this.ingredient.add(new Ingredient("carrot"));  
+         //this.ingredients.add(new Ingredient("rice"));
+       
+        
+        this.ingredients.clear();
+        
+        updateRecipeIngredients();
+
+        
         originalAF = new AppFrame(af.getHeader(), af.getRecipeList(), af.getScrollPane(), af.getAddButton(), rl);
     };
 
@@ -156,6 +168,8 @@ public class RecipeDetail {
         detailView.setTop(dhead);
         // TODO: uncomment this to test Detail Recipe
         // detailView.setCenter(new DetailRecipe(recipe));
+
+       //adds all ingredients to the screen
          VBox vb = new VBox();
         for (int i = 0; i < this.ingredients.size(); i++) {
            vb.getChildren().add(this.ingredients.get(i));
@@ -171,23 +185,69 @@ public class RecipeDetail {
     public AppFrame getOriginalAppFrame() {return originalAF;}
 
     public void saveIngredient() {
-    try {
-            java.io.FileWriter outfile = new java.io.FileWriter("/Users/leahkuruvila/Desktop/pantrypal/cse-110-project-team-30/src/main/java/team30/recipeList/ingredient.csv", true); //true = append
+
+        //first clear the csv before saving what is on the screen
+        // clear the contents of the CSV file
+        try {
+            java.io.FileWriter outfile = new java.io.FileWriter("/Users/leahkuruvila/Desktop/pantrypal/cse-110-project-team-30/src/main/java/team30/recipeList/ingredient.csv", false);
+            outfile.close();
+        } catch (Exception e) {
+            e.getStackTrace();
+        }
+
+        //save the ingredients on the screen to the csv
+        try {
+            java.io.FileWriter outfile2 = new java.io.FileWriter("/Users/leahkuruvila/Desktop/pantrypal/cse-110-project-team-30/src/main/java/team30/recipeList/ingredient.csv", true); //true = append
             for (int i = 0; i < this.ingredients.size(); i++) {   // Iterates through each contact
                 if (this.ingredients.get(i) instanceof Ingredient) {
                     String line1 = ((Ingredient) this.ingredients.get(i)).getIngredient().getText();   // ingredient
-                
-                    outfile.write(line1 + " " + "\n");
-                    
+                    outfile2.write(line1 + " " + "\n");
                 }
             }
-            //fw.close();
-            outfile.close();
-        }
-        catch (Exception e) {
+            outfile2.close();
+        } catch (Exception e) {
             e.getStackTrace();
         }
     }
+
+    public void updateRecipeIngredients() {
+
+        //clear the ingredient arraylist
+        this.ingredients.clear();
+
+        //create new array list
+        ArrayList<Ingredient> recipeIngredients = new ArrayList<Ingredient>();
+
+        //iterate through the csv file that contains saved ingredients and add each ingredient to the arraylist
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("/Users/leahkuruvila/Desktop/pantrypal/cse-110-project-team-30/src/main/java/team30/recipeList/ingredient.csv"));
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                //creates a string array of each ingredient
+                String[] curr_ingredient = line.split(",");
+
+                //adds each ingredient to the arraylist
+                for(String current : curr_ingredient) {
+                    recipeIngredients.add(new Ingredient(current));
+                }
+                
+            }
+            br.close();
+        } catch (Exception ex) {
+            System.out.println("Error: " + ex);
+        }
+
+        //iterate through array list from recipe ingredient and add it to the screen
+        for (int i = 0; i < recipeIngredients.size(); i++) {
+            Ingredient ingredient = recipeIngredients.get(i);
+            this.ingredients.add(new Ingredient(ingredient.getIngredient().getText()));
+            //System.out.println(ingredient);
+        }
+
+    }
+
+
+
 
     public void addListeners(Button back, Button save, Button edit, Button delete) {
         // listener for Back
