@@ -5,9 +5,12 @@ plugins {
 }
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
-    }
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
+}
+
+if (project.hasProperty("javaHome")) {
+    javaHome = file(project.javaHome)
 }
 
 repositories {
@@ -19,19 +22,40 @@ javafx {
     modules = [ 'javafx.controls' ]
 }
 
+
 dependencies {
     def junitVersion = '5.8.1'
 
-    // This provides the JUnit API.
+    // JUnit dependencies
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testImplementation 'org.mockito:mockito-core:3.12.4'
-    // This provides the TestEngine to actually run the tests.
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+
+    // JSON library dependency
+    implementation 'org.json:json:20230227'
+
+    // JavaFX dependencies
+    implementation 'org.openjfx:javafx-controls:21.0.1'
+    implementation 'org.openjfx:javafx-fxml:21.0.1'
+    // Add other JavaFX dependencies as needed
 }
-dependencies {
-    testImplementation 'org.mockito:mockito-core:3.12.4'
+
+jar {
+    duplicatesStrategy = 'exclude'
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    manifest {
+        attributes(
+            'Main-Class': 'team30.recipeList.VoiceGeneration'
+        )
+    }
 }
-test {
-    useJUnitPlatform()
+
+run {
+    // Include the JSON library in the classpath when running the application
+    classpath = sourceSets.main.runtimeClasspath
 }
-mainClassName = 'team30.meal.recipeList.RecipeList'
+
+mainClassName = 'team30.recipeList.VoiceGeneration'
