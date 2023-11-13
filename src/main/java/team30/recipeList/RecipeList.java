@@ -372,7 +372,7 @@ class AppFrame extends BorderPane {
             br.close();
         }
         catch (Exception e) {
-            System.out.println("no 'contacts.csv' file found!");
+            System.out.println("no 'recipes.csv' file found!");
         }
     }
 

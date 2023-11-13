@@ -219,12 +219,6 @@ public class RecipeDetail {
     RecipeDetail(RecipeList rl, AppFrame af, Recipe r) {
         this.rl = rl;
         this.recipe = r;
-        // store ingredients
-        //adds new ingredient
-        this.ingredients.add(new Ingredient("carrot"));
-        this.ingredients.add(new Ingredient("onion"));
-        this.ingredients.add(new Ingredient("broccoli"));
-        this.ingredients.add(new Ingredient("rice"));
         originalAF = new AppFrame(af.getHeader(), af.getRecipeList(),  af.getScrollPane(), af.getRecipe(), af.getAddButton(), rl, af.getPostButton(), af.getGetButton(), af.getPutButton(), af.getDeleteButton());
     };
 
