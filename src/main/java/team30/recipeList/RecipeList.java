@@ -240,6 +240,15 @@ class AppFrame extends BorderPane {
         putButton = new Button("Put");
         deleteButton = new Button("Delete");
 
+        String recipeName = "example";
+        String mealType = "Lunch";
+        TextField ingredients = new TextField("example ingredients");
+        ArrayList<TextField> steps = new ArrayList<TextField>();
+        steps.add(new TextField("Step 1...."));
+        steps.add(new TextField("Step 2...."));
+        steps.add(new TextField("Step 3...."));
+        recipe = new Recipe(recipeName, ingredients, steps, mealType);
+
         loadRecipes();
         addListeners();
     }
