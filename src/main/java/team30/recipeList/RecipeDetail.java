@@ -225,7 +225,7 @@ public class RecipeDetail {
         this.ingredients.add(new Ingredient("onion"));
         this.ingredients.add(new Ingredient("broccoli"));
         this.ingredients.add(new Ingredient("rice"));
-        originalAF = new AppFrame(af.getHeader(), af.getRecipeList(), af.getScrollPane(), af.getAddButton(), rl, af.getPostButton(), af.getGetButton(), af.getPutButton(), af.getDeleteButton());
+        originalAF = new AppFrame(af.getHeader(), af.getRecipeList(),  af.getScrollPane(), af.getRecipe(), af.getAddButton(), rl, af.getPostButton(), af.getGetButton(), af.getPutButton(), af.getDeleteButton());
     };
 
     public void openDetailWindow(Recipe recipe) {
