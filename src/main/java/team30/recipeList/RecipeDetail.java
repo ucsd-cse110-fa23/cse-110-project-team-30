@@ -263,7 +263,7 @@ public class RecipeDetail {
         this.recipe = recipe;
 
         dRecipe = new DetailRecipe(recipe);
-        ScrollPane scrollPane = new ScrollPane(dRecipe);
+        scrollPane = new ScrollPane(dRecipe);
         // ScrollPane scrollPane = new ScrollPane(new DetailRecipe(recipe));
 
         scrollPane.setFitToHeight(true);
