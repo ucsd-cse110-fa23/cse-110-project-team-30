@@ -134,6 +134,7 @@ class Recipe extends HBox {
     }
 
     public boolean equals(Recipe other){
+        if(!(this.index.getText().equals(other.index.getText()))) return false;
         if(!(this.ingredients.getText().equals(other.ingredients.getText()))) return false;
         if(!(this.recipe_title.getText().equals(other.recipe_title.getText()))) return false;
         if(!this.meal_type.equals(other.meal_type)) return false;
