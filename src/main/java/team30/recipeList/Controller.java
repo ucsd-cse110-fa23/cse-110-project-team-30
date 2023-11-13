@@ -21,32 +21,28 @@ public class Controller {
         String[] recipeDetails = view.getRecipeDetails();
         String response = model.performRequest("POST", recipeName, detailsToString(recipeDetails), null);
         view.showAlert("Response", response);
-        //view.showAlert("Response", "POST");
         System.out.println("POST");
     }
 
     private void handleGetButton(ActionEvent event) {
-        // String query = view.getQuery();
-        // String response = model.performRequest("GET", null, null, query);
-        // view.showAlert("Response", response);
-        view.showAlert("Response", "GET");
+        String recipeName = view.getQuery();
+        String response = model.performRequest("GET", null, null, recipeName);
+        view.showAlert("Response", response);
         System.out.println("GET");
     }
 
     private void handlePutButton(ActionEvent event) {
-        // String language = view.getLanguage();
-        // String year = view.getYear();
-        // String response = model.performRequest("PUT", language, year, null);
-        // view.showAlert("Response", response);
-        view.showAlert("Response", "PUT");
+        String recipeName = view.getRecipeName();
+        String[] recipeDetails = view.getRecipeDetails();
+        String response = model.performRequest("PUT", recipeName, detailsToString(recipeDetails), null);
+        view.showAlert("Response", response);
         System.out.println("PUT");
     }
 
     private void handleDeleteButton(ActionEvent event) {
-        // String query = view.getQuery();
-        // String response = model.performRequest("DELETE", null, null, query);
-        // view.showAlert("Response", response);
-        view.showAlert("Response", "DELETE");
+        String recipeName = view.getQuery();
+        String response = model.performRequest("DELETE", null, null, recipeName);
+        view.showAlert("Response", response);
         System.out.println("DELETE");
     }
 
