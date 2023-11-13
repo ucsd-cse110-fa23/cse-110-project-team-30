@@ -22,7 +22,6 @@ import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
 import java.io.*;
 import javafx.util.Pair;
-import team30.meal.MealType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +35,7 @@ class Recipe extends HBox {
     private Button recipe_title;
     private TextField ingredients;
     private ArrayList<TextField> steps;
-    private MealType mealtype;
+    private String meal_type;
 
     Recipe() {
         this.setPrefSize(450, 40); // sets size of task
@@ -70,10 +69,10 @@ class Recipe extends HBox {
 
         ingredients = null;
         steps = null;
-        mealtype = null;
+        meal_type = null;
     }
 
-    Recipe(String recipe_name, TextField ingredients, ArrayList<TextField> steps, MealType mealType) {
+    Recipe(String recipe_name, TextField ingredients, ArrayList<TextField> steps, String mealType) {
         this.setPrefSize(450, 40); // sets size of task
         this.setMaxHeight(HBox.USE_PREF_SIZE); 
         this.setMinHeight(HBox.USE_PREF_SIZE);
@@ -104,14 +103,12 @@ class Recipe extends HBox {
         this.getChildren().add(recipe_title);
 
         // deep copy initializing ingredients
-        this.ingredients.setText(ingredients.getText());
+        this.ingredients = ingredients;
             
         // deep copy initializing steps
-        for (int i = 0; i < steps.size(); ++i) {
-            this.steps.add(new TextField(steps.get(i).getText()));
-        }
+        this.steps = steps;
 
-        this.mealtype = mealType;
+        this.meal_type = mealType;
     }
 
         
@@ -124,8 +121,16 @@ class Recipe extends HBox {
         return this.recipe_title;
     }
 
-    public MealType getMealType() {
-        return this.mealtype;
+    public String getMealType() {
+        return this.meal_type;
+    }
+
+    public TextField getIngredients() {
+        return this.ingredients;
+    }
+
+    public ArrayList<TextField> getSteps() {
+        return this.steps;
     }
 }
 class List extends VBox {
@@ -164,7 +169,7 @@ class Header extends HBox {
         
         this.setMargin(this.getTitleText(), new Insets(0, 200, 0, 0));
 
-        addButton = new Button("Generate Recipe");
+        addButton = new Button("Generate");
         setButtonStyle(addButton);
         this.getChildren().add(addButton);
         this.setAlignment(Pos.CENTER_LEFT);
@@ -253,6 +258,12 @@ class AppFrame extends BorderPane {
 
         addButton = header.getAddButton();
 
+        
+        postButton = new Button("Post");
+        getButton = new Button("Get");
+        putButton = new Button("Put");
+        deleteButton = new Button("Delete");
+
         addListeners();
     }
 
@@ -262,7 +273,11 @@ class AppFrame extends BorderPane {
             recipeDetails[0] = "meal type";
             recipeDetails[1] = "ingredients";
             recipeDetails[2] = "steps";
-            Recipe recipe = new Recipe();
+            ArrayList<TextField> steps = new ArrayList<>();
+            steps.add(new TextField("Step 1...."));
+            steps.add(new TextField("Step 2...."));
+            steps.add(new TextField("Step 3...."));
+            Recipe recipe = new Recipe("example", new TextField("ingredients......"), steps, "Lunch");
             recipeList.getChildren().add(recipe);
             recipeList.updateTaskIndices();
             postButton.fire(); //click HTTP post button
