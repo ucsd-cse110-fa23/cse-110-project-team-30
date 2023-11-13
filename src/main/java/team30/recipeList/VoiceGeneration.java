@@ -1,3 +1,5 @@
+package team30.recipeList;
+
 import java.io.*;
 import java.net.*;
 import org.json.*;
@@ -120,7 +122,7 @@ public class VoiceGeneration {
         String responseBody = response.body();
 
         JSONObject responseJson = new JSONObject(responseBody);
-        
+
         JSONArray choices = responseJson.getJSONArray("choices");
         String recipe = choices.getJSONObject(0).getString("text");
 
