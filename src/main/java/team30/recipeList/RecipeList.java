@@ -222,7 +222,6 @@ class AppFrame extends BorderPane {
     //unseen buttons for HTTP functions
     private Button postButton, getButton, putButton, deleteButton;
 
-
     AppFrame() {
         header = new Header();
         recipeList = new List();
@@ -241,6 +240,7 @@ class AppFrame extends BorderPane {
         putButton = new Button("Put");
         deleteButton = new Button("Delete");
 
+        loadRecipes();
         addListeners();
     }
 
@@ -289,6 +289,77 @@ class AppFrame extends BorderPane {
         });
     }
 
+    public void loadRecipes() {
+        try {
+            FileReader fr = new FileReader("src\\main\\java\\team30\\recipeList\\recipes.csv");
+            BufferedReader br = new BufferedReader(fr);
+            String str = br.readLine(); //Recipe,Meal Type,Ingredients,Steps header line
+            while (br.ready()) {
+                str = br.readLine();
+
+                String recipeName = "";
+                String mealType = "";
+                TextField ingredients;
+                ArrayList<TextField> steps = new ArrayList<TextField>();
+
+
+                int count = 0;
+                int stepcounter = 3;
+                String ingredientsText = "", stepsText = "";
+                for (int i = 0; i < str.length(); i++) {
+                    if (str.substring(i, i+1).equals(";")) {
+                        count++;
+                    }
+                    else if (count == 0) {
+                        recipeName += str.substring(i, i+1);
+                    }
+                    else if (count == 1) {
+                        mealType += str.substring(i, i+1);
+                    }
+                    else if (count == 2) {
+                        ingredientsText += str.substring(i, i+1);
+                    }
+                    else if (count >= 3) {
+                        if (stepcounter == count) {
+                            stepsText += str.substring(i, i+1);
+                        }
+                        else {
+                            //add prev step
+                            steps.add(new TextField(stepsText));
+                            stepsText = "";
+                            stepsText += str.substring(i, i+1);
+                            stepcounter++;
+                        }
+                    }
+                    else {
+                        System.out.println("ERROR: invalid semicolon count!");
+                    }
+                }
+                //add prev step
+                steps.add(new TextField(stepsText));
+                ingredients = new TextField(ingredientsText);
+
+                
+                Recipe cur = new Recipe(recipeName, ingredients, steps, mealType);
+                recipeList.getChildren().add(cur);
+
+                
+                recipeList.updateTaskIndices();
+                postButton.fire(); //click HTTP post button
+
+                cur.getRecipeTitle().setOnAction(f -> {
+                    RecipeDetail ord = new RecipeDetail(rl, this, cur);
+                    ord.openDetailWindow(cur);
+                });
+            }
+            fr.close();
+            br.close();
+        }
+        catch (Exception e) {
+            System.out.println("no 'contacts.csv' file found!");
+        }
+    }
+
     public String getRecipeName() {
         return recipe.getRecipeTitle().getText();
     }
@@ -333,10 +404,7 @@ public class RecipeList extends Application {
     private Stage primStage;
     private Button postButton, getButton, putButton, deleteButton;
     Controller controller;
-
-    private String recipeName;
-    private String[] recipeDetails = new String[3];
-
+    
     @Override
     public void start(Stage primaryStage) throws Exception {
         root = new AppFrame();

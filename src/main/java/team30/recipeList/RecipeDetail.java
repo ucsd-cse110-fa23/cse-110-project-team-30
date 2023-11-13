@@ -241,14 +241,6 @@ public class RecipeDetail {
         scrollPane.setFitToWidth(true);
         
         detailView.setTop(dhead);
-      /*
-        // TODO: uncomment this to test Detail Recipe
-        // detailView.setCenter(new DetailRecipe(recipe));
-         VBox vb = new VBox();
-        for (int i = 0; i < this.ingredients.size(); i++) {
-           vb.getChildren().add(this.ingredients.get(i));
-        }
-        detailView.setCenter(vb);*/
         detailView.setCenter(scrollPane);
         detailView.setBottom(dfooter);
 
