@@ -132,6 +132,17 @@ class Recipe extends HBox {
     public ArrayList<TextField> getSteps() {
         return this.steps;
     }
+
+    public boolean equals(Recipe other){
+        if(!(this.ingredients.getText().equals(other.ingredients.getText()))) return false;
+        if(!(this.recipe_title.getText().equals(other.recipe_title.getText()))) return false;
+        if(!this.meal_type.equals(other.meal_type)) return false;
+        if(this.steps.size() != other.steps.size()) return false;
+        for(int i = 0 ; i < steps.size() ; i++){
+            if(!(this.steps.get(i).equals(other.steps.get(i)))) return false;
+        }
+        return true;
+    }
 }
 class List extends VBox {
 
@@ -150,6 +161,14 @@ class List extends VBox {
                 index++;
             }
         }
+    }
+
+    /**
+     * Removes the recipe from the list.
+     */
+    void removeRecipe(Recipe recipeToRemove){
+        this.getChildren().removeIf(recipe -> recipe instanceof Recipe && ((Recipe)recipe).equals(recipeToRemove));
+        this.updateTaskIndices();
     }
 }
 

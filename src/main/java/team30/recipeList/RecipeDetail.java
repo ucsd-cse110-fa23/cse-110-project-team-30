@@ -215,6 +215,7 @@ public class RecipeDetail {
     private AppFrame originalAF;
     private RecipeList rl;
     private ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
+    private Recipe recipe;
 
     RecipeDetail(RecipeList rl, AppFrame af) {
         this.rl = rl;
@@ -242,6 +243,7 @@ public class RecipeDetail {
         DetailHeader dhead = new DetailHeader();
         DetailFooter dfooter = new DetailFooter(); 
         ScrollPane scrollPane = new ScrollPane(new DetailRecipe(recipe));
+        this.recipe = recipe;
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
         
@@ -300,5 +302,11 @@ public class RecipeDetail {
         // TODO: listener for edit
 
         // TODO: listener for delete
+        delete.setOnAction(e -> {
+            //Kinda sketchy, may need to change if originalAF makes a deep copy of values.
+            this.originalAF.getRecipeList().removeRecipe(this.recipe);
+            this.originalAF.getDeleteButton().fire();
+            closeDetailWindow();
+        });
     }
 }
