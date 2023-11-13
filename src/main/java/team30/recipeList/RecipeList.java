@@ -222,6 +222,8 @@ class AppFrame extends BorderPane {
     //unseen buttons for HTTP functions
     private Button postButton, getButton, putButton, deleteButton;
 
+    private String query;
+
     AppFrame() {
         header = new Header();
         recipeList = new List();
@@ -248,6 +250,8 @@ class AppFrame extends BorderPane {
         steps.add(new TextField("Step 2...."));
         steps.add(new TextField("Step 3...."));
         recipe = new Recipe(recipeName, ingredients, steps, mealType);
+
+        query = "";
         
 
         loadRecipes();
@@ -407,6 +411,10 @@ class AppFrame extends BorderPane {
         return deleteButton;
     }
 
+    public String getQuery() {
+        return query;
+    }
+
     public void setRecipeList(RecipeList rl) {this.rl = rl;}
     public Header getHeader() {return header;}
     public List getRecipeList() {return recipeList;}
@@ -471,6 +479,10 @@ public class RecipeList extends Application {
 
     public String[] getRecipeDetails() {
         return root.getRecipeDetails();
+    }
+
+    public String getQuery() {
+        return root.getQuery();
     }
 
     public void showAlert(String title, String content) {
