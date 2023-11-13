@@ -13,6 +13,7 @@ import javafx.scene.layout.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -70,10 +71,10 @@ class DetailFooter extends DetailHeader {
 
 class DetailRecipe extends VBox{
     // recipe info
-    // private TextField recipe_name;
-    // private TextField ingredients;
-    // private ArrayList<TextField> steps;
-    // private MealType mealtype;
+    private Label recipe_name;
+    private Label ingredients;
+    private ArrayList<TextArea> steps;
+    private Label mealtype;
 
     DetailRecipe (Recipe recipe) {
         this.setPrefSize(500, 560); // sets size of task
@@ -83,18 +84,13 @@ class DetailRecipe extends VBox{
         this.setStyle("-fx-background-color: #f8f3c9;");
 
         // initia recipe info
-        Label recipe_name = new Label(recipe.getRecipeTitle().getText());
-        Label ingredients = new Label(recipe.getIngredients().getText());
-        ArrayList<Label> steps = new ArrayList<>();
+        recipe_name = new Label(recipe.getRecipeTitle().getText());
+        ingredients = new Label(recipe.getIngredients().getText());
+        steps = new ArrayList<>();
         for (int i = 0; i < recipe.getSteps().size(); ++i) {
-            steps.add(new Label(recipe.getSteps().get(i).getText()));
+            steps.add(new TextArea(recipe.getSteps().get(i).getText()));
         }
-        Label mealtype = new Label(recipe.getMealType());
-
-        // dropdown menu
-        // ComboBox<String> mealtype = new ComboBox<>();
-        // mealtype.setPromptText(recipe.getMealType().getMealType());
-        // mealtype.getItems().addAll("Breakfast", "Lunch", "Dinner");
+        mealtype = new Label(recipe.getMealType());
 
         // adding first recipe_name & mealtype row
         HBox title_mealtype_HBox = new HBox();
@@ -127,8 +123,7 @@ class DetailRecipe extends VBox{
 
         ingredients.setPrefSize(300, 60);
         ingredients.setStyle("-fx-padding: 0 0 0 20;-fx-background-color: #e5da3e; -fx-border-width: 1px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10;-fx-font-size: 13;-fx-alignment: TOP_LEFT;");
-        ingredients.setWrapText(true);
-        ingredients.setText("Ingredients: " + ingredients.getText());  
+        ingredients.setWrapText(true); 
 
         ingredients_HBox.getChildren().add(ingredients_title);
         ingredients_HBox.getChildren().add(ingredients);
@@ -165,6 +160,8 @@ class DetailRecipe extends VBox{
             steps.get(i).setPrefSize(350, 30);
             steps.get(i).setStyle("-fx-padding: 0 0 0 20;-fx-background-color: #e5da3e; -fx-border-width: 1px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10;-fx-font-size: 12;-fx-alignment: TOP_LEFT;");
             steps.get(i).setWrapText(true);
+            steps.get(i).setMouseTransparent(true);
+            steps.get(i).setEditable(false);
 
 
             individual_step_HBox.getChildren().add(index);
@@ -177,6 +174,11 @@ class DetailRecipe extends VBox{
         this.getChildren().add(ingredients_HBox);
         this.getChildren().add(steps_VBox);
     }
+
+    public Label getRecipeName() {return recipe_name;}
+    public Label getIngredients() {return ingredients;}
+    public ArrayList<TextArea> getSteps() {return steps;}
+    public Label getMealType() {return mealtype;}
 }
 
 class DetailHeader extends Header {
@@ -207,25 +209,25 @@ class Ingredient extends HBox {
 
 }
 
-
-
-
-
 public class RecipeDetail {
     private AppFrame originalAF;
     private RecipeList rl;
     private ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
+
+    private DetailRecipe dRecipe;
+
     private Recipe recipe;
 
-    RecipeDetail(RecipeList rl, AppFrame af) {
+    RecipeDetail(RecipeList rl, AppFrame af, Recipe r) {
         this.rl = rl;
+        this.recipe = r;
         // store ingredients
         //adds new ingredient
         this.ingredients.add(new Ingredient("carrot"));
         this.ingredients.add(new Ingredient("onion"));
         this.ingredients.add(new Ingredient("broccoli"));
         this.ingredients.add(new Ingredient("rice"));
-        originalAF = new AppFrame(af.getHeader(), af.getRecipeList(), af.getScrollPane(), af.getAddButton(), rl);
+        originalAF = new AppFrame(af.getHeader(), af.getRecipeList(), af.getScrollPane(), af.getAddButton(), rl, af.getPostButton(), af.getGetButton(), af.getPutButton(), af.getDeleteButton());
     };
 
     public void openDetailWindow(Recipe recipe) {
@@ -238,24 +240,36 @@ public class RecipeDetail {
         rl.getPrimStage().setScene(new Scene(originalAF,500, 600));
     }
 
+    public void enableEdit() {
+        for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
+            dRecipe.getSteps().get(i).setEditable(true);
+            dRecipe.getSteps().get(i).setMouseTransparent(false);
+        }
+    }
+
+    public void disableEdit() {
+        for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
+            dRecipe.getSteps().get(i).setEditable(false);
+            dRecipe.getSteps().get(i).setMouseTransparent(true);
+        }
+    }
+
     private AppFrame createDetailView(Recipe recipe) {
         AppFrame detailView = new AppFrame();
         DetailHeader dhead = new DetailHeader();
         DetailFooter dfooter = new DetailFooter(); 
+
         ScrollPane scrollPane = new ScrollPane(new DetailRecipe(recipe));
         this.recipe = recipe;
+
+        dRecipe = new DetailRecipe(recipe);
+        ScrollPane scrollPane = new ScrollPane(dRecipe);
+        // ScrollPane scrollPane = new ScrollPane(new DetailRecipe(recipe));
+
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
         
         detailView.setTop(dhead);
-      /*
-        // TODO: uncomment this to test Detail Recipe
-        // detailView.setCenter(new DetailRecipe(recipe));
-         VBox vb = new VBox();
-        for (int i = 0; i < this.ingredients.size(); i++) {
-           vb.getChildren().add(this.ingredients.get(i));
-        }
-        detailView.setCenter(vb);*/
         detailView.setCenter(scrollPane);
         detailView.setBottom(dfooter);
 
@@ -266,18 +280,24 @@ public class RecipeDetail {
 
     public AppFrame getOriginalAppFrame() {return originalAF;}
 
-    public void saveIngredient() {
-    try {
-            java.io.FileWriter outfile = new java.io.FileWriter("/Users/leahkuruvila/Desktop/pantrypal/cse-110-project-team-30/src/main/java/team30/recipeList/ingredient.csv", true); //true = append
-            for (int i = 0; i < this.ingredients.size(); i++) {   // Iterates through each contact
-                if (this.ingredients.get(i) instanceof Ingredient) {
-                    String line1 = ((Ingredient) this.ingredients.get(i)).getIngredient().getText();   // ingredient
-                
-                    outfile.write(line1 + " " + "\n");
-                    
-                }
+    public void saveRecipe() {
+        String recipe_title = recipe.getRecipeTitle().getText();
+        String meal_type = recipe.getMealType();
+        String ingredients = recipe.getIngredients().getText();
+        ArrayList<String> steps = new ArrayList<String>();
+        for (int i = 0; i < recipe.getSteps().size(); ++i) {
+            steps.add(recipe.getSteps().get(i).getText());
+        }
+        
+        try {
+            java.io.FileWriter outfile = new java.io.FileWriter("src\\main\\java\\team30\\recipeList\\recipes.csv", true); //true = append
+            // Recipe,Meal Type,Ingredients,Steps
+            // format with semicolons in between different categories, like recipes.csv in Lab 6
+            outfile.write(recipe_title + ";" + meal_type + ";" + ingredients + ";");
+            for (String s : steps) {
+                outfile.write(s + ";");
             }
-            //fw.close();
+            outfile.write("\n");
             outfile.close();
         }
         catch (Exception e) {
@@ -291,15 +311,18 @@ public class RecipeDetail {
             closeDetailWindow();
         });
 
-        // TODO: listener for save
+        // listener for save
         save.setOnAction(e -> {
         // for (Ingredient ingredient : ingredients) {
         //     ingredient.saveIngredient();
         // }
-        saveIngredient();
+            disableEdit();
+            saveRecipe();
         });
 
-        // TODO: listener for edit
+        edit.setOnAction(e -> {
+            enableEdit();
+        });
 
         // TODO: listener for delete
         delete.setOnAction(e -> {
