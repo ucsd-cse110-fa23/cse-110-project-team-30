@@ -258,6 +258,12 @@ class AppFrame extends BorderPane {
 
         addButton = header.getAddButton();
 
+        
+        postButton = new Button("Post");
+        getButton = new Button("Get");
+        putButton = new Button("Put");
+        deleteButton = new Button("Delete");
+
         addListeners();
     }
 
