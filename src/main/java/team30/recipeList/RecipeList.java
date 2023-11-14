@@ -37,9 +37,9 @@ class Recipe extends HBox {
     private String meal_type;
 
     Recipe() {
-    //    this.setPrefSize(450, 40); // sets size of task
-    //     this.setMaxHeight(HBox.USE_PREF_SIZE); 
-    //     this.setMinHeight(HBox.USE_PREF_SIZE);
+        this.setPrefSize(450, 40); // sets size of task
+        this.setMaxHeight(HBox.USE_PREF_SIZE); 
+        this.setMinHeight(HBox.USE_PREF_SIZE);
         this.setSpacing(10);
 
         // index number
@@ -72,9 +72,9 @@ class Recipe extends HBox {
     }
 
     Recipe(String recipe_name, TextField ingredients, ArrayList<TextField> steps, String mealType) {
-        // this.setPrefSize(450, 40); // sets size of task
-        // this.setMaxHeight(HBox.USE_PREF_SIZE); 
-        // this.setMinHeight(HBox.USE_PREF_SIZE);
+        this.setPrefSize(450, 40); // sets size of task
+        this.setMaxHeight(HBox.USE_PREF_SIZE); 
+        this.setMinHeight(HBox.USE_PREF_SIZE);
         this.setSpacing(10);
 
         // index number
@@ -465,7 +465,7 @@ public class RecipeList extends Application {
         this.primStage = primaryStage;
         root.setRecipeList(this);
         primaryStage.setTitle("PantryPal");
-        primaryStage.setScene(new Scene(root, 500, 600));
+        primaryStage.setScene(new Scene(root,500,600));
         primaryStage.setResizable(true); // Set resizeable to true tasks and everything else are currently not resizeable
         primaryStage.show();
     }
