@@ -314,22 +314,21 @@ public class RecipeDetail {
 
         // listener for save
         save.setOnAction(e -> {
-        // for (Ingredient ingredient : ingredients) {
-        //     ingredient.saveIngredient();
-        // }
             disableEdit();
             updateRecipeList();
             saveRecipe();
         });
 
+        // listener for edit
         edit.setOnAction(e -> {
             enableEdit();
         });
 
-        // TODO: listener for delete
+        // listener for delete
         delete.setOnAction(e -> {
             //Kinda sketchy, may need to change if originalAF makes a deep copy of values.
             this.originalAF.getRecipeList().removeRecipe(this.recipe);
+            this.originalAF.setQuery(this.recipe.getRecipeTitle().getText());
             this.originalAF.getDeleteButton().fire();
             closeDetailWindow();
         });

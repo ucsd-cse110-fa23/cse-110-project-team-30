@@ -69,37 +69,12 @@ class Recipe extends HBox {
         ingredients = null;
         steps = null;
         meal_type = null;
+
+        this.setFillHeight(true);
     }
 
     Recipe(String recipe_name, TextField ingredients, ArrayList<TextField> steps, String mealType) {
-        this.setPrefSize(450, 40); // sets size of task
-        this.setMaxHeight(HBox.USE_PREF_SIZE); 
-        this.setMinHeight(HBox.USE_PREF_SIZE);
-        this.setSpacing(10);
-
-        // index number
-        index = new Label();
-        index.setStyle("-fx-background-color: #e5da3e; -fx-background-radius: 20");
-        index.setText(""); // create index label
-        index.setPrefSize(40, 40); // set size of Index label
-        index.setTextAlignment(TextAlignment.CENTER); // Set alignment of index label
-        index.setAlignment(Pos.CENTER);
-        index.setPadding(new Insets(0, 0, 0, 0)); // adds some padding to the task
-        this.getChildren().add(index); // add index label to task
-
-        // button
-        recipe_title = new Button(recipe_name);
-        recipe_title.setPrefSize(400, 40);
-        recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10");
-
-        // Adding hover effect
-        recipe_title.setOnMouseEntered(e -> recipe_title.setStyle("-fx-background-color: #dccf1e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        recipe_title.setOnMouseExited(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-            
-        // Adding click effect
-        recipe_title.setOnMousePressed(e -> recipe_title.setStyle("-fx-background-color: #b4a918; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        recipe_title.setOnMouseReleased(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        this.getChildren().add(recipe_title);
+        this();
 
         // deep copy initializing ingredients
         this.ingredients = ingredients;
@@ -151,6 +126,8 @@ class List extends VBox {
         
         this.setPrefSize(500, 560);
         this.setStyle("-fx-background-color: #f8f3c9;-fx-padding: 10;");
+
+        this.setFillWidth(true);
     }
 
     public void updateTaskIndices() {
@@ -191,8 +168,9 @@ class Header extends HBox {
         addButton = new Button("Generate");
         setButtonStyle(addButton);
         this.getChildren().add(addButton);
-        this.setAlignment(Pos.CENTER_LEFT);
+        this.setAlignment(Pos.CENTER_RIGHT);
 
+        this.setMargin(addButton, new Insets(10, 10, 10, 10)); //resizeable
     }
 
     public Text getTitleText() {return titleText;}
@@ -435,6 +413,10 @@ class AppFrame extends BorderPane {
         return query;
     }
 
+    public void setQuery(String s) {
+        query = s;
+    }
+
     public void setRecipeList(RecipeList rl) {this.rl = rl;}
     public Header getHeader() {return header;}
     public List getRecipeList() {return recipeList;}
@@ -449,6 +431,8 @@ public class RecipeList extends Application {
     private Stage primStage;
     private Button postButton, getButton, putButton, deleteButton;
     Controller controller;
+
+    private double stageWidth, stageHeight;
     
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -463,6 +447,8 @@ public class RecipeList extends Application {
         controller = new Controller(this, model);
 
         this.primStage = primaryStage;
+        stageWidth = primStage.getWidth();
+        stageHeight = primStage.getHeight();
         root.setRecipeList(this);
         primaryStage.setTitle("PantryPal");
         primaryStage.setScene(new Scene(root,500,600));

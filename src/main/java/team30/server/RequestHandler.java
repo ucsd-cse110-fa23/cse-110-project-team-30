@@ -104,8 +104,10 @@ public class RequestHandler implements HttpHandler {
         String response = "Invalid DELETE request";
         URI uri = httpExchange.getRequestURI();
         String query = uri.getRawQuery();
+        System.out.println("Raw Query " + query);
         if (query != null) {
             String value = query.substring(query.indexOf("=") + 1);
+            System.out.println("Value " + value);
             String recipeDetails = data.remove(value); // Retrieve data from hashmap
             if (recipeDetails != null) {
                 response = "Deleted entry {" + value + ", " + recipeDetails + "}";
