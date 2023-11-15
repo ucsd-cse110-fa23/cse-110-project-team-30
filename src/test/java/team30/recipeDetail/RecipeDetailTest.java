@@ -1,5 +1,6 @@
 package team30.recipeDetail;
 
+import team30.recipeList.RecipeDetail;
 import team30.recipeList.RecipeList;
 
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,12 @@ import javafx.scene.control.Label;
 import javafx.scene.text.*;
 import javafx.scene.control.TextField;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.FileReader;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Files;
 
 class mockDetailFooter {
     private mockEditButton edit;
@@ -68,6 +75,8 @@ class mockSaveButton {
     public mockSaveButton(String s) {text = s;}
 
     public String getText() {return text;}
+
+    public void fire(mockRecipeDetail rl) {rl.saveRecipe();}
 }
 
 class mockDeleteButton {
@@ -120,8 +129,10 @@ class mockDetailRecipe extends VBox {
         mealtype = recipe.getMealType();
         index_num = 1;
         
-        for (int i = 0; i < steps.size(); ++i, index_num++) {}
-        index_num--;
+        if (steps != null) {
+            for (int i = 0; i < steps.size(); ++i, index_num++) {}
+            index_num--;
+        }
     }
 
     public String getDetailRecipeName() {return recipe_name;}
@@ -135,11 +146,13 @@ class mockRecipeDetail {
     private String originalAF;
     private String currentScene;
     private mockDetailFooter footer;
+    private mockDetailRecipe dRecipe;
 
     mockRecipeDetail(String af) {
         footer = new mockDetailFooter();
         originalAF = af;
         currentScene = originalAF;
+        dRecipe = new mockDetailRecipe(new mockRecipe());
     };
 
     public void openDetailWindow(mockRecipe recipe) {
@@ -158,7 +171,38 @@ class mockRecipeDetail {
         return af;
     }
 
+    public mockDetailRecipe getDRecipe() {return dRecipe;}
+
     public String getAppFrame() {return currentScene;}
+
+    public void saveRecipe() {
+        String recipe_title = dRecipe.getDetailRecipeName();
+        String meal_type = dRecipe.getMealType();
+        String ingredients = dRecipe.getIngredients();
+        ArrayList<String> steps = new ArrayList<String>();
+        for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
+            steps.add(dRecipe.getSteps().get(i));
+        }
+        
+        try {
+            java.io.FileWriter outfile = new java.io.FileWriter("test.csv", true); //true = append
+            // Recipe,Meal Type,Ingredients,Steps
+            // format with semicolons in between different categories, like recipes.csv in Lab 6
+            outfile.write(recipe_title + ";" + meal_type + ";" + ingredients + ";");
+            for (String s : steps) {
+                outfile.write(s + ";");
+            }
+            outfile.write("\n");
+            outfile.close();
+        }
+        catch (Exception e) {
+            e.getStackTrace();
+        }
+    }
+
+    public void setDRecipe(mockRecipe recipe) {
+        dRecipe = new mockDetailRecipe(recipe);
+    }
 
     public void addListeners(mockBackButton back, mockSaveButton save, mockEditButton edit, mockDeleteButton delete) {
         // listener for Back
@@ -233,4 +277,43 @@ public class RecipeDetailTest {
     }
 
     // TODO: add test methods for save, edit, and delete button
+    @Test 
+    void testSaveButton() {
+        ArrayList<String> steps = new ArrayList<>();
+        steps.add("Step 1");
+        steps.add("Step 2");
+        steps.add("Step 3");
+        steps.add("Step 4");
+        mockRecipe recipe = new mockRecipe("Recipe name", "Some ingredients", steps, "Breakfast");
+        rl.setDRecipe(recipe);
+        footer.getSave().fire(rl);
+        
+        String filePath = "test.csv";
+
+        try {
+            // drop test.csv first
+            Path path = FileSystems.getDefault().getPath(filePath);
+            if (Files.exists(path)) {
+                Files.delete(path);
+            }
+
+            BufferedReader reader = new BufferedReader(new FileReader(filePath));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] values = line.split(";");
+                assertEquals(values[0], rl.getDRecipe().getDetailRecipeName());
+                assertEquals(values[1], rl.getDRecipe().getMealType());
+                assertEquals(values[2], rl.getDRecipe().getIngredients());
+                // compare if the number of steps match
+                assertEquals(values.length - 3, rl.getDRecipe().getSteps().size());
+                for (int i = 3; i < values.length; ++i) {
+                    assertEquals(values[i], rl.getDRecipe().getSteps().get(i - 3));
+                }
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
+
