@@ -25,7 +25,7 @@ public class Controller {
     }
 
     private void handleGetButton(ActionEvent event) {
-        String recipeName = view.getRecipeName();
+        String recipeName = view.getQuery();
         String response = model.performRequest("GET", null, null, recipeName);
         view.showAlert("Response", response);
         System.out.println("GET");
@@ -40,7 +40,7 @@ public class Controller {
     }
 
     private void handleDeleteButton(ActionEvent event) {
-        String recipeName = view.getRecipeName();
+        String recipeName = view.getQuery();
         String response = model.performRequest("DELETE", null, null, recipeName);
         view.showAlert("Response", response);
         System.out.println("DELETE");
