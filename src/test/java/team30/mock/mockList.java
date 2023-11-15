@@ -1,8 +1,6 @@
 package team30.mock;
 
-import javafx.scene.layout.VBox;
 import java.util.ArrayList;
-import java.util.List;
 
 public class mockList{
     private mockButton button;
