@@ -49,7 +49,6 @@ public class RecipeListTest {
         assertEquals(1, count);
     }
 
-
     @Test
     void testAddMultipleRecipe() {
         int numOfRecipes = 10;

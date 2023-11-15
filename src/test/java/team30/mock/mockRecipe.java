@@ -11,9 +11,14 @@ public class mockRecipe {
 
     public mockRecipe() {
         recipe_title = "example";
+        index = "";
+        mealtype = "";
+        ingredients = "";
+        steps = new ArrayList<>();
     }    
 
     public mockRecipe(String name, String ingredients, ArrayList<String> steps, String mealtype) {
+        index = "";
         this.recipe_title = name;
         this.ingredients = ingredients;
         this.steps = steps;

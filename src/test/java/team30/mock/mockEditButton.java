@@ -5,4 +5,8 @@ public class mockEditButton {
     public mockEditButton(String s) {text = s;}
 
     public String getText() {return text;} 
+
+    public void fire(mockRecipeDetail rl, int step_index, String update_msg) {
+        rl.enableEdit(step_index, update_msg);;
+    }
 }

@@ -62,4 +62,8 @@ public class mockRecipeDetail {
     public void setDRecipe(mockRecipe recipe) {
         dRecipe = new mockDetailRecipe(recipe);
     }
+
+    public void enableEdit(int step_index, String update_msg) {
+        dRecipe.getSteps().set(step_index, update_msg);
+    }
 }
