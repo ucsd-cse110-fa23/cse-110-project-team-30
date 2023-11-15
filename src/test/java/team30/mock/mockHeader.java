@@ -4,15 +4,15 @@ import javafx.scene.layout.HBox;
 
 public class mockHeader extends HBox{
     private String titleText;
-    private mockButton addButton;
+    private mockAddButton addButton;
 
     public mockHeader() {
         titleText = "PantryPal";
-        addButton = new mockButton();
+        addButton = new mockAddButton();
     }
     public String getTitleText() {return titleText;}
 
-    public mockButton getAddButton() {
+    public mockAddButton getAddButton() {
         return addButton;
     } 
 }

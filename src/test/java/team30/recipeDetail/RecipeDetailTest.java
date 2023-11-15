@@ -15,6 +15,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,7 +39,7 @@ public class RecipeDetailTest {
     private mockDetailFooter footer;
     private mockRecipeDetail rl;
     private mockRecipe concrete_recipe;
-    
+
     @BeforeEach
     void setUp() {
         footer = new mockDetailFooter();
@@ -49,6 +50,20 @@ public class RecipeDetailTest {
         steps.add("step 2");
         steps.add("step 3");
         concrete_recipe = new mockRecipe("example", "Some ingredients", steps, "Dinner");
+    }
+
+    @AfterAll
+    static void cleanUp() {
+        // delete test.csv file
+        String filePath = "test.csv";
+        try {
+            Path path = FileSystems.getDefault().getPath(filePath);
+            if (Files.exists(path)) {
+                Files.delete(path);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -281,5 +296,68 @@ public class RecipeDetailTest {
         // back
         footer.getBack().fire(rl);
         assertEquals("original scene", rl.getAppFrame());
+    }
+
+    @Test
+    void testDeleteButton() {
+        // open detail windows, then buttons show up
+        rl.getRecipeList().getAddButton().fire(rl.getRecipeList(), concrete_recipe);
+        rl.openDetailWindow(concrete_recipe);
+
+        footer.getDelete().fire(rl, concrete_recipe);
+
+        assertFalse(rl.getRecipeList().getChildren().contains(concrete_recipe), "Recipe should be removed");
+        assertEquals(0 , rl.getRecipeList().getChildren().size());
+    }
+
+    @Test
+    void testDeleteMultipleRecipes() {      // add 3 recipes, delete 2, should remain only 1
+        // add 3 recipes first
+        mockRecipe recipeToRemove1 = new mockRecipe();
+        rl.getRecipeList().getAddButton().fire(rl.getRecipeList(), recipeToRemove1);
+        mockRecipe recipeToRemove2 = new mockRecipe();
+        rl.getRecipeList().getAddButton().fire(rl.getRecipeList(), recipeToRemove2);
+        mockRecipe recipeToRemove3 = new mockRecipe();
+        rl.getRecipeList().getAddButton().fire(rl.getRecipeList(), recipeToRemove3);
+        
+        // remove first and third
+        rl.openDetailWindow(recipeToRemove1);
+        footer.getDelete().fire(rl, recipeToRemove1);
+        footer.getBack().fire(rl);;
+        rl.openDetailWindow(recipeToRemove3);
+        footer.getDelete().fire(rl, recipeToRemove3);
+        footer.getBack().fire(rl);;
+
+        assertFalse(rl.getRecipeList().getChildren().contains(recipeToRemove1), "Recipe should be removed");
+        assertFalse(rl.getRecipeList().getChildren().contains(recipeToRemove3), "Recipe should be removed");
+        assertEquals(1 , rl.getRecipeList().getChildren().size());
+    }
+
+    void testEditThenDelete() {
+        rl.getRecipeList().getAddButton().fire(rl.getRecipeList(), concrete_recipe);
+        rl.openDetailWindow(concrete_recipe);
+
+        // edit
+        int step_index = 2;     // index bound = 2
+        String update_msg = "Update to Something else";
+        rl.setDRecipe(concrete_recipe);
+        footer.getEdit().fire(rl, step_index,update_msg);
+
+        footer.getDelete().fire(rl, concrete_recipe);
+
+        assertFalse(rl.getRecipeList().getChildren().contains(concrete_recipe), "Recipe should be removed");
+        assertEquals(0 , rl.getRecipeList().getChildren().size());
+    }   
+    
+    void testDeleteThenBack() {     // in practice, delete should automatically call back
+        rl.getRecipeList().getAddButton().fire(rl.getRecipeList(), concrete_recipe);
+        rl.openDetailWindow(concrete_recipe);
+
+        footer.getDelete().fire(rl, concrete_recipe);
+
+        footer.getBack().fire(rl);
+
+        assertFalse(rl.getRecipeList().getChildren().contains(concrete_recipe), "Recipe should be removed");
+        assertEquals(0 , rl.getRecipeList().getChildren().size());
     }
 }

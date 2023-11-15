@@ -5,4 +5,8 @@ public class mockDeleteButton {
     public mockDeleteButton(String s) {text = s;}
 
     public String getText() {return text;} 
+
+    public void fire(mockRecipeDetail rl, mockRecipe recipe) {
+        rl.getRecipeList().removeRecipe(recipe);
+    }
 }

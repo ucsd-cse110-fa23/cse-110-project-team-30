@@ -3,12 +3,12 @@ package team30.mock;
 import java.util.ArrayList;
 
 public class mockList{
-    private mockButton button;
+    private mockAddButton add;
     private ArrayList<mockRecipe> list;
 
     public ArrayList<mockRecipe> getChildren() {return list;}
     public mockList() {
-        button = new mockButton();
+        add = new mockAddButton();
         list = new ArrayList<>();
     }
 
@@ -22,7 +22,7 @@ public class mockList{
         }
     }
 
-    public mockButton getButton() {return button;} 
+    public mockAddButton getAddButton() {return add;} 
 
     void removeRecipe(mockRecipe recipeToRemove){
         this.getChildren().removeIf(recipe -> recipe instanceof mockRecipe && ((mockRecipe)recipe).equals(recipeToRemove));

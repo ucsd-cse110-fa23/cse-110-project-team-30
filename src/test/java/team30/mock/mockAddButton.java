@@ -1,10 +1,8 @@
 package team30.mock;
 
-public class mockButton {
+public class mockAddButton {
     private String text;
-    public void fire(mockList ml, String s) {
-        text = s;
-        mockRecipe recipe = new mockRecipe();
+    public void fire(mockList ml, mockRecipe recipe) {
         ml.getChildren().add(recipe);
         ml.updateTaskIndices();
         System.out.println(recipe.getRecipeTitle());

@@ -1,5 +1,7 @@
 package team30.mock;
 
+import static org.mockito.ArgumentMatchers.startsWith;
+
 import java.util.ArrayList;
 
 public class mockRecipe {
@@ -10,7 +12,7 @@ public class mockRecipe {
     private ArrayList<String> steps;
 
     public mockRecipe() {
-        recipe_title = "example";
+        recipe_title = "Example";
         index = "";
         mealtype = "";
         ingredients = "";

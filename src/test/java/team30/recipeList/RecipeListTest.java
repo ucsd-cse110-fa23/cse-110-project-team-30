@@ -44,7 +44,8 @@ public class RecipeListTest {
 
     @Test
     void testAddButton() {
-        recipe_list.getButton().fire(recipe_list, "");
+        mockRecipe recipe = new mockRecipe();
+        recipe_list.getAddButton().fire(recipe_list, recipe);
         int count = recipe_list.getChildren().size();
         assertEquals(1, count);
     }
@@ -53,7 +54,8 @@ public class RecipeListTest {
     void testAddMultipleRecipe() {
         int numOfRecipes = 10;
         for (int i = 0; i < numOfRecipes; ++i) {
-            recipe_list.getButton().fire(recipe_list, "");
+            mockRecipe recipe = new mockRecipe();
+            recipe_list.getAddButton().fire(recipe_list, recipe);
         }
         int count = 0;
         for (int i = 0; i < recipe_list.getChildren().size(); i++) {
@@ -66,7 +68,8 @@ public class RecipeListTest {
 
     @Test
     void testRecipeDefaultConstructor() {
-        recipe_list.getButton().fire(recipe_list, "");
+        mockRecipe recipe = new mockRecipe();
+        recipe_list.getAddButton().fire(recipe_list, recipe);
         String title = "";
         for (int i = 0; i < recipe_list.getChildren().size(); i++) {
             if (recipe_list.getChildren().get(i) instanceof mockRecipe) {
@@ -74,7 +77,7 @@ public class RecipeListTest {
                 break;
             }
         }
-        assertEquals("example", title);
+        assertEquals("Example", title);
     }
 
     @Test
@@ -88,26 +91,13 @@ public class RecipeListTest {
         steps.add(new String("Step 3"));
 
         mockRecipe recipe = new mockRecipe(recipe_name, ingredients, steps, meal_type);
+        recipe_list.getAddButton().fire(recipe_list, recipe);
         assertEquals(recipe_name, recipe.getRecipeTitle());
         assertEquals(ingredients, recipe.getIngredients());
         for (int i = 0; i < steps.size(); ++i) {
             assertEquals(steps.get(i), recipe.getSteps().get(i));
         }
         assertEquals(meal_type, recipe.getMealType());
-    }
-
-    @Test
-    void testSetUpRecipeTitle() {
-        String testTitle = "example";
-        recipe_list.getButton().fire(recipe_list, testTitle);
-        String title = "";
-        for (int i = 0; i < recipe_list.getChildren().size(); i++) {
-            if (recipe_list.getChildren().get(i) instanceof mockRecipe) {
-                title = ((mockRecipe)recipe_list.getChildren().get(i)).getRecipeTitle();
-                break;
-            }
-        }
-        assertEquals(testTitle, title);
     }
 
     @Test

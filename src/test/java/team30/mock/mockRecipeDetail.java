@@ -7,12 +7,14 @@ public class mockRecipeDetail {
     private String currentScene;
     private mockDetailFooter footer;
     private mockDetailRecipe dRecipe;
+    private mockList list;
 
     public mockRecipeDetail(String af) {
         footer = new mockDetailFooter();
         originalAF = af;
         currentScene = originalAF;
         dRecipe = new mockDetailRecipe(new mockRecipe());
+        list = new mockList();
     };
 
     public void openDetailWindow(mockRecipe recipe) {
@@ -66,4 +68,6 @@ public class mockRecipeDetail {
     public void enableEdit(int step_index, String update_msg) {
         dRecipe.getSteps().set(step_index, update_msg);
     }
+
+    public mockList getRecipeList() {return list;}
 }
