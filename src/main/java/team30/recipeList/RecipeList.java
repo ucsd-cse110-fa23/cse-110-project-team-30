@@ -72,45 +72,12 @@ class Recipe extends HBox {
     }
 
     Recipe(String recipe_name, TextField ingredients, ArrayList<TextField> steps, String mealType) {
-        this.setPrefSize(450, 40); // sets size of task
-        this.setMaxHeight(HBox.USE_PREF_SIZE); 
-        this.setMinHeight(HBox.USE_PREF_SIZE);
-        this.setSpacing(10);
+        this();
 
-        // index number
-        index = new Label();
-        index.setStyle("-fx-background-color: #e5da3e; -fx-background-radius: 20");
-        index.setText(""); // create index label
-        index.setPrefSize(40, 40); // set size of Index label
-        index.setTextAlignment(TextAlignment.CENTER); // Set alignment of index label
-        index.setAlignment(Pos.CENTER);
-        index.setPadding(new Insets(0, 0, 0, 0)); // adds some padding to the task
-        this.getChildren().add(index); // add index label to task
-
-        // button
-        recipe_title = new Button(recipe_name);
-        recipe_title.setPrefSize(400, 40);
-        recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10");
-
-        // Adding hover effect
-        recipe_title.setOnMouseEntered(e -> recipe_title.setStyle("-fx-background-color: #dccf1e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        recipe_title.setOnMouseExited(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-            
-        // Adding click effect
-        recipe_title.setOnMousePressed(e -> recipe_title.setStyle("-fx-background-color: #b4a918; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        recipe_title.setOnMouseReleased(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        this.getChildren().add(recipe_title);
-
-        // deep copy initializing ingredients
         this.ingredients = ingredients;
-            
-        // deep copy initializing steps
         this.steps = steps;
-
         this.meal_type = mealType;
     }
-
-        
 
     public void setTaskIndex(int num) {
         this.index.setText(num + ""); // num to String
@@ -279,23 +246,14 @@ class AppFrame extends BorderPane {
     }
 
     AppFrame(Header hd, List ls, ScrollPane sp, Recipe recipe, Button button, RecipeList rl, Button postButton, Button getButton, Button putButton, Button deleteButton) {
+        this();
+        
         header = hd;
         recipeList = ls;
         scrollPane = sp;
         addButton = button;
         this.recipe = recipe;
         this.rl = rl;
-
-        this.setTop(header);
-        this.setCenter(scrollPane);
-
-        addButton = header.getAddButton();
-
-        
-        // postButton = new Button("Post");
-        // getButton = new Button("Get");
-        // putButton = new Button("Put");
-        // deleteButton = new Button("Delete");
 
         this.postButton = postButton;
         this.getButton = getButton;

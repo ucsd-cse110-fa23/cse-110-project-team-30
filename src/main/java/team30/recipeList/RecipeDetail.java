@@ -69,7 +69,7 @@ class DetailFooter extends DetailHeader {
     public Button getBack() {return back;}
 }
 
-class DetailRecipe extends VBox{
+class DetailRecipe extends VBox {
     // recipe info
     private Label recipe_name;
     private Label ingredients;
@@ -212,7 +212,6 @@ class Ingredient extends HBox {
 public class RecipeDetail {
     private AppFrame originalAF;
     private RecipeList rl;
-    private ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
 
     private DetailRecipe dRecipe;
 
@@ -258,7 +257,6 @@ public class RecipeDetail {
 
         dRecipe = new DetailRecipe(recipe);
         scrollPane = new ScrollPane(dRecipe);
-        // ScrollPane scrollPane = new ScrollPane(new DetailRecipe(recipe));
 
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
@@ -314,19 +312,17 @@ public class RecipeDetail {
 
         // listener for save
         save.setOnAction(e -> {
-        // for (Ingredient ingredient : ingredients) {
-        //     ingredient.saveIngredient();
-        // }
             disableEdit();
             updateRecipeList();
             saveRecipe();
         });
 
+        // listener for edit
         edit.setOnAction(e -> {
             enableEdit();
         });
 
-        // TODO: listener for delete
+        // listener for delete
         delete.setOnAction(e -> {
             //Kinda sketchy, may need to change if originalAF makes a deep copy of values.
             this.originalAF.getRecipeList().removeRecipe(this.recipe);
