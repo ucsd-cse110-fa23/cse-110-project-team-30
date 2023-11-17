@@ -63,6 +63,7 @@ public class Recipe extends HBox {
     public Recipe(String recipe_name, String mealType, String ingredients, ArrayList<String> steps, String imageurl) {
         this();
 
+        this.recipe_title.setText(recipe_name);
         this.ingredients = ingredients;
         this.steps = steps;
         this.meal_type = mealType;

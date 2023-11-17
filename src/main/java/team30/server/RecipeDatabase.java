@@ -95,6 +95,19 @@ public class RecipeDatabase {
 
     }
 
+    //deletes recipe document
+    public void deleteRecipe(Recipe r) {
+        String objectID = r.getObjectID();
+        if (objectID == "") { //wasn't in database
+            return;
+        }
+
+        Bson filter = eq("_id", new ObjectId(objectID));
+        recipesCollection.findOneAndDelete(filter);
+        System.out.println("deleted recipe successfully!");
+
+    }
+
     //convert steps from arraylist form to string form
     String stepsToString(ArrayList<String> steps) {
         String s = "";

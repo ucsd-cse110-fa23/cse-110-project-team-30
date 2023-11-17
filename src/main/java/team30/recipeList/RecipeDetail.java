@@ -325,6 +325,7 @@ public class RecipeDetail {
         // listener for delete
         delete.setOnAction(e -> {
             this.recipeListAF.getRecipeList().removeRecipe(this.recipe);
+            recipeDB.deleteRecipe(this.recipe);
             this.recipeListAF.getDeleteButton().fire();
             closeDetailWindow();
         });
