@@ -46,18 +46,18 @@ public class RecipeDatabase {
     }
 
     //insert recipe into database
-    void insertRecipe(String name, String meal_type, String ingredients, ArrayList<String> steps, String imageurl) {
+    public void insertRecipe(Recipe r) {
         Document recipe = new Document("_id", new ObjectId());
-        recipe.append("name", name)
-                .append("meal_type", meal_type)
-                .append("ingredients", ingredients)
-                .append("steps", stepsToString(steps))
-                .append("imageurl", imageurl);
+        recipe.append("name", r.getRecipeTitle())
+                .append("meal_type", r.getMealType())
+                .append("ingredients", r.getIngredients())
+                .append("steps", stepsToString(r.getSteps()))
+                .append("imageurl", r.getImageURL());
         recipesCollection.insertOne(recipe);
     }
 
     //gets recipe by its id in database (for iteration through database)
-    Recipe getRecipe(int id) {
+    public Recipe getRecipe(int id) {
         String name, meal_type, ingredients, stepsString, imageurl;
 
         Document d = recipesCollection.find(eq("_id", id)).first();
@@ -100,6 +100,10 @@ public class RecipeDatabase {
         if (stepsText != "")
             al.add(stepsText);
         return al;
+    }
+
+    public long countDocuments() {
+        return recipesCollection.countDocuments();
     }
 
 }

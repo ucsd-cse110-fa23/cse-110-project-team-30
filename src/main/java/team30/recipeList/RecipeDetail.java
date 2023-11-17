@@ -211,7 +211,8 @@ class Ingredient extends HBox {
 }
 
 public class RecipeDetail {
-    private AppFrame originalAF;
+    private AppFrame recipeListAF; //original app frame
+    private AppFrame recipeViewAF; //current app frame
     private RecipeList rl;
 
     private DetailRecipe dRecipe;
@@ -219,21 +220,44 @@ public class RecipeDetail {
 
     private RecipeDatabase recipeDB;
 
+    private Scene recipeListScene;
+    private Scene recipeViewScene;
+
     RecipeDetail(RecipeList rl, AppFrame af, Recipe r) {
         this.rl = rl;
         this.recipe = r;
-        originalAF = new AppFrame(af.getHeader(), af.getRecipeList(),  af.getScrollPane(), af.getRecipe(), af.getAddButton(), rl, af.getPostButton(), af.getGetButton(), af.getPutButton(), af.getDeleteButton());
-        recipeDB = originalAF.getRecipeDB();
+        recipeListAF = af;
+        recipeListScene = rl.getScene();
+        recipeDB = recipeListAF.getRecipeDB();
+
+        recipeViewAF = new AppFrame();
+        DetailHeader dhead = new DetailHeader();
+        DetailFooter dfooter = new DetailFooter(); 
+
+        ScrollPane scrollPane = new ScrollPane(new DetailRecipe(recipe));
+        this.recipe = recipe;
+
+        dRecipe = new DetailRecipe(recipe);
+        scrollPane = new ScrollPane(dRecipe);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
+        recipeViewAF.setTop(dhead);
+        recipeViewAF.setCenter(scrollPane);
+        recipeViewAF.setBottom(dfooter);
+
+        addListeners(dfooter.getBack(), dfooter.getSave(), dfooter.getEdit(), dfooter.getDelete());
+
+        recipeViewScene = new Scene(recipeViewAF, 500, 600);
     };
 
     public void openDetailWindow(Recipe recipe) {
-        AppFrame af = createDetailView(recipe);
-        
-        rl.getPrimStage().setScene(new Scene(af, 500, 600));
+        rl.getPrimStage().setScene(recipeViewScene);
+        rl.getPrimStage().show();
     }
 
     public void closeDetailWindow() {
-        rl.getPrimStage().setScene(new Scene(originalAF,500, 600));
+        rl.getPrimStage().setScene(recipeListScene);
+        rl.getPrimStage().show();
     }
 
     public void enableEdit() {
@@ -250,31 +274,6 @@ public class RecipeDetail {
         }
     }
 
-    private AppFrame createDetailView(Recipe recipe) {
-        AppFrame detailView = new AppFrame();
-        DetailHeader dhead = new DetailHeader();
-        DetailFooter dfooter = new DetailFooter(); 
-
-        ScrollPane scrollPane = new ScrollPane(new DetailRecipe(recipe));
-        this.recipe = recipe;
-
-        dRecipe = new DetailRecipe(recipe);
-        scrollPane = new ScrollPane(dRecipe);
-
-        scrollPane.setFitToHeight(true);
-        scrollPane.setFitToWidth(true);
-        
-        detailView.setTop(dhead);
-        detailView.setCenter(scrollPane);
-        detailView.setBottom(dfooter);
-
-        addListeners(dfooter.getBack(), dfooter.getSave(), dfooter.getEdit(), dfooter.getDelete());
-        
-        return detailView;
-    }
-
-    public AppFrame getOriginalAppFrame() {return originalAF;}
-
     public void updateRecipeList() {
         recipe.getSteps().clear();
         for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
@@ -283,28 +282,12 @@ public class RecipeDetail {
     }
 
     public void saveRecipe() {
-        //refactor this into saving into mongodb with recipeDB
-        String recipe_title = dRecipe.getRecipeName().getText();
-        String meal_type = dRecipe.getMealType().getText();
-        String ingredients = dRecipe.getIngredients().getText();
-        ArrayList<String> steps = new ArrayList<String>();
-        for (int i = 0; i < recipe.getSteps().size(); ++i) {
-            steps.add(dRecipe.getSteps().get(i).getText());
-        }
-        
         try {
-            java.io.FileWriter outfile = new java.io.FileWriter("src\\main\\java\\team30\\recipeList\\recipes.csv", true); //true = append
-            // Recipe,Meal Type,Ingredients,Steps
-            // format with semicolons in between different categories, like recipes.csv in Lab 6
-            outfile.write(recipe_title + ";" + meal_type + ";" + ingredients + ";");
-            for (String s : steps) {
-                outfile.write(s + ";");
-            }
-            outfile.write("\n");
-            outfile.close();
+            recipeDB.insertRecipe(recipe);
         }
         catch (Exception e) {
             e.getStackTrace();
+            System.out.println("couldn't save to database!");
         }
     }
 
@@ -328,9 +311,8 @@ public class RecipeDetail {
 
         // listener for delete
         delete.setOnAction(e -> {
-            //Kinda sketchy, may need to change if originalAF makes a deep copy of values.
-            this.originalAF.getRecipeList().removeRecipe(this.recipe);
-            this.originalAF.getDeleteButton().fire();
+            this.recipeListAF.getRecipeList().removeRecipe(this.recipe);
+            this.recipeListAF.getDeleteButton().fire();
             closeDetailWindow();
         });
     }

@@ -192,60 +192,13 @@ class AppFrame extends BorderPane {
 
     public void loadRecipes() {
         try {
-            FileReader fr = new FileReader("src\\main\\java\\team30\\recipeList\\recipes.csv");
-            BufferedReader br = new BufferedReader(fr);
-            String str = br.readLine(); //Recipe,Meal Type,Ingredients,Steps header line
-            while (br.ready()) {
-                str = br.readLine();
+            long totalRecipes = recipeDB.countDocuments();
+            System.out.println("Total recipes: " + recipeDB.countDocuments());
 
-                String recipeName = "";
-                String mealType = "";
-                String ingredients;
-                ArrayList<String> steps = new ArrayList<String>();
-                String imageurl = "";
-
-
-                int count = 0;
-                int stepcounter = 3;
-                String ingredientsText = "", stepsText = "";
-                for (int i = 0; i < str.length(); i++) {
-                    if (str.substring(i, i+1).equals(";")) {
-                        count++;
-                    }
-                    else if (count == 0) {
-                        recipeName += str.substring(i, i+1);
-                    }
-                    else if (count == 1) {
-                        mealType += str.substring(i, i+1);
-                    }
-                    else if (count == 2) {
-                        ingredientsText += str.substring(i, i+1);
-                    }
-                    else if (count >= 3) {
-                        if (stepcounter == count) {
-                            stepsText += str.substring(i, i+1);
-                        }
-                        else {
-                            //add prev step
-                            steps.add(stepsText);
-                            stepsText = "";
-                            stepsText += str.substring(i, i+1);
-                            stepcounter++;
-                        }
-                    }
-                    else {
-                        System.out.println("ERROR: invalid semicolon count!");
-                    }
-                }
-                //add prev step
-                steps.add(stepsText);
-                ingredients = ingredientsText;
-
+            for (int i = 0; i < totalRecipes; i++) {
+                Recipe cur = recipeDB.getRecipe(i);
                 
-                Recipe cur = new Recipe(recipeName, mealType, ingredients, steps, imageurl);
                 recipeList.getChildren().add(cur);
-
-                
                 recipeList.updateTaskIndices();
                 postButton.fire(); //click HTTP post button
 
@@ -254,11 +207,9 @@ class AppFrame extends BorderPane {
                     ord.openDetailWindow(cur);
                 });
             }
-            fr.close();
-            br.close();
         }
         catch (Exception e) {
-            System.out.println("no 'recipes.csv' file found!");
+            System.out.println("couldn't open database!");
         }
     }
 
@@ -277,29 +228,12 @@ class AppFrame extends BorderPane {
         return details;
     }
 
-    public Button getPostButton() {
-        return postButton;
-    }
-
-    public Button getGetButton() {
-        return getButton;
-    }
-
-    public Button getPutButton() {
-        return putButton;
-    }
-
-    public Button getDeleteButton() {
-        return deleteButton;
-    }
-
-    public String getQuery() {
-        return query;
-    }
-
-    public RecipeDatabase getRecipeDB() {
-        return recipeDB;
-    }
+    public Button getPostButton() {return postButton;}
+    public Button getGetButton() {return getButton;}
+    public Button getPutButton() {return putButton;}
+    public Button getDeleteButton() {return deleteButton;}
+    public String getQuery() {return query;}
+    public RecipeDatabase getRecipeDB() {return recipeDB;}
 
     public void setRecipeList(RecipeList rl) {this.rl = rl;}
     public Header getHeader() {return header;}
@@ -313,6 +247,7 @@ class AppFrame extends BorderPane {
 public class RecipeList extends Application {
     private AppFrame root;
     private Stage primStage;
+    private Scene listScene;
     private Button postButton, getButton, putButton, deleteButton;
     Controller controller;
     
@@ -320,6 +255,7 @@ public class RecipeList extends Application {
     public void start(Stage primaryStage) throws Exception {
         root = new AppFrame();
         Model model = new Model();
+        listScene = new Scene(root, 500, 600);
         
         postButton = root.getPostButton();
         getButton = root.getGetButton();
@@ -331,7 +267,7 @@ public class RecipeList extends Application {
         this.primStage = primaryStage;
         root.setRecipeList(this);
         primaryStage.setTitle("PantryPal");
-        primaryStage.setScene(new Scene(root, 500, 600));
+        primaryStage.setScene(listScene);
         primaryStage.setResizable(false);
         primaryStage.show();
     }
@@ -341,35 +277,17 @@ public class RecipeList extends Application {
     }
 
     public Stage getPrimStage() {return primStage;}
+    public Scene getScene() {return listScene;}
     public void setAppFrame(AppFrame af) {root = af;}
 
-    public void setPostButtonAction(EventHandler<ActionEvent> eventHandler) {
-        postButton.setOnAction(eventHandler);
-    }
+    public void setPostButtonAction(EventHandler<ActionEvent> eventHandler) {postButton.setOnAction(eventHandler);}
+    public void setGetButtonAction(EventHandler<ActionEvent> eventHandler) {getButton.setOnAction(eventHandler);}
+    public void setPutButtonAction(EventHandler<ActionEvent> eventHandler) {putButton.setOnAction(eventHandler);}
+    public void setDeleteButtonAction(EventHandler<ActionEvent> eventHandler) {deleteButton.setOnAction(eventHandler);}
 
-    public void setGetButtonAction(EventHandler<ActionEvent> eventHandler) {
-        getButton.setOnAction(eventHandler);
-    }
-
-    public void setPutButtonAction(EventHandler<ActionEvent> eventHandler) {
-        putButton.setOnAction(eventHandler);
-    }
-
-    public void setDeleteButtonAction(EventHandler<ActionEvent> eventHandler) {
-        deleteButton.setOnAction(eventHandler);
-    }
-
-    public String getRecipeName() {
-        return root.getRecipeName();
-    }
-
-    public String[] getRecipeDetails() {
-        return root.getRecipeDetails();
-    }
-
-    public String getQuery() {
-        return root.getQuery();
-    }
+    public String getRecipeName() {return root.getRecipeName();}
+    public String[] getRecipeDetails() {return root.getRecipeDetails();}
+    public String getQuery() {return root.getQuery();}
 
     public void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

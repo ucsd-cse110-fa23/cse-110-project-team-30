@@ -86,7 +86,7 @@ public class Recipe extends HBox {
         return this.steps;
     }
 
-    public String imageURL() {
+    public String getImageURL() {
         return this.imageurl;
     }
 
