@@ -28,7 +28,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
+
 import javafx.scene.paint.Color;
+
+import com.mongodb.client.FindIterable;
+import org.bson.Document;
 
 class List extends VBox {
 
@@ -156,24 +161,6 @@ class AppFrame extends BorderPane {
         addListeners();
     }
 
-    AppFrame(Header hd, List ls, ScrollPane sp, Recipe recipe, Button button, RecipeList rl, Button postButton, Button getButton, Button putButton, Button deleteButton) {
-        this();
-
-        header = hd;
-        recipeList = ls;
-        scrollPane = sp;
-        addButton = button;
-        this.recipe = recipe;
-        this.rl = rl;
-
-        this.postButton = postButton;
-        this.getButton = getButton;
-        this.putButton = putButton;
-        this.deleteButton = deleteButton;
-
-        addListeners();
-    }
-
     public void addListeners() {
         addButton.setOnAction(e -> {
             Recipe recipe = new Recipe();
@@ -193,10 +180,12 @@ class AppFrame extends BorderPane {
     public void loadRecipes() {
         try {
             long totalRecipes = recipeDB.countDocuments();
-            System.out.println("Total recipes: " + recipeDB.countDocuments());
+            System.out.println("Total recipes: " + totalRecipes);
 
-            for (int i = 0; i < totalRecipes; i++) {
-                Recipe cur = recipeDB.getRecipe(i);
+            FindIterable<Document> iterDoc = recipeDB.find();
+            Iterator<Document> it = iterDoc.iterator();
+            while (it.hasNext()) {
+                Recipe cur = recipeDB.getRecipe(it.next());
                 
                 recipeList.getChildren().add(cur);
                 recipeList.updateTaskIndices();
@@ -209,7 +198,7 @@ class AppFrame extends BorderPane {
             }
         }
         catch (Exception e) {
-            System.out.println("couldn't open database!");
+            //System.out.println("couldn't open database!");
         }
     }
 

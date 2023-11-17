@@ -16,6 +16,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -31,14 +32,17 @@ public class RecipeDatabase {
 
     MongoDatabase recipeDB;
     MongoCollection<Document> recipesCollection;
+    MongoClient mongoClient;
 
     String uri = "mongodb+srv://lil043:VA4U7rBgvZ0EqlNO@cse110.ltw8f69.mongodb.net/?retryWrites=true&w=majority";
 
     //default constructor
     public RecipeDatabase() {
-        try (MongoClient mongoClient = MongoClients.create(uri)) {
-            MongoDatabase recipeDB = mongoClient.getDatabase("recipes_db");
-            MongoCollection<Document> recipesCollection = recipeDB.getCollection("recipes");
+        try {
+            mongoClient = MongoClients.create(uri);
+            recipeDB = mongoClient.getDatabase("recipes_db");
+            recipesCollection = recipeDB.getCollection("recipes");
+            System.out.println("Success: accessed database");
         }
         catch (Exception e) {
             System.out.println("ERROR: failed to access database");
@@ -53,14 +57,23 @@ public class RecipeDatabase {
                 .append("ingredients", r.getIngredients())
                 .append("steps", stepsToString(r.getSteps()))
                 .append("imageurl", r.getImageURL());
-        recipesCollection.insertOne(recipe);
+        System.out.println("inserting new recipe!");
+        try {
+            recipesCollection.insertOne(recipe);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        // recipesCollection.insertOne({"name": r.getRecipeTitle(), 
+        //                             "meal_type": r.getMealType(),
+        //                             "ingredients": r.getIngredients(),
+        //                             "steps": stepsToString(r.getSteps())
+        //                             "imageurl": r.getImageURL()});
     }
 
-    //gets recipe by its id in database (for iteration through database)
-    public Recipe getRecipe(int id) {
+    //gets recipe from document
+    public Recipe getRecipe(Document d) {
         String name, meal_type, ingredients, stepsString, imageurl;
-
-        Document d = recipesCollection.find(eq("_id", id)).first();
         name = (String) d.get("name");
         meal_type = (String) d.get("meal_type");
         ingredients = (String) d.get("ingredients");
@@ -104,6 +117,10 @@ public class RecipeDatabase {
 
     public long countDocuments() {
         return recipesCollection.countDocuments();
+    }
+
+    public FindIterable<Document> find() {
+        return recipesCollection.find();
     }
 
 }

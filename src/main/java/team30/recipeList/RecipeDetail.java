@@ -296,19 +296,16 @@ public class RecipeDetail {
         back.setOnAction(e -> {
             closeDetailWindow();
         });
-
         // listener for save
         save.setOnAction(e -> {
             disableEdit();
             updateRecipeList();
             saveRecipe();
         });
-
         // listener for edit
         edit.setOnAction(e -> {
             enableEdit();
         });
-
         // listener for delete
         delete.setOnAction(e -> {
             this.recipeListAF.getRecipeList().removeRecipe(this.recipe);
