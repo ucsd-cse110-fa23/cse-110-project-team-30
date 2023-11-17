@@ -18,6 +18,8 @@ public class Recipe extends HBox {
     private ArrayList<String> steps;
     private String imageurl;
 
+    private String objectID; //mongodb id
+
     public Recipe() {
         this.setPrefSize(450, 40); // sets size of task
         this.setMaxHeight(HBox.USE_PREF_SIZE); 
@@ -55,6 +57,7 @@ public class Recipe extends HBox {
         steps.add("step 3...");
         meal_type = "lunch";
         imageurl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxcSpK0Chn1awF4y-TYCY_BSsBy1psaade2G957ylydxSDx3fVWbSlLtjE2-FXafRVf8E&usqp=CAU"; //random image
+        objectID = ""; //will be set if saved
     }
 
     public Recipe(String recipe_name, String mealType, String ingredients, ArrayList<String> steps, String imageurl) {
@@ -68,6 +71,14 @@ public class Recipe extends HBox {
 
     public void setTaskIndex(int num) {
         this.index.setText(num + ""); // num to String
+    }
+
+    public void setObjectID(String id) {
+        this.objectID = id;
+    }
+
+    public String getObjectID() {
+        return this.objectID;
     }
 
     public Button getRecipeTitle() {

@@ -223,6 +223,8 @@ public class RecipeDetail {
     private Scene recipeListScene;
     private Scene recipeViewScene;
 
+    private boolean editMode;
+
     RecipeDetail(RecipeList rl, AppFrame af, Recipe r) {
         this.rl = rl;
         this.recipe = r;
@@ -247,6 +249,8 @@ public class RecipeDetail {
 
         addListeners(dfooter.getBack(), dfooter.getSave(), dfooter.getEdit(), dfooter.getDelete());
 
+        editMode = false;
+
         recipeViewScene = new Scene(recipeViewAF, 500, 600);
     };
 
@@ -261,6 +265,7 @@ public class RecipeDetail {
     }
 
     public void enableEdit() {
+        editMode = true;
         for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
             dRecipe.getSteps().get(i).setEditable(true);
             dRecipe.getSteps().get(i).setMouseTransparent(false);
@@ -268,6 +273,7 @@ public class RecipeDetail {
     }
 
     public void disableEdit() {
+        editMode = false;
         for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
             dRecipe.getSteps().get(i).setEditable(false);
             dRecipe.getSteps().get(i).setMouseTransparent(true);
@@ -282,12 +288,22 @@ public class RecipeDetail {
     }
 
     public void saveRecipe() {
-        try {
-            recipeDB.insertRecipe(recipe);
+        if (recipe.getObjectID() == "") {  //insert new recipe to database
+            try {
+                String newID = recipeDB.insertRecipe(recipe);
+                recipe.setObjectID(newID);
+            }
+            catch (Exception e) {
+                System.out.println("couldn't save to database!");
+            }
         }
-        catch (Exception e) {
-            e.getStackTrace();
-            System.out.println("couldn't save to database!");
+        else { //updating existing recipe in database
+            try {
+                recipeDB.editRecipe(recipe);
+            }
+            catch (Exception e) {
+                System.out.println("couldn't edit database!");
+            }
         }
     }
 

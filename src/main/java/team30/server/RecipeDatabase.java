@@ -2,15 +2,8 @@ package team30.server;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.set;
-import static java.util.Arrays.asList;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -21,11 +14,10 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.InsertManyOptions;
-import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 
-import javafx.scene.control.TextField;
 import team30.recipeList.Recipe; 
 
 public class RecipeDatabase {
@@ -50,7 +42,8 @@ public class RecipeDatabase {
     }
 
     //insert recipe into database
-    public void insertRecipe(Recipe r) {
+    //returns document id
+    public String insertRecipe(Recipe r) {
         Document recipe = new Document("_id", new ObjectId());
         //recipe.put("name", r.getRecipeTitle().getText());
         recipe.append("name", r.getRecipeTitle().getText())
@@ -65,25 +58,41 @@ public class RecipeDatabase {
         catch (Exception e) {
             e.printStackTrace();
         }
-        // recipesCollection.insertOne({"name": r.getRecipeTitle(), 
-        //                             "meal_type": r.getMealType(),
-        //                             "ingredients": r.getIngredients(),
-        //                             "steps": stepsToString(r.getSteps())
-        //                             "imageurl": r.getImageURL()});
+        return recipe.get("_id").toString();
     }
 
     //gets recipe from document
     public Recipe getRecipe(Document d) {
         String name, meal_type, ingredients, stepsString, imageurl;
-        name = (String) d.get("name");
-        meal_type = (String) d.get("meal_type");
-        ingredients = (String) d.get("ingredients");
-        stepsString = (String) d.get("steps");      
-        imageurl = (String) d.get("steps");       
+        name = d.get("name").toString();
+        meal_type = d.get("meal_type").toString();
+        ingredients = d.get("ingredients").toString();
+        stepsString = d.get("steps").toString();      
+        imageurl = d.get("steps").toString();       
 
         ArrayList<String> steps = stepsFromString(stepsString);
 
-       return new Recipe(name, meal_type, ingredients, steps, imageurl);
+        Recipe r = new Recipe(name, meal_type, ingredients, steps, imageurl);
+        r.setObjectID(d.get("_id").toString());
+        return r;
+    }
+
+    //edits recipe document
+    public void editRecipe(Recipe r) {
+        String objectID = r.getObjectID();
+        if (objectID == "") {
+            System.out.println("ERROR: cannot find matching document to edit");
+            return;
+        }
+
+        Bson filter = eq("_id", new ObjectId(objectID));
+        recipesCollection.updateMany(filter,
+                Updates.combine(Updates.set("meal_type", r.getMealType()),
+                                Updates.set("ingredients", r.getIngredients()),
+                                Updates.set("steps", stepsToString(r.getSteps())),
+                                Updates.set("imageurl", r.getImageURL())));   
+        System.out.println("updated recipe successfully!");
+
     }
 
     //convert steps from arraylist form to string form
@@ -103,7 +112,7 @@ public class RecipeDatabase {
         String stepsText = "";
         for (int i = 0; i < steps.length() - 1; i++) {
             if (steps.substring(i, i+2).equals(";;")) {
-                i += 2;
+                i += 1;
                 al.add(stepsText);
                 stepsText = "";
             }

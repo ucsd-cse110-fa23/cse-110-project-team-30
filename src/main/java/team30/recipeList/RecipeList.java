@@ -198,7 +198,7 @@ class AppFrame extends BorderPane {
             }
         }
         catch (Exception e) {
-            //System.out.println("couldn't open database!");
+            System.out.println("couldn't open database!");
         }
     }
 
