@@ -85,10 +85,10 @@ class DetailRecipe extends VBox {
 
         // initia recipe info
         recipe_name = new Label(recipe.getRecipeTitle().getText());
-        ingredients = new Label(recipe.getIngredients().getText());
+        ingredients = new Label(recipe.getIngredients());
         steps = new ArrayList<>();
         for (int i = 0; i < recipe.getSteps().size(); ++i) {
-            steps.add(new TextArea(recipe.getSteps().get(i).getText()));
+            steps.add(new TextArea(recipe.getSteps().get(i)));
         }
         mealtype = new Label(recipe.getMealType());
 
@@ -275,7 +275,7 @@ public class RecipeDetail {
     public void updateRecipeList() {
         recipe.getSteps().clear();
         for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
-            recipe.getSteps().add(new TextField(dRecipe.getSteps().get(i).getText()));
+            recipe.getSteps().add(dRecipe.getSteps().get(i).getText());
         }
     }
 

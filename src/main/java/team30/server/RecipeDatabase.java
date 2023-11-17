@@ -1,4 +1,5 @@
 package team30.server;
+
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.set;
 import static java.util.Arrays.asList;
@@ -21,43 +22,84 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.InsertManyOptions;
 import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.result.UpdateResult; 
+import com.mongodb.client.result.UpdateResult;
+
+import javafx.scene.control.TextField;
+import team30.recipeList.Recipe; 
 
 public class RecipeDatabase {
-    public static void main( String[] args ) throws IOException {
-        String uri = "mongodb+srv://lil043:VA4U7rBgvZ0EqlNO@cse110.ltw8f69.mongodb.net/?retryWrites=true&w=majority";
+
+    MongoDatabase recipeDB;
+    MongoCollection<Document> recipesCollection;
+
+    String uri = "mongodb+srv://lil043:VA4U7rBgvZ0EqlNO@cse110.ltw8f69.mongodb.net/?retryWrites=true&w=majority";
+
+    //default constructor
+    public RecipeDatabase() {
         try (MongoClient mongoClient = MongoClients.create(uri)) {
             MongoDatabase recipeDB = mongoClient.getDatabase("recipes_db");
             MongoCollection<Document> recipesCollection = recipeDB.getCollection("recipes");
-
-
-            // LAB CODE
-            
-            // List<Document> recipes = new ArrayList<>();
-            // for (int i = 0; i < recipesCollection.countDocuments(); i++) {
-            //     recipes.add(new Document("_id", new ObjectId()).append("recipe", records.get(i).get(0)) //name
-            //                                                     .append("recipe", records.get(i).get(1)) //meal type
-            //                                                     .append("description", records.get(i).get(2)) //ingredients
-            //                                                     .append("hours", records.get(i).get(2))); //steps
-
-            // }
-            // recipesCollection.insertMany(recipes, new InsertManyOptions().ordered(false));
-
-            // System.out.println("Total recipes: " + recipesCollection.countDocuments());
-            
-            // Document spinach = recipesCollection.find(eq("recipe", "Savory Spinach Delight")).first();
-            // System.out.println("Savory Spinach Delight takes " + spinach.get("hours") + " hours to make.");
-
-
-            // Bson updateOperation = set("hours", 4.5);
-            // recipesCollection.updateOne(eq("recipe", "Savory Spinach Delight"), updateOperation);spinach = recipesCollection.find(eq("recipe", "Savory Spinach Delight")).first();
-            // System.out.println("Savory Spinach Delight takes " + spinach.get("hours") + " hours to make.");
-
-            // Bson filter = eq("recipe", "Spicy Shrimp Tacos");
-            // System.out.println("Deleted Spicy Shrimp Tacos");
-            // recipesCollection.deleteOne(filter);
-
-            // System.out.println("Total recipes: " + recipesCollection.countDocuments());
+        }
+        catch (Exception e) {
+            System.out.println("ERROR: failed to access database");
         }
     }
+
+    //insert recipe into database
+    void insertRecipe(String name, String meal_type, String ingredients, ArrayList<String> steps, String imageurl) {
+        Document recipe = new Document("_id", new ObjectId());
+        recipe.append("name", name)
+                .append("meal_type", meal_type)
+                .append("ingredients", ingredients)
+                .append("steps", stepsToString(steps))
+                .append("imageurl", imageurl);
+        recipesCollection.insertOne(recipe);
+    }
+
+    //gets recipe by its id in database (for iteration through database)
+    Recipe getRecipe(int id) {
+        String name, meal_type, ingredients, stepsString, imageurl;
+
+        Document d = recipesCollection.find(eq("_id", id)).first();
+        name = (String) d.get("name");
+        meal_type = (String) d.get("meal_type");
+        ingredients = (String) d.get("ingredients");
+        stepsString = (String) d.get("steps");      
+        imageurl = (String) d.get("steps");       
+
+        ArrayList<String> steps = stepsFromString(stepsString);
+
+       return new Recipe(name, meal_type, ingredients, steps, imageurl);
+    }
+
+    //convert steps from arraylist form to string form
+    String stepsToString(ArrayList<String> steps) {
+        String s = "";
+        for (String step : steps) {
+            if (s != "") 
+                s += ";;"; //separate steps with ;;
+            s += step;
+        }
+        return s;
+    }
+
+    //convert steps from string form to arraylist form
+    ArrayList<String> stepsFromString(String steps) {
+        ArrayList<String> al = new ArrayList<>();
+        String stepsText = "";
+        for (int i = 0; i < steps.length() - 1; i++) {
+            if (steps.substring(i, i+2).equals(";;")) {
+                i += 2;
+                al.add(stepsText);
+                stepsText = "";
+            }
+            else {
+                stepsText += steps.substring(i, i+1);
+            }
+        }
+        if (stepsText != "")
+            al.add(stepsText);
+        return al;
+    }
+
 }

@@ -28,89 +28,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import javafx.scene.paint.Color;
 
-class Recipe extends HBox {
-
-    private Label index;
-    private Button recipe_title;
-    private TextField ingredients;
-    private ArrayList<TextField> steps;
-    private String meal_type;
-
-    Recipe() {
-        this.setPrefSize(450, 40); // sets size of task
-        this.setMaxHeight(HBox.USE_PREF_SIZE); 
-        this.setMinHeight(HBox.USE_PREF_SIZE);
-        this.setSpacing(10);
-
-        // index number
-        index = new Label();
-        index.setStyle("-fx-background-color: #e5da3e; -fx-background-radius: 20");
-        index.setText(""); // create index label
-        index.setPrefSize(40, 40); // set size of Index label
-        index.setTextAlignment(TextAlignment.CENTER); // Set alignment of index label
-        index.setAlignment(Pos.CENTER);
-        index.setPadding(new Insets(0, 0, 0, 0)); // adds some padding to the task
-        this.getChildren().add(index); // add index label to task
-
-        // button
-        recipe_title = new Button("example");
-        recipe_title.setPrefSize(400, 40);
-        recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10");
-
-        // Adding hover effect
-        recipe_title.setOnMouseEntered(e -> recipe_title.setStyle("-fx-background-color: #dccf1e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        recipe_title.setOnMouseExited(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        
-        // Adding click effect
-        recipe_title.setOnMousePressed(e -> recipe_title.setStyle("-fx-background-color: #b4a918; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        recipe_title.setOnMouseReleased(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        this.getChildren().add(recipe_title);
-
-        ingredients = null;
-        steps = null;
-        meal_type = null;
-    }
-
-    Recipe(String recipe_name, TextField ingredients, ArrayList<TextField> steps, String mealType) {
-        this();
-
-        this.ingredients = ingredients;
-        this.steps = steps;
-        this.meal_type = mealType;
-    }
-
-    public void setTaskIndex(int num) {
-        this.index.setText(num + ""); // num to String
-    }
-
-    public Button getRecipeTitle() {
-        return this.recipe_title;
-    }
-
-    public String getMealType() {
-        return this.meal_type;
-    }
-
-    public TextField getIngredients() {
-        return this.ingredients;
-    }
-
-    public ArrayList<TextField> getSteps() {
-        return this.steps;
-    }
-
-    public boolean equals(Recipe other){
-        if(!(this.index.getText().equals(other.index.getText()))) return false;
-        if(!(this.ingredients.getText().equals(other.ingredients.getText()))) return false;
-        if(!(this.recipe_title.getText().equals(other.recipe_title.getText()))) return false;
-        if(!this.meal_type.equals(other.meal_type)) return false;
-        if(this.steps.size() != other.steps.size()) return false;
-        for(int i = 0 ; i < steps.size() ; i++){
-            if(!(this.steps.get(i).equals(other.steps.get(i)))) return false;
-        }
-        return true;
-    }
-}
 class List extends VBox {
 
     List() {
@@ -229,15 +146,7 @@ class AppFrame extends BorderPane {
         putButton = new Button("Put");
         deleteButton = new Button("Delete");
 
-        String recipeName = "example";
-        String mealType = "Lunch";
-        TextField ingredients = new TextField("example ingredients");
-        ArrayList<TextField> steps = new ArrayList<TextField>();
-        steps.add(new TextField("Step 1...."));
-        steps.add(new TextField("Step 2...."));
-        steps.add(new TextField("Step 3...."));
-        recipe = new Recipe(recipeName, ingredients, steps, mealType);
-
+        recipe = new Recipe();
         query = "";
         
 
@@ -247,7 +156,7 @@ class AppFrame extends BorderPane {
 
     AppFrame(Header hd, List ls, ScrollPane sp, Recipe recipe, Button button, RecipeList rl, Button postButton, Button getButton, Button putButton, Button deleteButton) {
         this();
-        
+
         header = hd;
         recipeList = ls;
         scrollPane = sp;
@@ -265,15 +174,7 @@ class AppFrame extends BorderPane {
 
     public void addListeners() {
         addButton.setOnAction(e -> {
-            // (String recipe_name, TextField ingredients, ArrayList<TextField> steps, String mealType)
-            String recipeName = "example";
-            String mealType = "Lunch";
-            TextField ingredients = new TextField("example ingredients");
-            ArrayList<TextField> steps = new ArrayList<TextField>();
-            steps.add(new TextField("Step 1...."));
-            steps.add(new TextField("Step 2...."));
-            steps.add(new TextField("Step 3...."));
-            Recipe recipe = new Recipe(recipeName, ingredients, steps, mealType);
+            Recipe recipe = new Recipe();
             recipeList.getChildren().add(recipe);
             recipeList.updateTaskIndices();
             postButton.fire(); //click HTTP post button
@@ -297,8 +198,9 @@ class AppFrame extends BorderPane {
 
                 String recipeName = "";
                 String mealType = "";
-                TextField ingredients;
-                ArrayList<TextField> steps = new ArrayList<TextField>();
+                String ingredients;
+                ArrayList<String> steps = new ArrayList<String>();
+                String imageurl = "";
 
 
                 int count = 0;
@@ -323,7 +225,7 @@ class AppFrame extends BorderPane {
                         }
                         else {
                             //add prev step
-                            steps.add(new TextField(stepsText));
+                            steps.add(stepsText);
                             stepsText = "";
                             stepsText += str.substring(i, i+1);
                             stepcounter++;
@@ -334,11 +236,11 @@ class AppFrame extends BorderPane {
                     }
                 }
                 //add prev step
-                steps.add(new TextField(stepsText));
-                ingredients = new TextField(ingredientsText);
+                steps.add(stepsText);
+                ingredients = ingredientsText;
 
                 
-                Recipe cur = new Recipe(recipeName, ingredients, steps, mealType);
+                Recipe cur = new Recipe(recipeName, mealType, ingredients, steps, imageurl);
                 recipeList.getChildren().add(cur);
 
                 
@@ -365,10 +267,10 @@ class AppFrame extends BorderPane {
     public String[] getRecipeDetails() {
         String[] details = new String[3];
         details[0] = recipe.getMealType();
-        details[1] = recipe.getIngredients().getText();
+        details[1] = recipe.getIngredients();
         details[2] = "";
         for (int i = 0; i < recipe.getSteps().size(); ++i) {
-            details[2] += recipe.getSteps().get(i).getText();
+            details[2] += recipe.getSteps().get(i);
         }
         return details;
     }
