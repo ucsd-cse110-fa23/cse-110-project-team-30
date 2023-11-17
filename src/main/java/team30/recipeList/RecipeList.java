@@ -22,6 +22,8 @@ import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
 import java.io.*;
 import javafx.util.Pair;
+import team30.server.RecipeDatabase;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -115,18 +117,17 @@ class AppFrame extends BorderPane {
 
     private Header header;
     private List recipeList;
-
     private ScrollPane scrollPane;
 
     private Recipe recipe;
-
     private Button addButton;
     private RecipeList rl;
 
     //unseen buttons for HTTP functions
     private Button postButton, getButton, putButton, deleteButton;
-
     private String query;
+
+    private RecipeDatabase recipeDB;
 
     AppFrame() {
         header = new Header();
@@ -148,8 +149,9 @@ class AppFrame extends BorderPane {
 
         recipe = new Recipe();
         query = "";
-        
 
+        recipeDB = new RecipeDatabase();
+        
         loadRecipes();
         addListeners();
     }
@@ -293,6 +295,10 @@ class AppFrame extends BorderPane {
 
     public String getQuery() {
         return query;
+    }
+
+    public RecipeDatabase getRecipeDB() {
+        return recipeDB;
     }
 
     public void setRecipeList(RecipeList rl) {this.rl = rl;}

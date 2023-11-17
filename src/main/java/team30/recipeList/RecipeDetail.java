@@ -25,6 +25,7 @@ import java.io.*;
 import java.nio.file.StandardCopyOption;
 
 import javafx.util.Pair;
+import team30.server.RecipeDatabase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -214,13 +215,15 @@ public class RecipeDetail {
     private RecipeList rl;
 
     private DetailRecipe dRecipe;
-
     private Recipe recipe;
+
+    private RecipeDatabase recipeDB;
 
     RecipeDetail(RecipeList rl, AppFrame af, Recipe r) {
         this.rl = rl;
         this.recipe = r;
         originalAF = new AppFrame(af.getHeader(), af.getRecipeList(),  af.getScrollPane(), af.getRecipe(), af.getAddButton(), rl, af.getPostButton(), af.getGetButton(), af.getPutButton(), af.getDeleteButton());
+        recipeDB = originalAF.getRecipeDB();
     };
 
     public void openDetailWindow(Recipe recipe) {
@@ -280,6 +283,7 @@ public class RecipeDetail {
     }
 
     public void saveRecipe() {
+        //refactor this into saving into mongodb with recipeDB
         String recipe_title = dRecipe.getRecipeName().getText();
         String meal_type = dRecipe.getMealType().getText();
         String ingredients = dRecipe.getIngredients().getText();
