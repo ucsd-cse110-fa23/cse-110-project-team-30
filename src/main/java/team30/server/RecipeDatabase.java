@@ -52,14 +52,15 @@ public class RecipeDatabase {
     //insert recipe into database
     public void insertRecipe(Recipe r) {
         Document recipe = new Document("_id", new ObjectId());
-        recipe.append("name", r.getRecipeTitle())
+        //recipe.put("name", r.getRecipeTitle().getText());
+        recipe.append("name", r.getRecipeTitle().getText())
                 .append("meal_type", r.getMealType())
                 .append("ingredients", r.getIngredients())
                 .append("steps", stepsToString(r.getSteps()))
                 .append("imageurl", r.getImageURL());
-        System.out.println("inserting new recipe!");
         try {
             recipesCollection.insertOne(recipe);
+            System.out.println("inserted new recipe!");
         }
         catch (Exception e) {
             e.printStackTrace();
