@@ -25,6 +25,7 @@ import java.io.*;
 import java.nio.file.StandardCopyOption;
 
 import javafx.util.Pair;
+import team30.server.RecipeDatabase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,7 +70,7 @@ class DetailFooter extends DetailHeader {
     public Button getBack() {return back;}
 }
 
-class DetailRecipe extends VBox{
+class DetailRecipe extends VBox {
     // recipe info
     private Label recipe_name;
     private Label ingredients;
@@ -85,10 +86,10 @@ class DetailRecipe extends VBox{
 
         // initia recipe info
         recipe_name = new Label(recipe.getRecipeTitle().getText());
-        ingredients = new Label(recipe.getIngredients().getText());
+        ingredients = new Label(recipe.getIngredients());
         steps = new ArrayList<>();
         for (int i = 0; i < recipe.getSteps().size(); ++i) {
-            steps.add(new TextArea(recipe.getSteps().get(i).getText()));
+            steps.add(new TextArea(recipe.getSteps().get(i)));
         }
         mealtype = new Label(recipe.getMealType());
 
@@ -210,46 +211,28 @@ class Ingredient extends HBox {
 }
 
 public class RecipeDetail {
-    private AppFrame originalAF;
+    private AppFrame recipeListAF; //original app frame
+    private AppFrame recipeViewAF; //current app frame
     private RecipeList rl;
-    private ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
 
     private DetailRecipe dRecipe;
-
     private Recipe recipe;
+
+    private RecipeDatabase recipeDB;
+
+    private Scene recipeListScene;
+    private Scene recipeViewScene;
+
+    private boolean editMode;
 
     RecipeDetail(RecipeList rl, AppFrame af, Recipe r) {
         this.rl = rl;
         this.recipe = r;
-        originalAF = new AppFrame(af.getHeader(), af.getRecipeList(),  af.getScrollPane(), af.getRecipe(), af.getAddButton(), rl, af.getPostButton(), af.getGetButton(), af.getPutButton(), af.getDeleteButton());
-    };
+        recipeListAF = af;
+        recipeListScene = rl.getScene();
+        recipeDB = recipeListAF.getRecipeDB();
 
-    public void openDetailWindow(Recipe recipe) {
-        AppFrame af = createDetailView(recipe);
-        
-        rl.getPrimStage().setScene(new Scene(af, 500, 600));
-    }
-
-    public void closeDetailWindow() {
-        rl.getPrimStage().setScene(new Scene(originalAF,500, 600));
-    }
-
-    public void enableEdit() {
-        for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
-            dRecipe.getSteps().get(i).setEditable(true);
-            dRecipe.getSteps().get(i).setMouseTransparent(false);
-        }
-    }
-
-    public void disableEdit() {
-        for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
-            dRecipe.getSteps().get(i).setEditable(false);
-            dRecipe.getSteps().get(i).setMouseTransparent(true);
-        }
-    }
-
-    private AppFrame createDetailView(Recipe recipe) {
-        AppFrame detailView = new AppFrame();
+        recipeViewAF = new AppFrame();
         DetailHeader dhead = new DetailHeader();
         DetailFooter dfooter = new DetailFooter(); 
 
@@ -258,51 +241,69 @@ public class RecipeDetail {
 
         dRecipe = new DetailRecipe(recipe);
         scrollPane = new ScrollPane(dRecipe);
-        // ScrollPane scrollPane = new ScrollPane(new DetailRecipe(recipe));
-
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
-        
-        detailView.setTop(dhead);
-        detailView.setCenter(scrollPane);
-        detailView.setBottom(dfooter);
+        recipeViewAF.setTop(dhead);
+        recipeViewAF.setCenter(scrollPane);
+        recipeViewAF.setBottom(dfooter);
 
         addListeners(dfooter.getBack(), dfooter.getSave(), dfooter.getEdit(), dfooter.getDelete());
-        
-        return detailView;
+
+        editMode = false;
+
+        recipeViewScene = new Scene(recipeViewAF, 500, 600);
+    };
+
+    public void openDetailWindow(Recipe recipe) {
+        rl.getPrimStage().setScene(recipeViewScene);
+        rl.getPrimStage().show();
     }
 
-    public AppFrame getOriginalAppFrame() {return originalAF;}
+    public void closeDetailWindow() {
+        rl.getPrimStage().setScene(recipeListScene);
+        rl.getPrimStage().show();
+    }
+
+    public void enableEdit() {
+        editMode = true;
+        for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
+            dRecipe.getSteps().get(i).setEditable(true);
+            dRecipe.getSteps().get(i).setMouseTransparent(false);
+        }
+    }
+
+    public void disableEdit() {
+        editMode = false;
+        for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
+            dRecipe.getSteps().get(i).setEditable(false);
+            dRecipe.getSteps().get(i).setMouseTransparent(true);
+        }
+    }
 
     public void updateRecipeList() {
         recipe.getSteps().clear();
         for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
-            recipe.getSteps().add(new TextField(dRecipe.getSteps().get(i).getText()));
+            recipe.getSteps().add(dRecipe.getSteps().get(i).getText());
         }
     }
 
     public void saveRecipe() {
-        String recipe_title = dRecipe.getRecipeName().getText();
-        String meal_type = dRecipe.getMealType().getText();
-        String ingredients = dRecipe.getIngredients().getText();
-        ArrayList<String> steps = new ArrayList<String>();
-        for (int i = 0; i < recipe.getSteps().size(); ++i) {
-            steps.add(dRecipe.getSteps().get(i).getText());
-        }
-        
-        try {
-            java.io.FileWriter outfile = new java.io.FileWriter("src\\main\\java\\team30\\recipeList\\recipes.csv", true); //true = append
-            // Recipe,Meal Type,Ingredients,Steps
-            // format with semicolons in between different categories, like recipes.csv in Lab 6
-            outfile.write(recipe_title + ";" + meal_type + ";" + ingredients + ";");
-            for (String s : steps) {
-                outfile.write(s + ";");
+        if (recipe.getObjectID() == "") {  //insert new recipe to database
+            try {
+                String newID = recipeDB.insertRecipe(recipe);
+                recipe.setObjectID(newID);
             }
-            outfile.write("\n");
-            outfile.close();
+            catch (Exception e) {
+                System.out.println("couldn't save to database!");
+            }
         }
-        catch (Exception e) {
-            e.getStackTrace();
+        else { //updating existing recipe in database
+            try {
+                recipeDB.editRecipe(recipe);
+            }
+            catch (Exception e) {
+                System.out.println("couldn't edit database!");
+            }
         }
     }
 
@@ -311,25 +312,21 @@ public class RecipeDetail {
         back.setOnAction(e -> {
             closeDetailWindow();
         });
-
         // listener for save
         save.setOnAction(e -> {
-        // for (Ingredient ingredient : ingredients) {
-        //     ingredient.saveIngredient();
-        // }
             disableEdit();
             updateRecipeList();
             saveRecipe();
         });
-
+        // listener for edit
         edit.setOnAction(e -> {
             enableEdit();
         });
 
         delete.setOnAction(e -> {
-            //Kinda sketchy, may need to change if originalAF makes a deep copy of values.
-            this.originalAF.getRecipeList().removeRecipe(this.recipe);
-            this.originalAF.getDeleteButton().fire();
+            this.recipeListAF.getRecipeList().removeRecipe(this.recipe);
+            recipeDB.deleteRecipe(this.recipe);
+            this.recipeListAF.getDeleteButton().fire();
             closeDetailWindow();
         });
     }

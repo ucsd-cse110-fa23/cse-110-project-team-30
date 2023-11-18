@@ -22,128 +22,19 @@ import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
 import java.io.*;
 import javafx.util.Pair;
+import team30.server.RecipeDatabase;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
+
 import javafx.scene.paint.Color;
 
-class Recipe extends HBox {
+import com.mongodb.client.FindIterable;
+import org.bson.Document;
 
-    private Label index;
-    private Button recipe_title;
-    private TextField ingredients;
-    private ArrayList<TextField> steps;
-    private String meal_type;
-
-    Recipe() {
-        this.setPrefSize(450, 40); // sets size of task
-        this.setMaxHeight(HBox.USE_PREF_SIZE); 
-        this.setMinHeight(HBox.USE_PREF_SIZE);
-        this.setSpacing(10);
-
-        // index number
-        index = new Label();
-        index.setStyle("-fx-background-color: #e5da3e; -fx-background-radius: 20");
-        index.setText(""); // create index label
-        index.setPrefSize(40, 40); // set size of Index label
-        index.setTextAlignment(TextAlignment.CENTER); // Set alignment of index label
-        index.setAlignment(Pos.CENTER);
-        index.setPadding(new Insets(0, 0, 0, 0)); // adds some padding to the task
-        this.getChildren().add(index); // add index label to task
-
-        // button
-        recipe_title = new Button("example");
-        recipe_title.setPrefSize(400, 40);
-        recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10");
-
-        // Adding hover effect
-        recipe_title.setOnMouseEntered(e -> recipe_title.setStyle("-fx-background-color: #dccf1e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        recipe_title.setOnMouseExited(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        
-        // Adding click effect
-        recipe_title.setOnMousePressed(e -> recipe_title.setStyle("-fx-background-color: #b4a918; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        recipe_title.setOnMouseReleased(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        this.getChildren().add(recipe_title);
-
-        ingredients = null;
-        steps = null;
-        meal_type = null;
-    }
-
-    Recipe(String recipe_name, TextField ingredients, ArrayList<TextField> steps, String mealType) {
-        this.setPrefSize(450, 40); // sets size of task
-        this.setMaxHeight(HBox.USE_PREF_SIZE); 
-        this.setMinHeight(HBox.USE_PREF_SIZE);
-        this.setSpacing(10);
-
-        // index number
-        index = new Label();
-        index.setStyle("-fx-background-color: #e5da3e; -fx-background-radius: 20");
-        index.setText(""); // create index label
-        index.setPrefSize(40, 40); // set size of Index label
-        index.setTextAlignment(TextAlignment.CENTER); // Set alignment of index label
-        index.setAlignment(Pos.CENTER);
-        index.setPadding(new Insets(0, 0, 0, 0)); // adds some padding to the task
-        this.getChildren().add(index); // add index label to task
-
-        // button
-        recipe_title = new Button(recipe_name);
-        recipe_title.setPrefSize(400, 40);
-        recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10");
-
-        // Adding hover effect
-        recipe_title.setOnMouseEntered(e -> recipe_title.setStyle("-fx-background-color: #dccf1e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        recipe_title.setOnMouseExited(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-            
-        // Adding click effect
-        recipe_title.setOnMousePressed(e -> recipe_title.setStyle("-fx-background-color: #b4a918; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        recipe_title.setOnMouseReleased(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        this.getChildren().add(recipe_title);
-
-        // deep copy initializing ingredients
-        this.ingredients = ingredients;
-            
-        // deep copy initializing steps
-        this.steps = steps;
-
-        this.meal_type = mealType;
-    }
-
-        
-
-    public void setTaskIndex(int num) {
-        this.index.setText(num + ""); // num to String
-    }
-
-    public Button getRecipeTitle() {
-        return this.recipe_title;
-    }
-
-    public String getMealType() {
-        return this.meal_type;
-    }
-
-    public TextField getIngredients() {
-        return this.ingredients;
-    }
-
-    public ArrayList<TextField> getSteps() {
-        return this.steps;
-    }
-
-    public boolean equals(Recipe other){
-        if(!(this.index.getText().equals(other.index.getText()))) return false;
-        if(!(this.ingredients.getText().equals(other.ingredients.getText()))) return false;
-        if(!(this.recipe_title.getText().equals(other.recipe_title.getText()))) return false;
-        if(!this.meal_type.equals(other.meal_type)) return false;
-        if(this.steps.size() != other.steps.size()) return false;
-        for(int i = 0 ; i < steps.size() ; i++){
-            if(!(this.steps.get(i).equals(other.steps.get(i)))) return false;
-        }
-        return true;
-    }
-}
 class List extends VBox {
 
     List() {
@@ -231,18 +122,17 @@ class AppFrame extends BorderPane {
 
     private Header header;
     private List recipeList;
-
     private ScrollPane scrollPane;
 
     private Recipe recipe;
-
     private Button addButton;
     private RecipeList rl;
 
     //unseen buttons for HTTP functions
     private Button postButton, getButton, putButton, deleteButton;
-
     private String query;
+
+    private RecipeDatabase recipeDB;
 
     AppFrame() {
         header = new Header();
@@ -262,60 +152,18 @@ class AppFrame extends BorderPane {
         putButton = new Button("Put");
         deleteButton = new Button("Delete");
 
-        String recipeName = "example";
-        String mealType = "Lunch";
-        TextField ingredients = new TextField("example ingredients");
-        ArrayList<TextField> steps = new ArrayList<TextField>();
-        steps.add(new TextField("Step 1...."));
-        steps.add(new TextField("Step 2...."));
-        steps.add(new TextField("Step 3...."));
-        recipe = new Recipe(recipeName, ingredients, steps, mealType);
-
+        recipe = new Recipe();
         query = "";
-        
 
+        recipeDB = new RecipeDatabase();
+        
         loadRecipes();
-        addListeners();
-    }
-
-    AppFrame(Header hd, List ls, ScrollPane sp, Recipe recipe, Button button, RecipeList rl, Button postButton, Button getButton, Button putButton, Button deleteButton) {
-        header = hd;
-        recipeList = ls;
-        scrollPane = sp;
-        addButton = button;
-        this.recipe = recipe;
-        this.rl = rl;
-
-        this.setTop(header);
-        this.setCenter(scrollPane);
-
-        addButton = header.getAddButton();
-
-        
-        // postButton = new Button("Post");
-        // getButton = new Button("Get");
-        // putButton = new Button("Put");
-        // deleteButton = new Button("Delete");
-
-        this.postButton = postButton;
-        this.getButton = getButton;
-        this.putButton = putButton;
-        this.deleteButton = deleteButton;
-
         addListeners();
     }
 
     public void addListeners() {
         addButton.setOnAction(e -> {
-            // (String recipe_name, TextField ingredients, ArrayList<TextField> steps, String mealType)
-            String recipeName = "example";
-            String mealType = "Lunch";
-            TextField ingredients = new TextField("example ingredients");
-            ArrayList<TextField> steps = new ArrayList<TextField>();
-            steps.add(new TextField("Step 1...."));
-            steps.add(new TextField("Step 2...."));
-            steps.add(new TextField("Step 3...."));
-            Recipe recipe = new Recipe(recipeName, ingredients, steps, mealType);
+            Recipe recipe = new Recipe();
             recipeList.getChildren().add(recipe);
             recipeList.updateTaskIndices();
             postButton.fire(); //click HTTP post button
@@ -331,59 +179,15 @@ class AppFrame extends BorderPane {
 
     public void loadRecipes() {
         try {
-            FileReader fr = new FileReader("src\\main\\java\\team30\\recipeList\\recipes.csv");
-            BufferedReader br = new BufferedReader(fr);
-            String str = br.readLine(); //Recipe,Meal Type,Ingredients,Steps header line
-            while (br.ready()) {
-                str = br.readLine();
+            long totalRecipes = recipeDB.countDocuments();
+            System.out.println("Total recipes: " + totalRecipes);
 
-                String recipeName = "";
-                String mealType = "";
-                TextField ingredients;
-                ArrayList<TextField> steps = new ArrayList<TextField>();
-
-
-                int count = 0;
-                int stepcounter = 3;
-                String ingredientsText = "", stepsText = "";
-                for (int i = 0; i < str.length(); i++) {
-                    if (str.substring(i, i+1).equals(";")) {
-                        count++;
-                    }
-                    else if (count == 0) {
-                        recipeName += str.substring(i, i+1);
-                    }
-                    else if (count == 1) {
-                        mealType += str.substring(i, i+1);
-                    }
-                    else if (count == 2) {
-                        ingredientsText += str.substring(i, i+1);
-                    }
-                    else if (count >= 3) {
-                        if (stepcounter == count) {
-                            stepsText += str.substring(i, i+1);
-                        }
-                        else {
-                            //add prev step
-                            steps.add(new TextField(stepsText));
-                            stepsText = "";
-                            stepsText += str.substring(i, i+1);
-                            stepcounter++;
-                        }
-                    }
-                    else {
-                        System.out.println("ERROR: invalid semicolon count!");
-                    }
-                }
-                //add prev step
-                steps.add(new TextField(stepsText));
-                ingredients = new TextField(ingredientsText);
-
+            FindIterable<Document> iterDoc = recipeDB.find();
+            Iterator<Document> it = iterDoc.iterator();
+            while (it.hasNext()) {
+                Recipe cur = recipeDB.getRecipe(it.next());
                 
-                Recipe cur = new Recipe(recipeName, ingredients, steps, mealType);
                 recipeList.getChildren().add(cur);
-
-                
                 recipeList.updateTaskIndices();
                 postButton.fire(); //click HTTP post button
 
@@ -392,11 +196,9 @@ class AppFrame extends BorderPane {
                     ord.openDetailWindow(cur);
                 });
             }
-            fr.close();
-            br.close();
         }
         catch (Exception e) {
-            System.out.println("no 'recipes.csv' file found!");
+            System.out.println("couldn't open database!");
         }
     }
 
@@ -407,33 +209,20 @@ class AppFrame extends BorderPane {
     public String[] getRecipeDetails() {
         String[] details = new String[3];
         details[0] = recipe.getMealType();
-        details[1] = recipe.getIngredients().getText();
+        details[1] = recipe.getIngredients();
         details[2] = "";
         for (int i = 0; i < recipe.getSteps().size(); ++i) {
-            details[2] += recipe.getSteps().get(i).getText();
+            details[2] += recipe.getSteps().get(i);
         }
         return details;
     }
 
-    public Button getPostButton() {
-        return postButton;
-    }
-
-    public Button getGetButton() {
-        return getButton;
-    }
-
-    public Button getPutButton() {
-        return putButton;
-    }
-
-    public Button getDeleteButton() {
-        return deleteButton;
-    }
-
-    public String getQuery() {
-        return query;
-    }
+    public Button getPostButton() {return postButton;}
+    public Button getGetButton() {return getButton;}
+    public Button getPutButton() {return putButton;}
+    public Button getDeleteButton() {return deleteButton;}
+    public String getQuery() {return query;}
+    public RecipeDatabase getRecipeDB() {return recipeDB;}
 
     public void setRecipeList(RecipeList rl) {this.rl = rl;}
     public Header getHeader() {return header;}
@@ -447,6 +236,7 @@ class AppFrame extends BorderPane {
 public class RecipeList extends Application {
     private AppFrame root;
     private Stage primStage;
+    private Scene listScene;
     private Button postButton, getButton, putButton, deleteButton;
     Controller controller;
     
@@ -454,6 +244,7 @@ public class RecipeList extends Application {
     public void start(Stage primaryStage) throws Exception {
         root = new AppFrame();
         Model model = new Model();
+        listScene = new Scene(root, 500, 600);
         
         postButton = root.getPostButton();
         getButton = root.getGetButton();
@@ -465,7 +256,7 @@ public class RecipeList extends Application {
         this.primStage = primaryStage;
         root.setRecipeList(this);
         primaryStage.setTitle("PantryPal");
-        primaryStage.setScene(new Scene(root, 500, 600));
+        primaryStage.setScene(listScene);
         primaryStage.setResizable(false);
         primaryStage.show();
     }
@@ -475,35 +266,17 @@ public class RecipeList extends Application {
     }
 
     public Stage getPrimStage() {return primStage;}
+    public Scene getScene() {return listScene;}
     public void setAppFrame(AppFrame af) {root = af;}
 
-    public void setPostButtonAction(EventHandler<ActionEvent> eventHandler) {
-        postButton.setOnAction(eventHandler);
-    }
+    public void setPostButtonAction(EventHandler<ActionEvent> eventHandler) {postButton.setOnAction(eventHandler);}
+    public void setGetButtonAction(EventHandler<ActionEvent> eventHandler) {getButton.setOnAction(eventHandler);}
+    public void setPutButtonAction(EventHandler<ActionEvent> eventHandler) {putButton.setOnAction(eventHandler);}
+    public void setDeleteButtonAction(EventHandler<ActionEvent> eventHandler) {deleteButton.setOnAction(eventHandler);}
 
-    public void setGetButtonAction(EventHandler<ActionEvent> eventHandler) {
-        getButton.setOnAction(eventHandler);
-    }
-
-    public void setPutButtonAction(EventHandler<ActionEvent> eventHandler) {
-        putButton.setOnAction(eventHandler);
-    }
-
-    public void setDeleteButtonAction(EventHandler<ActionEvent> eventHandler) {
-        deleteButton.setOnAction(eventHandler);
-    }
-
-    public String getRecipeName() {
-        return root.getRecipeName();
-    }
-
-    public String[] getRecipeDetails() {
-        return root.getRecipeDetails();
-    }
-
-    public String getQuery() {
-        return root.getQuery();
-    }
+    public String getRecipeName() {return root.getRecipeName();}
+    public String[] getRecipeDetails() {return root.getRecipeDetails();}
+    public String getQuery() {return root.getQuery();}
 
     public void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
