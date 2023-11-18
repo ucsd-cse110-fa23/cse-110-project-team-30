@@ -100,7 +100,7 @@ public class VoiceRecorder {
         backButton = voiceAF.getBackButton();
         
         recordingLabel = new Label("Recording...");
-        recordingLabel.setStyle("-fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px; -fx-text-fill: red; visibility: hidden");
+        recordingLabel.setStyle("-fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px; -fx-fill: red; visibility: hidden");
 
         voiceAF.getMiddle().getChildren().addAll(recordingLabel);
         audioFormat = getAudioFormat();

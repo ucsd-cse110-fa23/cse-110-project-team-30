@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.collections.ArrayChangeListener;
+import javafx.collections.FXCollections;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
@@ -53,6 +54,7 @@ class List extends VBox {
 
     //updates indices on recipes in list
     public void updateTaskIndices() {
+        FXCollections.reverse(this.getChildren());
         int index = 1;
         for (int i = 0; i < this.getChildren().size(); i++) {
             if (this.getChildren().get(i) instanceof Recipe) {
@@ -180,9 +182,9 @@ class AppFrame extends BorderPane {
         addButton.setOnAction(e -> {
             getVoiceRecording();
             Recipe recipe = new Recipe();
-            // recipeList.getChildren().add(recipe);
-            // recipeList.updateTaskIndices();
-            // postButton.fire(); //click HTTP post button
+            recipeList.getChildren().add(recipe);
+            recipeList.updateTaskIndices();
+            postButton.fire(); //click HTTP post button
 
             
             // set button action for open detail windown button
