@@ -326,7 +326,6 @@ public class RecipeDetail {
             enableEdit();
         });
 
-        // TODO: listener for delete
         delete.setOnAction(e -> {
             //Kinda sketchy, may need to change if originalAF makes a deep copy of values.
             this.originalAF.getRecipeList().removeRecipe(this.recipe);
