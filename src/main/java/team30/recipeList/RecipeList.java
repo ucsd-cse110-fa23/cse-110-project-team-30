@@ -30,6 +30,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.TargetDataLine;
+
 import javafx.scene.paint.Color;
 
 import com.mongodb.client.FindIterable;
@@ -44,6 +51,7 @@ class List extends VBox {
         this.setStyle("-fx-background-color: #f8f3c9;-fx-padding: 10;");
     }
 
+    //updates indices on recipes in list
     public void updateTaskIndices() {
         int index = 1;
         for (int i = 0; i < this.getChildren().size(); i++) {
@@ -54,9 +62,7 @@ class List extends VBox {
         }
     }
 
-    /**
-     * Removes the recipe from the list.
-     */
+    //removes recipe from list
     void removeRecipe(Recipe recipeToRemove){
         this.getChildren().removeIf(recipe -> recipe instanceof Recipe && ((Recipe)recipe).equals(recipeToRemove));
         this.updateTaskIndices();
@@ -134,6 +140,9 @@ class AppFrame extends BorderPane {
 
     private RecipeDatabase recipeDB;
 
+    //voice recorder popup
+    VoiceRecorder voiceRecorder;
+
     AppFrame() {
         header = new Header();
         recipeList = new List();
@@ -161,12 +170,19 @@ class AppFrame extends BorderPane {
         addListeners();
     }
 
+    public void getVoiceRecording() {
+        System.out.println("starting voice recording...");
+        voiceRecorder = new VoiceRecorder(rl, this);
+        voiceRecorder.openDetailWindow();
+    }
+
     public void addListeners() {
         addButton.setOnAction(e -> {
+            getVoiceRecording();
             Recipe recipe = new Recipe();
-            recipeList.getChildren().add(recipe);
-            recipeList.updateTaskIndices();
-            postButton.fire(); //click HTTP post button
+            // recipeList.getChildren().add(recipe);
+            // recipeList.updateTaskIndices();
+            // postButton.fire(); //click HTTP post button
 
             
             // set button action for open detail windown button
@@ -279,10 +295,10 @@ public class RecipeList extends Application {
     public String getQuery() {return root.getQuery();}
 
     public void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+        // Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        // alert.setTitle(title);
+        // alert.setHeaderText(null);
+        // alert.setContentText(content);
+        // alert.showAndWait();
     }
 }
