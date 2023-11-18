@@ -322,7 +322,7 @@ public class RecipeDetail {
         edit.setOnAction(e -> {
             enableEdit();
         });
-        // listener for delete
+
         delete.setOnAction(e -> {
             this.recipeListAF.getRecipeList().removeRecipe(this.recipe);
             recipeDB.deleteRecipe(this.recipe);
