@@ -90,8 +90,16 @@ public class Recipe extends HBox {
         return this.meal_type;
     }
 
+    public void setMealType(String meal_type) {
+        this.meal_type = meal_type;
+    }
+
     public String getIngredients() {
         return this.ingredients;
+    }
+
+    public void setIngredients(String ingredients){
+        this.ingredients = ingredients;
     }
 
     public ArrayList<String> getSteps() {
