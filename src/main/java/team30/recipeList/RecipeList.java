@@ -181,17 +181,6 @@ class AppFrame extends BorderPane {
     public void addListeners() {
         addButton.setOnAction(e -> {
             getVoiceRecording();
-            Recipe recipe = new Recipe();
-            recipeList.getChildren().add(recipe);
-            recipeList.updateTaskIndices();
-            postButton.fire(); //click HTTP post button
-
-            
-            // set button action for open detail windown button
-            recipe.getRecipeTitle().setOnAction(f -> {
-                RecipeDetail ord = new RecipeDetail(rl, this, recipe);
-                ord.openDetailWindow(recipe);
-            });
         });
     }
 

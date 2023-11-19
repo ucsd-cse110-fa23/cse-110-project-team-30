@@ -15,7 +15,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 
 import java.io.*;
+import java.net.URISyntaxException;
+
 import javax.sound.sampled.*;
+
+import org.json.JSONException;
 
 class RecorderBorderPane extends BorderPane {
     String tanLight = "#f1eae0", tanDark = "#ede1cf";
@@ -30,6 +34,7 @@ class RecorderBorderPane extends BorderPane {
     private Button backButton;
     private Button startButton;
     private Button stopButton;
+    private Button continueButton;
 
     String defaultButtonStyle = "-fx-font-style: italic; -fx-padding: 10; -fx-background-insets: 5; -fx-font-weight: bold; -fx-font: 11 arial; ";
     
@@ -43,7 +48,9 @@ class RecorderBorderPane extends BorderPane {
         footer = new HBox();
         backButton = new Button("Cancel");
         backButton.setStyle(defaultButtonStyle + "-fx-background-color: " + blue);
-        footer.getChildren().add(backButton);
+        continueButton = new Button("Continue");
+        continueButton.setStyle(defaultButtonStyle + "-fx-background-color: " + purple);
+        footer.getChildren().addAll(backButton, continueButton);
         footer.setAlignment(Pos.CENTER);
 
         middle = new VBox();
@@ -69,6 +76,9 @@ class RecorderBorderPane extends BorderPane {
     public Button getBackButton() {
         return backButton;
     }
+    public Button getContinueButton() {
+        return continueButton;
+    }
     public VBox getMiddle() {
         return middle;
     }
@@ -85,44 +95,135 @@ public class VoiceRecorder {
     private Button startButton;
     private Button stopButton;
     private Button backButton;
+    private Button continueButton;
+
     private AudioFormat audioFormat;
     private TargetDataLine targetDataLine;
     private Label recordingLabel;
+    private Label failedMealTypeLabel, successfulMealTypeLabel, instructionsMealTypeLabel;
+
+    private boolean startedRecording;
+    private boolean completedRecording;
+
+    private String mealtype;
+    String defaultLabelStyle = "-fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px";
+
+    private Whisper audioProcessor;
 
     public VoiceRecorder(RecipeList rl, AppFrame af) {
         this.rl = rl;
         recipeListScene = rl.getScene();
 
         voiceAF = new RecorderBorderPane();
+        audioProcessor = new Whisper();
 
         startButton = voiceAF.getStartButton();
         stopButton = voiceAF.getStopButton();
         backButton = voiceAF.getBackButton();
+        continueButton = voiceAF.getContinueButton();
         
         recordingLabel = new Label("Recording...");
-        recordingLabel.setStyle("-fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px; -fx-fill: red; visibility: hidden");
+        instructionsMealTypeLabel = new Label("Options are 'breakfast', 'lunch', and 'dinner'");
+        failedMealTypeLabel = new Label("Please say 'breakfast', 'lunch', or 'dinner'!");
+        successfulMealTypeLabel = new Label("You said: ");
 
-        voiceAF.getMiddle().getChildren().addAll(recordingLabel);
+        recordingLabel.setStyle(defaultLabelStyle);
+        instructionsMealTypeLabel.setStyle(defaultLabelStyle);
+        failedMealTypeLabel.setStyle(defaultLabelStyle);
+        successfulMealTypeLabel.setStyle(defaultLabelStyle);
+
+        recordingLabel.setWrapText(true);
+        instructionsMealTypeLabel.setWrapText(true);
+        failedMealTypeLabel.setWrapText(true);
+        successfulMealTypeLabel.setWrapText(true);
+
         audioFormat = getAudioFormat();
 
+        startedRecording = false;
+        completedRecording = false;
+        mealtype = "";
+
+        hideLabels();
+        instructionsMealTypeLabel.setVisible(true);
+
+        voiceAF.getMiddle().getChildren().addAll(recordingLabel, instructionsMealTypeLabel, failedMealTypeLabel, successfulMealTypeLabel);
         addListeners();
         voiceScene = new Scene(voiceAF, 500, 600);
     };
 
+    private void hideLabels() {
+        recordingLabel.setVisible(false);
+        instructionsMealTypeLabel.setVisible(false);
+        failedMealTypeLabel.setVisible(false);
+        successfulMealTypeLabel.setVisible(false);
+    }
+
     public void addListeners() {
-        // Start Button
         startButton.setOnAction(e -> {
+            hideLabels();
             startRecording();
         });
-
-        // Stop Button
         stopButton.setOnAction(e -> {
             stopRecording();
-        });
+            if (startedRecording == true) {
+                completedRecording = true;
+            }
+            //process voice recording for meal type
+            if (mealtype == "") {
+                audioProcessor.setInputFile("src\\main\\java\\team30\\recipeList\\mealtype.wav");
+                try {
+                    mealtype = audioProcessor.run();
+                } catch (JSONException | IOException | URISyntaxException e1) {
+                    e1.printStackTrace();
+                }
 
-        //Back Button
+                hideLabels();
+                System.out.println(mealtype.toLowerCase());
+                //check mealtype validity
+                if (mealtype.toLowerCase().equals("breakfast") || mealtype.toLowerCase().equals("lunch") || mealtype.toLowerCase().equals("dinner")) {
+                    //valid
+                    successfulMealTypeLabel.setText("You said: " + mealtype.toLowerCase());
+                    successfulMealTypeLabel.setVisible(true);
+                }
+                else {
+                    failedMealTypeLabel.setVisible(true);
+                    mealtype = "";
+                    completedRecording = false;
+                }
+            }
+            //process ingredients
+            else {
+
+            }
+        });
         backButton.setOnAction(e -> {
+            hideLabels();
+            if (startedRecording == true) {
+                //cancel recording first
+                stopRecording();
+                completedRecording = false;
+            }
             closeDetailWindow();
+        });
+        continueButton.setOnAction(e -> {
+            if (completedRecording == false) {
+                //invalid recording
+                hideLabels();
+                failedMealTypeLabel.setVisible(true);
+            }
+            else {
+                // //process voice recording for meal type
+                // String mealtype = "";
+                // audioProcessor.setInputFile("src\\main\\java\\team30\\recipeList\\mealtype.wav");
+                // try {
+                //     mealtype = audioProcessor.run();
+                // } catch (JSONException | IOException | URISyntaxException e1) {
+                //     e1.printStackTrace();
+                // }
+                // System.out.println(mealtype);
+                // //TODO move onto recording meal type
+
+            }
         });
     }
 
@@ -155,6 +256,7 @@ public class VoiceRecorder {
                         targetDataLine = (TargetDataLine) AudioSystem.getLine(dataLineInfo);
                         targetDataLine.open(audioFormat);
                         targetDataLine.start();
+                        startedRecording = true;
                         recordingLabel.setVisible(true);
 
                         // the AudioInputStream that will be used to write the audio data to a file
@@ -162,12 +264,13 @@ public class VoiceRecorder {
                                 targetDataLine);
 
                         // the file that will contain the audio data
-                        File audioFile = new File("src\\main\\java\\team30\\recipeList\\recording.wav");
+                        File audioFile = new File("src\\main\\java\\team30\\recipeList\\mealtype.wav");
                         AudioSystem.write(
                                 audioInputStream,
                                 AudioFileFormat.Type.WAVE,
                                 audioFile);
                         recordingLabel.setVisible(false);
+                        startedRecording = false;
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -179,9 +282,7 @@ public class VoiceRecorder {
     private void stopRecording() {
         targetDataLine.stop();
         targetDataLine.close();
-        closeDetailWindow();
     }
-
 
     public void openDetailWindow() {
         rl.getPrimStage().setScene(voiceScene);
@@ -203,5 +304,9 @@ public class VoiceRecorder {
         // Adding click effect
         button.setOnMousePressed(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #117e2c;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
         button.setOnMouseReleased(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
+    }
+
+    public boolean successfulRecording() {
+        return completedRecording;
     }
 }
