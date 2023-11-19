@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -73,9 +74,9 @@ class DetailFooter extends DetailHeader {
 class DetailRecipe extends VBox {
     // recipe info
     private Label recipe_name;
-    private Label ingredients;
+    private TextArea ingredients;
     private ArrayList<TextArea> steps;
-    private Label mealtype;
+    private TextField mealtype;
 
     DetailRecipe (Recipe recipe) {
         this.setPrefSize(500, 560); // sets size of task
@@ -86,12 +87,12 @@ class DetailRecipe extends VBox {
 
         // initia recipe info
         recipe_name = new Label(recipe.getRecipeTitle().getText());
-        ingredients = new Label(recipe.getIngredients());
+        ingredients = new TextArea(recipe.getIngredients());
         steps = new ArrayList<>();
         for (int i = 0; i < recipe.getSteps().size(); ++i) {
             steps.add(new TextArea(recipe.getSteps().get(i)));
         }
-        mealtype = new Label(recipe.getMealType());
+        mealtype = new TextField(recipe.getMealType());
 
         // adding first recipe_name & mealtype row
         HBox title_mealtype_HBox = new HBox();
@@ -177,9 +178,9 @@ class DetailRecipe extends VBox {
     }
 
     public Label getRecipeName() {return recipe_name;}
-    public Label getIngredients() {return ingredients;}
+    public TextArea getIngredients() {return ingredients;}
     public ArrayList<TextArea> getSteps() {return steps;}
-    public Label getMealType() {return mealtype;}
+    public TextField getMealType() {return mealtype;}
 }
 
 class DetailHeader extends Header {
