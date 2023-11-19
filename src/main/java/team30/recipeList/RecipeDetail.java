@@ -6,8 +6,10 @@ import javafx.collections.ArrayChangeListener;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.*;
 import javafx.scene.control.Label;
@@ -342,6 +344,9 @@ public class RecipeDetail {
     public void saveEvent(){
         String validMealType = Recipe.validateMealType(dRecipe.getMealType().getText());
         if(validMealType == null){
+            String warningMessage = "Only breakfast, lunch, or dinner are valid mealTypes.";
+            Alert e = new Alert(AlertType.ERROR,warningMessage);
+            e.show();
             return;
         }
         dRecipe.getMealType().setText(validMealType);
