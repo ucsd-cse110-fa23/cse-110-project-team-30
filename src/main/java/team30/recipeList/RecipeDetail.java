@@ -267,6 +267,8 @@ public class RecipeDetail {
 
     public void enableEdit() {
         editMode = true;
+        dRecipe.getIngredients().setEditable(true);
+        dRecipe.getMealType().setEditable(true);
         for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
             dRecipe.getSteps().get(i).setEditable(true);
             dRecipe.getSteps().get(i).setMouseTransparent(false);
@@ -275,6 +277,8 @@ public class RecipeDetail {
 
     public void disableEdit() {
         editMode = false;
+        dRecipe.getIngredients().setEditable(false);
+        dRecipe.getMealType().setEditable(false);
         for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
             dRecipe.getSteps().get(i).setEditable(false);
             dRecipe.getSteps().get(i).setMouseTransparent(true);
@@ -282,6 +286,8 @@ public class RecipeDetail {
     }
 
     public void updateRecipeList() {
+        recipe.setMealType(dRecipe.getMealType().getText());
+        recipe.setIngredients(dRecipe.getIngredients().getText());
         recipe.getSteps().clear();
         for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
             recipe.getSteps().add(dRecipe.getSteps().get(i).getText());
