@@ -101,11 +101,14 @@ public class VoiceRecorder {
     private TargetDataLine targetDataLine;
     private Label recordingLabel;
     private Label failedMealTypeLabel, successfulMealTypeLabel, instructionsMealTypeLabel;
+    private Label instructionsIngredientsLabel, successfulIngredientsLabel;
 
     private boolean startedRecording;
     private boolean completedRecording;
+    private boolean processingIngredients;
+    private boolean completedIngredients;
 
-    private String mealtype;
+    private String mealtype, ingredientsRaw;
     String defaultLabelStyle = "-fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px";
 
     private Whisper audioProcessor;
@@ -126,27 +129,35 @@ public class VoiceRecorder {
         instructionsMealTypeLabel = new Label("Options are 'breakfast', 'lunch', and 'dinner'");
         failedMealTypeLabel = new Label("Please say 'breakfast', 'lunch', or 'dinner'!");
         successfulMealTypeLabel = new Label("You said: ");
+        instructionsIngredientsLabel = new Label("Please list the ingredients you have.");
+        successfulIngredientsLabel = new Label("You said: ");
 
         recordingLabel.setStyle(defaultLabelStyle);
         instructionsMealTypeLabel.setStyle(defaultLabelStyle);
         failedMealTypeLabel.setStyle(defaultLabelStyle);
         successfulMealTypeLabel.setStyle(defaultLabelStyle);
+        instructionsIngredientsLabel.setStyle(defaultLabelStyle);
+        successfulIngredientsLabel.setStyle(defaultLabelStyle);
 
         recordingLabel.setWrapText(true);
         instructionsMealTypeLabel.setWrapText(true);
         failedMealTypeLabel.setWrapText(true);
         successfulMealTypeLabel.setWrapText(true);
+        instructionsIngredientsLabel.setWrapText(true);
+        successfulIngredientsLabel.setWrapText(true);
 
         audioFormat = getAudioFormat();
 
         startedRecording = false;
         completedRecording = false;
+        processingIngredients = false;
+        completedIngredients = false;
         mealtype = "";
 
         hideLabels();
         instructionsMealTypeLabel.setVisible(true);
 
-        voiceAF.getMiddle().getChildren().addAll(recordingLabel, instructionsMealTypeLabel, failedMealTypeLabel, successfulMealTypeLabel);
+        voiceAF.getMiddle().getChildren().addAll(recordingLabel, instructionsMealTypeLabel, failedMealTypeLabel, successfulMealTypeLabel, instructionsIngredientsLabel, successfulIngredientsLabel);
         addListeners();
         voiceScene = new Scene(voiceAF, 500, 600);
     };
@@ -156,12 +167,18 @@ public class VoiceRecorder {
         instructionsMealTypeLabel.setVisible(false);
         failedMealTypeLabel.setVisible(false);
         successfulMealTypeLabel.setVisible(false);
+        instructionsIngredientsLabel.setVisible(false);
+        successfulIngredientsLabel.setVisible(false);
     }
 
     public void addListeners() {
         startButton.setOnAction(e -> {
             hideLabels();
             startRecording();
+            if (processingIngredients)
+                completedIngredients = false;
+            else
+                completedRecording = false;
         });
         stopButton.setOnAction(e -> {
             stopRecording();
@@ -169,7 +186,7 @@ public class VoiceRecorder {
                 completedRecording = true;
             }
             //process voice recording for meal type
-            if (mealtype == "") {
+            if (!processingIngredients) {
                 audioProcessor.setInputFile("src\\main\\java\\team30\\recipeList\\mealtype.wav");
                 try {
                     mealtype = audioProcessor.run();
@@ -184,6 +201,7 @@ public class VoiceRecorder {
                     //valid
                     successfulMealTypeLabel.setText("You said: " + mealtype.toLowerCase());
                     successfulMealTypeLabel.setVisible(true);
+                    completedRecording = true;
                 }
                 else {
                     failedMealTypeLabel.setVisible(true);
@@ -193,7 +211,18 @@ public class VoiceRecorder {
             }
             //process ingredients
             else {
+                audioProcessor.setInputFile("src\\main\\java\\team30\\recipeList\\ingredients.wav");
+                try {
+                    ingredientsRaw = audioProcessor.run();
+                } catch (JSONException | IOException | URISyntaxException e1) {
+                    e1.printStackTrace();
+                }
 
+                System.out.println(ingredientsRaw);
+                hideLabels();
+                successfulIngredientsLabel.setText("You said: " + ingredientsRaw);
+                successfulIngredientsLabel.setVisible(true);
+                completedIngredients = true;
             }
         });
         backButton.setOnAction(e -> {
@@ -211,18 +240,15 @@ public class VoiceRecorder {
                 hideLabels();
                 failedMealTypeLabel.setVisible(true);
             }
-            else {
-                // //process voice recording for meal type
-                // String mealtype = "";
-                // audioProcessor.setInputFile("src\\main\\java\\team30\\recipeList\\mealtype.wav");
-                // try {
-                //     mealtype = audioProcessor.run();
-                // } catch (JSONException | IOException | URISyntaxException e1) {
-                //     e1.printStackTrace();
-                // }
-                // System.out.println(mealtype);
-                // //TODO move onto recording meal type
-
+            else if (!processingIngredients) {
+                //if meal type is valid, process ingredients
+                processingIngredients = true;
+                hideLabels();
+                instructionsIngredientsLabel.setVisible(true);
+            }
+            else if (completedIngredients) {
+                //go back to recipe, do ChatGPT processing
+                closeDetailWindow();
             }
         });
     }
@@ -264,7 +290,11 @@ public class VoiceRecorder {
                                 targetDataLine);
 
                         // the file that will contain the audio data
-                        File audioFile = new File("src\\main\\java\\team30\\recipeList\\mealtype.wav");
+                        File audioFile;
+                        if (!processingIngredients)
+                            audioFile = new File("src\\main\\java\\team30\\recipeList\\mealtype.wav");
+                        else
+                            audioFile = new File("src\\main\\java\\team30\\recipeList\\ingredients.wav");
                         AudioSystem.write(
                                 audioInputStream,
                                 AudioFileFormat.Type.WAVE,
@@ -307,6 +337,14 @@ public class VoiceRecorder {
     }
 
     public boolean successfulRecording() {
-        return completedRecording;
+        return completedIngredients; //everything's completed
+    }
+
+    public String getIngredientAudio() {
+        return ingredientsRaw;
+    }
+
+    public String getMealType() {
+        return mealtype;
     }
 }
