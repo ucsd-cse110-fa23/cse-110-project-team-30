@@ -11,6 +11,22 @@ import javafx.scene.text.TextAlignment;
 
 public class Recipe extends HBox {
 
+    static String[] validMealTypes = {"Breakfast","Lunch","Dinner"};
+
+    /**
+     * Given a string representing a mealType,
+     * changes the string to the standard mealType string if it is a valid meal type.
+     * Else, it returns null
+     * @return a properly capitalized mealType if the given string is valid, and null if not.
+     */
+    static String validateMealType(String mealType){
+        for(String i : validMealTypes){
+            if(mealType.toLowerCase().equals(i.toLowerCase()))
+                return i;
+        }
+        return null;
+    }
+
     private Label index;
     private Button recipe_title;
     private String meal_type;
