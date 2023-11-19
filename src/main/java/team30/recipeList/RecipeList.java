@@ -181,6 +181,15 @@ class AppFrame extends BorderPane {
     public void addListeners() {
         addButton.setOnAction(e -> {
             getVoiceRecording();
+
+            //TODO: figure out how to only check this boolean when other window is closed
+            //to access text:
+            /*
+             * if (voiceRecorder.successfulRecording()) {
+             *      String ingredientsRaw = voiceRecorder.getIngredientAudio()
+             *      String mealtype = voiceRecorder.getMealType()
+             * }
+             */
         });
     }
 

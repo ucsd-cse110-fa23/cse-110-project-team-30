@@ -247,7 +247,7 @@ public class VoiceRecorder {
                 instructionsIngredientsLabel.setVisible(true);
             }
             else if (completedIngredients) {
-                //go back to recipe, do ChatGPT processing
+                //go back to recipe, do ChatGPT 
                 closeDetailWindow();
             }
         });
