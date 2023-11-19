@@ -340,6 +340,11 @@ public class RecipeDetail {
      * Runs the event that happens whenever save button is pressed.
      */
     public void saveEvent(){
+        String validMealType = Recipe.validateMealType(dRecipe.getMealType().getText());
+        if(validMealType == null){
+            return;
+        }
+        dRecipe.getMealType().setText(validMealType);
         disableEdit();
         updateRecipeList();
         saveRecipe();
