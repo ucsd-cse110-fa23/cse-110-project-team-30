@@ -321,9 +321,7 @@ public class RecipeDetail {
         });
         // listener for save
         save.setOnAction(e -> {
-            disableEdit();
-            updateRecipeList();
-            saveRecipe();
+            saveEvent();
         });
         // listener for edit
         edit.setOnAction(e -> {
@@ -336,5 +334,14 @@ public class RecipeDetail {
             this.recipeListAF.getDeleteButton().fire();
             closeDetailWindow();
         });
+    }
+
+    /**
+     * Runs the event that happens whenever save button is pressed.
+     */
+    public void saveEvent(){
+        disableEdit();
+        updateRecipeList();
+        saveRecipe();
     }
 }
