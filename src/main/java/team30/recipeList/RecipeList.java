@@ -188,18 +188,8 @@ class AppFrame extends BorderPane implements RecordingCompletionListener{
             String ingredientsRaw = voiceRecorder.getIngredientAudio();
             String mealtype = voiceRecorder.getMealType();
 
-            ChatGPT chatGPT = new ChatGPT();
-
             if (voiceRecorder.successfulRecording()) {
-                // onRecordingCompleted(mealtype, ingredientsRaw);
-                try {
-                // Generate recipe
-                    String generatedRecipe = chatGPT.generateRecipe(mealtype, ingredientsRaw);
-                    System.out.println("Generated Recipe: ");
-                    System.out.println(generatedRecipe);
-                } catch (Exception err) {
-                    err.printStackTrace();
-                }
+                onRecordingCompleted(mealtype, ingredientsRaw);
             }
         });  
     }
@@ -209,7 +199,16 @@ class AppFrame extends BorderPane implements RecordingCompletionListener{
         System.out.println("Recording completed!");
         System.out.println("Meal Type: " + mealType);
         System.out.println("Ingredients: " + ingredientsRaw);
- 
+
+        ChatGPT chatGPT = new ChatGPT();
+        try {
+            // Generate recipe
+            String generatedRecipe = chatGPT.generateRecipe(mealType, ingredientsRaw);
+            System.out.println("Generated Recipe: ");
+            System.out.println(generatedRecipe);
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
     }
 
     public void loadRecipes() {

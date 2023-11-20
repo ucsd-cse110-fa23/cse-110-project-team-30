@@ -18,7 +18,7 @@ public class ChatGPT {
     public String generateRecipe(String mealType, String ingredientsRaw) throws IOException, InterruptedException, URISyntaxException {
 
         //Our prompt for ChatGPT with our provided mealtype and ingredients
-        String prompt = "Create a recipe for " + mealType + " using these ingredients: " + ingredientsRaw;
+        String prompt = "Create a " + mealType + " recipe using only " + ingredientsRaw + "and common condiments";
         int maxTokens = 200;
 
         // Create a request body which you will pass into request object
@@ -49,9 +49,6 @@ public class ChatGPT {
         JSONObject responseJson = new JSONObject(responseBody);
         JSONArray choices = responseJson.getJSONArray("choices");
         String generatedText = choices.getJSONObject(0).getString("text");
-        System.out.println(generatedText);
-
         return generatedText;
-
    }
 }
