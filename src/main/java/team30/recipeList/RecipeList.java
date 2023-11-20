@@ -23,6 +23,7 @@ import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
 import java.io.*;
 import javafx.util.Pair;
+import team30.recipeList.VoiceRecorder.RecordingCompletionListener;
 import team30.server.RecipeDatabase;
 
 import java.util.ArrayList;
@@ -126,7 +127,7 @@ class Header extends HBox {
 }
 
 
-class AppFrame extends BorderPane {
+class AppFrame extends BorderPane implements RecordingCompletionListener{
 
     private Header header;
     private List recipeList;
@@ -175,22 +176,40 @@ class AppFrame extends BorderPane {
     public void getVoiceRecording() {
         System.out.println("starting voice recording...");
         voiceRecorder = new VoiceRecorder(rl, this);
+        voiceRecorder.setCompletionListener(this);
         voiceRecorder.openDetailWindow();
     }
+
 
     public void addListeners() {
         addButton.setOnAction(e -> {
             getVoiceRecording();
 
-            //TODO: figure out how to only check this boolean when other window is closed
-            //to access text:
-            /*
-             * if (voiceRecorder.successfulRecording()) {
-             *      String ingredientsRaw = voiceRecorder.getIngredientAudio()
-             *      String mealtype = voiceRecorder.getMealType()
-             * }
-             */
-        });
+            String ingredientsRaw = voiceRecorder.getIngredientAudio();
+            String mealtype = voiceRecorder.getMealType();
+
+            ChatGPT chatGPT = new ChatGPT();
+
+            if (voiceRecorder.successfulRecording()) {
+                // onRecordingCompleted(mealtype, ingredientsRaw);
+                try {
+                // Generate recipe
+                    String generatedRecipe = chatGPT.generateRecipe(mealtype, ingredientsRaw);
+                    System.out.println("Generated Recipe: ");
+                    System.out.println(generatedRecipe);
+                } catch (Exception err) {
+                    err.printStackTrace();
+                }
+            }
+        });  
+    }
+
+    public void onRecordingCompleted(String mealType, String ingredientsRaw) {
+        // This method will be called when the voice recording is completed
+        System.out.println("Recording completed!");
+        System.out.println("Meal Type: " + mealType);
+        System.out.println("Ingredients: " + ingredientsRaw);
+ 
     }
 
     public void loadRecipes() {

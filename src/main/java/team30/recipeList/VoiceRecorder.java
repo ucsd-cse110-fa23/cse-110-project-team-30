@@ -112,6 +112,7 @@ public class VoiceRecorder {
     String defaultLabelStyle = "-fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px";
 
     private Whisper audioProcessor;
+    private RecordingCompletionListener completionListener;
 
     public VoiceRecorder(RecipeList rl, AppFrame af) {
         this.rl = rl;
@@ -126,7 +127,7 @@ public class VoiceRecorder {
         continueButton = voiceAF.getContinueButton();
         
         recordingLabel = new Label("Recording...");
-        instructionsMealTypeLabel = new Label("Options are 'breakfast', 'lunch', and 'dinner'");
+        instructionsMealTypeLabel = new Label("Please select your mealtype 'breakfast', 'lunch', or 'dinner'");
         failedMealTypeLabel = new Label("Please say 'breakfast', 'lunch', or 'dinner'!");
         successfulMealTypeLabel = new Label("You said: ");
         instructionsIngredientsLabel = new Label("Please list the ingredients you have.");
@@ -197,9 +198,9 @@ public class VoiceRecorder {
                 hideLabels();
                 System.out.println(mealtype.toLowerCase());
                 //check mealtype validity
-                if (mealtype.toLowerCase().equals("breakfast") || mealtype.toLowerCase().equals("lunch") || mealtype.toLowerCase().equals("dinner")) {
+                if (mealtype.toLowerCase().replaceAll("[.]", "").equals("breakfast") || mealtype.toLowerCase().replaceAll("[.]", "").equals("lunch") || mealtype.toLowerCase().replaceAll("[.]", "").equals("dinner")) {
                     //valid
-                    successfulMealTypeLabel.setText("You said: " + mealtype.toLowerCase());
+                    successfulMealTypeLabel.setText("You said: " + mealtype.toLowerCase().replaceAll("[.]", ""));
                     successfulMealTypeLabel.setVisible(true);
                     completedRecording = true;
                 }
@@ -320,6 +321,9 @@ public class VoiceRecorder {
     }
 
     public void closeDetailWindow() {
+        if (completionListener != null) {
+            completionListener.onRecordingCompleted(mealtype, ingredientsRaw);
+        }
         rl.getPrimStage().setScene(recipeListScene);
         rl.getPrimStage().show();
     }
@@ -346,5 +350,13 @@ public class VoiceRecorder {
 
     public String getMealType() {
         return mealtype;
+    }
+
+    public interface RecordingCompletionListener {
+        void onRecordingCompleted(String mealType, String ingredientsRaw);
+    }
+
+    public void setCompletionListener(RecordingCompletionListener listener) {
+        this.completionListener = listener;
     }
 }
