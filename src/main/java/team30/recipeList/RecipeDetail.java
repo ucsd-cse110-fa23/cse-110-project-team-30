@@ -98,7 +98,7 @@ class DetailRecipe extends VBox {
 
         // adding first recipe_name & mealtype row
         HBox title_mealtype_HBox = new HBox();
-        title_mealtype_HBox.setPrefSize(450, 40); // sets size of task
+        title_mealtype_HBox.setPrefSize(450, 60); // sets size of task
         title_mealtype_HBox.setMaxHeight(HBox.USE_PREF_SIZE); 
         title_mealtype_HBox.setMinHeight(HBox.USE_PREF_SIZE);
         title_mealtype_HBox.setSpacing(15);
