@@ -252,7 +252,7 @@ public class RecipeDetail {
 
         addListeners(dfooter.getBack(), dfooter.getSave(), dfooter.getEdit(), dfooter.getDelete());
 
-        editMode = false;
+        this.disableEdit();
 
         recipeViewScene = new Scene(recipeViewAF, 500, 600);
     };
@@ -263,12 +263,14 @@ public class RecipeDetail {
     }
 
     public void closeDetailWindow() {
+        disableEdit();
         rl.getPrimStage().setScene(recipeListScene);
         rl.getPrimStage().show();
     }
 
     public void enableEdit() {
         editMode = true;
+        ((DetailFooter)recipeViewAF.getBottom()).getEdit().setText("Stop");
         dRecipe.getIngredients().setEditable(true);
         dRecipe.getMealType().setEditable(true);
         for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
@@ -279,6 +281,7 @@ public class RecipeDetail {
 
     public void disableEdit() {
         editMode = false;
+        ((DetailFooter)recipeViewAF.getBottom()).getEdit().setText("Edit");
         dRecipe.getIngredients().setEditable(false);
         dRecipe.getMealType().setEditable(false);
         for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
@@ -327,7 +330,10 @@ public class RecipeDetail {
         });
         // listener for edit
         edit.setOnAction(e -> {
-            enableEdit();
+            if(editMode)
+                disableEdit();
+            else
+                enableEdit();
         });
 
         delete.setOnAction(e -> {
