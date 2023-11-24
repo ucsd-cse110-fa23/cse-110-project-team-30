@@ -330,10 +330,7 @@ public class RecipeDetail {
         });
         // listener for edit
         edit.setOnAction(e -> {
-            if(editMode)
-                disableEdit();
-            else
-                enableEdit();
+            editEvent();
         });
 
         delete.setOnAction(e -> {
@@ -342,6 +339,16 @@ public class RecipeDetail {
             this.recipeListAF.getDeleteButton().fire();
             closeDetailWindow();
         });
+    }
+
+    /**
+     * Method holding what the edit button does.
+     */
+    public void editEvent(){
+        if(editMode)
+                disableEdit();
+            else
+                enableEdit();
     }
 
     /**
