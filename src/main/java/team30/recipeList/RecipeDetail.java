@@ -334,10 +334,7 @@ public class RecipeDetail {
         });
 
         delete.setOnAction(e -> {
-            this.recipeListAF.getRecipeList().removeRecipe(this.recipe);
-            recipeDB.deleteRecipe(this.recipe);
-            this.recipeListAF.getDeleteButton().fire();
-            closeDetailWindow();
+            deleteEvent();
         });
     }
 
@@ -349,6 +346,13 @@ public class RecipeDetail {
                 disableEdit();
             else
                 enableEdit();
+    }
+
+    public void deleteEvent(){
+        this.recipeListAF.getRecipeList().removeRecipe(this.recipe);
+        recipeDB.deleteRecipe(this.recipe);
+        this.recipeListAF.getDeleteButton().fire();
+        closeDetailWindow();
     }
 
     /**
