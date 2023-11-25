@@ -5,6 +5,23 @@ import static org.mockito.ArgumentMatchers.startsWith;
 import java.util.ArrayList;
 
 public class mockRecipe {
+
+    static String[] validMealTypes = {"Breakfast","Lunch","Dinner"};
+
+    /**
+     * Given a string representing a mealType,
+     * changes the string to the standard mealType string if it is a valid meal type.
+     * Else, it returns null
+     * @return a properly capitalized mealType if the given string is valid, and null if not.
+     */
+    static String validateMealType(String mealType){
+        for(String i : validMealTypes){
+            if(mealType.toLowerCase().equals(i.toLowerCase()))
+                return i;
+        }
+        return null;
+    }
+
     private String index;
     private String recipe_title;
     private String mealtype;
