@@ -326,7 +326,7 @@ public class RecipeDetail {
         });
         // listener for save
         save.setOnAction(e -> {
-            saveEvent();
+            saveEvent(true);
         });
         // listener for edit
         edit.setOnAction(e -> {
@@ -353,13 +353,16 @@ public class RecipeDetail {
 
     /**
      * Runs the event that happens whenever save button is pressed.
+     * @param showAlert - a flag that says whether to show the alert or not.
      */
-    public void saveEvent(){
+    public void saveEvent(boolean showAlert){
         String validMealType = Recipe.validateMealType(dRecipe.getMealType().getText());
         if(validMealType == null){
-            String warningMessage = "Only breakfast, lunch, or dinner are valid mealTypes.";
-            Alert e = new Alert(AlertType.ERROR,warningMessage);
-            e.show();
+            if(showAlert){
+                String warningMessage = "Only breakfast, lunch, or dinner are valid mealTypes.";
+                Alert e = new Alert(AlertType.ERROR,warningMessage);
+                e.show();
+            }
             return;
         }
         dRecipe.getMealType().setText(validMealType);
