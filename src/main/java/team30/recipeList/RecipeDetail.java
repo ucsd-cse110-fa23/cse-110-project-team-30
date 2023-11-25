@@ -370,4 +370,20 @@ public class RecipeDetail {
         updateRecipeList();
         saveRecipe();
     }
+
+    public Button getEditButton(){
+        return ((DetailFooter)recipeViewAF.getBottom()).getEdit();
+    }
+
+    public TextField getMealTypeTextField(){
+        return this.dRecipe.getMealType();
+    }
+
+    public TextArea getIngredientsTextArea(){
+        return this.dRecipe.getIngredients();
+    }
+
+    public ArrayList<TextArea> getStepsTextAreas(){
+        return this.dRecipe.getSteps();
+    }
 }
