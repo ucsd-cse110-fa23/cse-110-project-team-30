@@ -84,7 +84,7 @@ class DetailRecipe extends VBox {
         this.setSpacing(15);
         this.setStyle("-fx-background-color: #f8f3c9;");
 
-        // initia recipe info
+        // initial recipe info
         recipe_name = new Label(recipe.getRecipeTitle().getText());
         ingredients = new Label(recipe.getIngredients());
         steps = new ArrayList<>();
@@ -102,7 +102,7 @@ class DetailRecipe extends VBox {
         title_mealtype_HBox.setAlignment(Pos.BASELINE_CENTER);
 
         recipe_name.setPrefSize(315, 40);
-        recipe_name.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10;-fx-font-size: 40;-fx-alignment: CENTER;");
+        recipe_name.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-insets: 5, -fx-background-insets: 5; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10;-fx-font-size: 20;-fx-alignment: CENTER;");
 
         mealtype.setStyle("-fx-background-color: #EDDCF0; -fx-background-radius: 20;-fx-alignment: CENTER;-fx-font-size: 20");
         mealtype.setPrefSize(120, 30);
@@ -134,7 +134,7 @@ class DetailRecipe extends VBox {
         steps_VBox.setPrefSize(450, 460); // sets size of task
         steps_VBox.setMaxHeight(VBox.USE_PREF_SIZE); 
         steps_VBox.setMinHeight(VBox.USE_PREF_SIZE);
-        steps_VBox.setSpacing(5);
+        steps_VBox.setSpacing(15);
         Label steps_title = new Label("Steps");
         steps_title.setStyle("-fx-background-color: #CDF7FA; -fx-background-radius: 20; -fx-alignment: CENTER;-fx-font-size: 20");
         steps_title.setPrefSize(80, 40);
@@ -174,6 +174,7 @@ class DetailRecipe extends VBox {
         this.getChildren().add(title_mealtype_HBox);
         this.getChildren().add(ingredients_HBox);
         this.getChildren().add(steps_VBox);
+        this.setSpacing(10);
     }
 
     public Label getRecipeName() {return recipe_name;}

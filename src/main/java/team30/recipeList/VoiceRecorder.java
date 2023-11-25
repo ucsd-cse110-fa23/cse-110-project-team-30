@@ -198,9 +198,10 @@ public class VoiceRecorder {
                 hideLabels();
                 System.out.println(mealtype.toLowerCase());
                 //check mealtype validity
-                if (mealtype.toLowerCase().replaceAll("[.]", "").equals("breakfast") || mealtype.toLowerCase().replaceAll("[.]", "").equals("lunch") || mealtype.toLowerCase().replaceAll("[.]", "").equals("dinner")) {
+                mealtype = mealtype.toLowerCase().replaceAll("[.]", "");
+                if (mealtype.equals("breakfast") || mealtype.equals("lunch") || mealtype.equals("dinner")) {
                     //valid
-                    successfulMealTypeLabel.setText("You said: " + mealtype.toLowerCase().replaceAll("[.]", ""));
+                    successfulMealTypeLabel.setText("You said: " + mealtype);
                     successfulMealTypeLabel.setVisible(true);
                     completedRecording = true;
                 }

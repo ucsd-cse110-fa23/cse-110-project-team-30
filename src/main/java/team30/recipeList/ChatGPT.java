@@ -18,7 +18,7 @@ public class ChatGPT {
     public String generateRecipe(String mealType, String ingredientsRaw) throws IOException, InterruptedException, URISyntaxException {
 
         //Our prompt for ChatGPT with our provided mealtype and ingredients
-        String prompt = "Create a " + mealType + " recipe using only " + ingredientsRaw + "and common condiments";
+        String prompt = "Create a " + mealType + " recipe using only " + ingredientsRaw + "and common condiments, label the recipe name, ingredients, and instructions";
         int maxTokens = 200;
 
         // Create a request body which you will pass into request object
