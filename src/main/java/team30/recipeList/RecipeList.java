@@ -23,6 +23,7 @@ import javafx.geometry.Rectangle2D;
 import java.io.*;
 import javafx.util.Pair;
 import team30.server.RecipeDatabase;
+import team30.login.Login;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -239,12 +240,18 @@ public class RecipeList extends Application {
     private Scene listScene;
     private Button postButton, getButton, putButton, deleteButton;
     Controller controller;
+    private Login login;
+    private Scene loginScene;
+    private Button loginButton;
+    private Button createButton;
     
     @Override
     public void start(Stage primaryStage) throws Exception {
         root = new AppFrame();
         Model model = new Model();
         listScene = new Scene(root, 500, 600);
+        login = new Login();
+        loginScene = new Scene(login, 250, 300);
         
         postButton = root.getPostButton();
         getButton = root.getGetButton();
@@ -252,11 +259,17 @@ public class RecipeList extends Application {
         deleteButton = root.getDeleteButton();
         
         controller = new Controller(this, model);
+        
+        loginButton = login.getLoginButton();
+        createButton = login.getCreateButton();
+
+        addLoginListeners();
 
         this.primStage = primaryStage;
         root.setRecipeList(this);
         primaryStage.setTitle("PantryPal");
-        primaryStage.setScene(listScene);
+        // primaryStage.setScene(listScene);
+        primaryStage.setScene(loginScene);
         primaryStage.setResizable(false);
         primaryStage.show();
     }
@@ -284,5 +297,20 @@ public class RecipeList extends Application {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    public void addLoginListeners() {
+        loginButton.setOnAction(e -> {
+            // TODO: compare username and password
+
+            // TODO: if true, login
+            // Just Login for now
+            primStage.setScene(listScene); 
+            
+            // TODO: else, prompt not correct
+        });   
+        createButton.setOnAction(e -> {
+            // TODO: Open Create Account Scene;
+        });
     }
 }
