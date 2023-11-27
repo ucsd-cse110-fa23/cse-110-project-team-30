@@ -1,40 +1,13 @@
 package team30.login;
 
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.collections.ArrayChangeListener;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.*;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.geometry.Insets;
 import javafx.scene.text.*;
-import javafx.geometry.Rectangle2D;
-import java.io.*;
-import javafx.util.Pair;
+
 import team30.server.AccountDatabase;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-
-import javafx.scene.paint.Color;
-
-import com.mongodb.client.FindIterable;
-import org.bson.Document;
 
 class LoginCenter extends VBox{
     private Label loginTitLabel;
@@ -45,7 +18,7 @@ class LoginCenter extends VBox{
     private TextField passwordTextField;
 
     LoginCenter() {
-        this.setWidth(400);;
+        this.setWidth(250);
         this.setHeight(250);
 
         userNamLabel = new Label("username: ");

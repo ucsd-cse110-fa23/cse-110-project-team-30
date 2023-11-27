@@ -1,27 +1,15 @@
 package team30.server;
 
-
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Updates.set;
-
-import java.util.ArrayList;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
 
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.IndexOptions;
-import com.mongodb.client.model.Updates;
-import com.mongodb.client.result.UpdateResult;
-
-import team30.recipeList.Recipe; 
 
 public class AccountDatabase {
     MongoDatabase recipeDB;
@@ -29,14 +17,11 @@ public class AccountDatabase {
     MongoClient mongoClient;
 
     // String uri = "mongodb+srv://lil043:VA4U7rBgvZ0EqlNO@cse110.ltw8f69.mongodb.net/?retryWrites=true&w=majority";
-
     String uri = "mongodb+srv://m1ren:IHcPb6UPAHtXNQfK@cluster0.nybipuz.mongodb.net/?retryWrites=true&w=majority";
 
-    //default constructor
     public AccountDatabase() {
         mongoClient = MongoClients.create(uri);
         recipeDB = mongoClient.getDatabase("recipes_db");
-        // recipeDB.createCollection("accounts");
         accountCollection = recipeDB.getCollection("accounts");
         try {
             mongoClient = MongoClients.create(uri);

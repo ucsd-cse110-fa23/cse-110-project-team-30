@@ -23,6 +23,7 @@ import javafx.geometry.Rectangle2D;
 import java.io.*;
 import javafx.util.Pair;
 import team30.server.RecipeDatabase;
+import team30.login.CreateAccount;
 import team30.login.Login;
 
 import java.util.ArrayList;
@@ -241,9 +242,13 @@ public class RecipeList extends Application {
     private Button postButton, getButton, putButton, deleteButton;
     Controller controller;
     private Login login;
+    private CreateAccount createAccount;
     private Scene loginScene;
+    private Scene createAccountScene;
     private Button loginButton;
-    private Button createButton;
+    private Button loginCreateButton;
+    private Button createAccountBackButton;
+    private Button createAccountCreateButton;
     
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -252,6 +257,8 @@ public class RecipeList extends Application {
         listScene = new Scene(root, 500, 600);
         login = new Login();
         loginScene = new Scene(login, 250, 300);
+        createAccount = new CreateAccount();
+        createAccountScene = new Scene(createAccount, 250, 300);
         
         postButton = root.getPostButton();
         getButton = root.getGetButton();
@@ -261,7 +268,9 @@ public class RecipeList extends Application {
         controller = new Controller(this, model);
         
         loginButton = login.getLoginButton();
-        createButton = login.getCreateButton();
+        loginCreateButton = login.getCreateButton();
+        createAccountBackButton = createAccount.getBackButton();
+        createAccountCreateButton = createAccount.getCreateButton();
 
         addLoginListeners();
 
@@ -306,8 +315,14 @@ public class RecipeList extends Application {
                 primStage.setScene(listScene); 
             }
         });   
-        createButton.setOnAction(e -> {
-            // TODO: Open Create Account Scene;
+        loginCreateButton.setOnAction(e -> {
+            primStage.setScene(createAccountScene);
+        });
+        createAccountBackButton.setOnAction(e -> {
+            primStage.setScene(loginScene);
+        });
+        createAccountCreateButton.setOnAction(e -> {
+            // TODO
         });
     }
 }
