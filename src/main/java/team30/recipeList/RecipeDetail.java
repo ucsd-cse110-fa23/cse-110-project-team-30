@@ -379,15 +379,15 @@ public class RecipeDetail {
         return ((DetailFooter)recipeViewAF.getBottom()).getEdit();
     }
 
-    public TextField getMealTypeTextField(){
-        return this.dRecipe.getMealType();
-    }
+    // public TextField getMealTypeTextField(){
+    //     return this.dRecipe.getMealType();
+    // }
 
-    public TextArea getIngredientsTextArea(){
-        return this.dRecipe.getIngredients();
-    }
+    // public TextArea getIngredientsTextArea(){
+    //     return this.dRecipe.getIngredients();
+    // }
 
-    public ArrayList<TextArea> getStepsTextAreas(){
-        return this.dRecipe.getSteps();
-    }
+    // public ArrayList<TextArea> getStepsTextAreas(){
+    //     return this.dRecipe.getSteps();
+    // }
 }
