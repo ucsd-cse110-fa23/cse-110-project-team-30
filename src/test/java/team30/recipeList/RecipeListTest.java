@@ -108,4 +108,27 @@ public class RecipeListTest {
     @Test void testHeaderInitialization() {
         assertNotEquals(null, header.getAddButton());
     }
+    
+    @Test
+    void testValidator(){
+
+        String empty = "";
+        String invalid = "inedible Lunch";
+        String lunchLower = "lunch";
+        String breakfastLower = "breakfast";
+        String dinnerLower = "dinner";
+        String lunchUpper = "LUNCH";
+        String breakfastUpper = "BREAKFAST";
+        String dinnerUpper = "DINNER";
+
+        assertEquals(Recipe.validateMealType(empty),null, "Validator doesn't give null if string is empty.");
+        assertEquals(Recipe.validateMealType(invalid),null, "Validator doesn't give null to an invalid string");
+        assertEquals(Recipe.validateMealType(lunchLower),"Lunch","Validator doesn't correctly validate lowercase lunch");
+        assertEquals(Recipe.validateMealType(dinnerLower),"Dinner","Validator doesn't correctly validate lowercase dinner");
+        assertEquals(Recipe.validateMealType(breakfastLower),"Breakfast","Validator doesn't correctly validate lowercase breakfast");
+        assertEquals(Recipe.validateMealType(lunchUpper),"Lunch","Validator doesn't correctly validate uppercase lunch");
+        assertEquals(Recipe.validateMealType(dinnerUpper),"Dinner","Validator doesn't correctly validate uppercase dinner");
+        assertEquals(Recipe.validateMealType(breakfastUpper),"Breakfast","Validator doesn't correctly validate upcase breakfast");
+    }
+    
 }

@@ -6,14 +6,17 @@ import javafx.collections.ArrayChangeListener;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -92,9 +95,9 @@ class DetailFooter extends HBox {
 class DetailRecipe extends VBox {
     // recipe info
     private Label recipe_name;
-    private Label ingredients;
+    private TextArea ingredients;
     private ArrayList<TextArea> steps;
-    private Label mealtype;
+    private TextField mealtype;
 
     String tanLight = "#f1eae0", tanDark = "#ede1cf";
     String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
@@ -109,16 +112,16 @@ class DetailRecipe extends VBox {
 
         // initial recipe info
         recipe_name = new Label(recipe.getRecipeTitle().getText());
-        ingredients = new Label(recipe.getIngredients());
+        ingredients = new TextArea(recipe.getIngredients());
         steps = new ArrayList<>();
         for (int i = 0; i < recipe.getSteps().size(); ++i) {
             steps.add(new TextArea(recipe.getSteps().get(i)));
         }
-        mealtype = new Label(recipe.getMealType());
+        mealtype = new TextField(recipe.getMealType());
 
         // adding first recipe_name & mealtype row
         HBox title_mealtype_HBox = new HBox();
-        title_mealtype_HBox.setPrefSize(450, 40); // sets size of task
+        title_mealtype_HBox.setPrefSize(450, 60); // sets size of task
         title_mealtype_HBox.setMaxHeight(HBox.USE_PREF_SIZE); 
         title_mealtype_HBox.setMinHeight(HBox.USE_PREF_SIZE);
         title_mealtype_HBox.setSpacing(15);
@@ -201,9 +204,9 @@ class DetailRecipe extends VBox {
     }
 
     public Label getRecipeName() {return recipe_name;}
-    public Label getIngredients() {return ingredients;}
+    public TextArea getIngredients() {return ingredients;}
     public ArrayList<TextArea> getSteps() {return steps;}
-    public Label getMealType() {return mealtype;}
+    public TextField getMealType() {return mealtype;}
 }
 
 class Ingredient extends HBox {
@@ -280,7 +283,7 @@ public class RecipeDetail {
 
         addListeners(dfooter.getBack(), dfooter.getSave(), dfooter.getEdit(), dfooter.getDelete(), dfooter.getCancel());
 
-        editMode = false;
+        this.disableEdit();
 
         recipeViewScene = new Scene(recipeViewAF, 500, 600);
     };
@@ -292,6 +295,7 @@ public class RecipeDetail {
     }
 
     public void closeDetailWindow() {
+        disableEdit();
         rl.getPrimStage().setScene(recipeListScene);
         System.out.println("?????");
         rl.getPrimStage().show();
@@ -299,6 +303,9 @@ public class RecipeDetail {
 
     public void enableEdit() {
         editMode = true;
+        ((DetailFooter)recipeViewAF.getBottom()).getEdit().setText("Stop");
+        dRecipe.getIngredients().setEditable(true);
+        dRecipe.getMealType().setEditable(true);
         for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
             dRecipe.getSteps().get(i).setEditable(true);
             dRecipe.getSteps().get(i).setMouseTransparent(false);
@@ -307,6 +314,9 @@ public class RecipeDetail {
 
     public void disableEdit() {
         editMode = false;
+        ((DetailFooter)recipeViewAF.getBottom()).getEdit().setText("Edit");
+        dRecipe.getIngredients().setEditable(false);
+        dRecipe.getMealType().setEditable(false);
         for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
             dRecipe.getSteps().get(i).setEditable(false);
             dRecipe.getSteps().get(i).setMouseTransparent(true);
@@ -314,6 +324,8 @@ public class RecipeDetail {
     }
 
     public void updateRecipeList() {
+        recipe.setMealType(dRecipe.getMealType().getText());
+        recipe.setIngredients(dRecipe.getIngredients().getText());
         recipe.getSteps().clear();
         for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
             recipe.getSteps().add(dRecipe.getSteps().get(i).getText());
@@ -357,20 +369,15 @@ public class RecipeDetail {
         });
         // listener for save
         save.setOnAction(e -> {
-            disableEdit();
-            updateRecipeList();
-            saveRecipe();
+            saveEvent(true);
         });
         // listener for edit
         edit.setOnAction(e -> {
-            enableEdit();
+            editEvent();
         });
 
         delete.setOnAction(e -> {
-            this.recipeListAF.getRecipeList().removeRecipe(this.recipe);
-            recipeDB.deleteRecipe(this.recipe);
-            this.recipeListAF.getDeleteButton().fire();
-            closeDetailWindow();
+            deleteEvent();
         });
 
         cancel.setOnAction(e -> {
@@ -380,4 +387,57 @@ public class RecipeDetail {
             closeDetailWindow();
         });
     }
+
+    /**
+     * Method holding what the edit button does.
+     */
+    public void editEvent(){
+        if(editMode)
+                disableEdit();
+            else
+                enableEdit();
+    }
+
+    public void deleteEvent(){
+        this.recipeListAF.getRecipeList().removeRecipe(this.recipe);
+        recipeDB.deleteRecipe(this.recipe);
+        this.recipeListAF.getDeleteButton().fire();
+        closeDetailWindow();
+    }
+
+    /**
+     * Runs the event that happens whenever save button is pressed.
+     * @param showAlert - a flag that says whether to show the alert or not.
+     */
+    public void saveEvent(boolean showAlert){
+        String validMealType = Recipe.validateMealType(dRecipe.getMealType().getText());
+        if(validMealType == null){
+            if(showAlert){
+                String warningMessage = "Only breakfast, lunch, or dinner are valid mealTypes.";
+                Alert e = new Alert(AlertType.ERROR,warningMessage);
+                e.show();
+            }
+            return;
+        }
+        dRecipe.getMealType().setText(validMealType);
+        disableEdit();
+        updateRecipeList();
+        saveRecipe();
+    }
+
+    public Button getEditButton(){
+        return ((DetailFooter)recipeViewAF.getBottom()).getEdit();
+    }
+
+    // public TextField getMealTypeTextField(){
+    //     return this.dRecipe.getMealType();
+    // }
+
+    // public TextArea getIngredientsTextArea(){
+    //     return this.dRecipe.getIngredients();
+    // }
+
+    // public ArrayList<TextArea> getStepsTextAreas(){
+    //     return this.dRecipe.getSteps();
+    // }
 }
