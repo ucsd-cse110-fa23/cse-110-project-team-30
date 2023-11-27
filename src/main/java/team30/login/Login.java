@@ -23,6 +23,7 @@ import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
 import java.io.*;
 import javafx.util.Pair;
+import team30.server.AccountDatabase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +40,7 @@ class LoginCenter extends VBox{
     private Label loginTitLabel;
     private Label userNamLabel;
     private Label passwordLabel;
+    private Label invalidPrompt;
     private TextField userNameTextField;
     private TextField passwordTextField;
 
@@ -50,6 +52,9 @@ class LoginCenter extends VBox{
         passwordLabel = new Label("password: ");
         loginTitLabel = new Label("Log In Your Account");
         loginTitLabel.setFont(new Font(20));
+        invalidPrompt = new Label("Incorrect password or username not exists");
+        invalidPrompt.setFont(new Font(12));;
+        invalidPrompt.setVisible(false);
 
         userNameTextField = new TextField();
         passwordTextField = new TextField();
@@ -70,13 +75,16 @@ class LoginCenter extends VBox{
 
         this.getChildren().add(loginTitLabel);
         this.getChildren().addAll(userNameHBox, passwodHBox);
+        this.getChildren().add(invalidPrompt);
         this.setSpacing(20);
         this.setAlignment(Pos.TOP_CENTER);
     }
 
     public TextField getUserNameTextField() {return userNameTextField;}
     public TextField getPasswordTextField() {return passwordTextField;}
-
+    public void showInvalidPrompt() {invalidPrompt.setVisible(true);}
+    public void setInvalidPassword() {invalidPrompt.setText("Incorrect Password");}
+    public void setInvalidUsername() {invalidPrompt.setText("Username Does Not Exist");}
 }
 
 class LoginFooter extends HBox{
@@ -125,12 +133,14 @@ public class Login extends BorderPane{
     private LoginFooter loginFooter;
     private Button loginButton;
     private Button createButton;
+    private AccountDatabase db;
 
     public Login() {
         loginCenter = new LoginCenter();
         loginFooter = new LoginFooter();
         loginButton = loginFooter.getLoginButton();
         createButton = loginFooter.getCreateButton();
+        db = new AccountDatabase();
 
         this.setCenter(loginCenter);
         this.setBottom(loginFooter);
@@ -142,4 +152,23 @@ public class Login extends BorderPane{
     public LoginFooter getLoginFooter() {return loginFooter;}
     public Button getLoginButton() {return loginButton;}
     public Button getCreateButton() {return createButton;}
+    
+    public int validUser() {
+        String username = loginCenter.getUserNameTextField().getText();
+        String password = loginCenter.getPasswordTextField().getText();
+
+        int match = db.validUser(username, password);
+        if (match == 1) {
+            loginCenter.setInvalidPassword();
+            loginCenter.showInvalidPrompt();
+            loginCenter.getPasswordTextField().setText("");
+        }
+        else if (match == -1) {
+            loginCenter.setInvalidUsername();
+            loginCenter.showInvalidPrompt();
+            loginCenter.getPasswordTextField().setText("");
+        }
+
+        return match;
+    }
 }

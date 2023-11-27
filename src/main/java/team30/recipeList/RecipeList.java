@@ -301,13 +301,10 @@ public class RecipeList extends Application {
 
     public void addLoginListeners() {
         loginButton.setOnAction(e -> {
-            // TODO: compare username and password
-
-            // TODO: if true, login
-            // Just Login for now
-            primStage.setScene(listScene); 
-            
-            // TODO: else, prompt not correct
+            int match = login.validUser();
+            if (match == 0) {
+                primStage.setScene(listScene); 
+            }
         });   
         createButton.setOnAction(e -> {
             // TODO: Open Create Account Scene;
