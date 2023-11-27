@@ -218,6 +218,42 @@ public class RecipeDetailTest {
     }
 
     @Test
+    void testInvalidMealTypeSaves(){
+        rl.openDetailWindow(concrete_recipe);
+
+        ArrayList<String> steps1 = new ArrayList<>();
+        steps1.add("Step 1");
+        steps1.add("Step 2");
+        steps1.add("Step 3");
+        steps1.add("Step 4");
+        mockRecipe recipe1 = new mockRecipe("Recipe 1", "Some ingredients", steps1, "Inedible");
+        rl.setDRecipe(recipe1);
+        footer.getSave().fire(rl);
+
+        ArrayList<String> steps3 = new ArrayList<>();
+        steps3.add("Step 1");
+        mockRecipe recipe3 = new mockRecipe("Recipe 3", "Some ingredients", steps3, "Dinner");
+        rl.setDRecipe(recipe3);
+        footer.getSave().fire(rl);
+
+        String filePath = "test.csv";
+        try {
+            // drop test.csv first
+            Path path = FileSystems.getDefault().getPath(filePath);
+            if (Files.exists(path)) {
+                Files.delete(path);
+            }
+
+            BufferedReader reader = new BufferedReader(new FileReader(filePath));
+            String line = reader.readLine();
+            assertEquals(null,line,"Check if nothing is added.");
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
     void testEditButton() {
         // open detail windows, then buttons show up
         rl.openDetailWindow(concrete_recipe);

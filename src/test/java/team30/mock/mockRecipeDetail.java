@@ -44,6 +44,9 @@ public class mockRecipeDetail {
         for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
             steps.add(dRecipe.getSteps().get(i));
         }
+
+        String mealTypeString = mockRecipe.validateMealType(meal_type);
+        if(mealTypeString != "Breakfast" && mealTypeString != "Lunch" && mealTypeString != "Dinner") return;
         
         try {
             java.io.FileWriter outfile = new java.io.FileWriter("test.csv", true); //true = append
