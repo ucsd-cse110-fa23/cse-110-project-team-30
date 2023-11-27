@@ -257,6 +257,11 @@ class AppFrame extends BorderPane implements RecordingCompletionListener{
                 RecipeDetail ord = new RecipeDetail(rl, this, cur);
                 ord.openDetailWindow(cur);
             });
+
+            RecipeDetail tmp = new RecipeDetail(rl, this, cur);
+            tmp.setCancellable(true);
+            System.out.println("OPENING NEW RECIPE...");
+            tmp.openDetailWindow(cur);
         } catch (Exception err) {
             err.printStackTrace();
         }

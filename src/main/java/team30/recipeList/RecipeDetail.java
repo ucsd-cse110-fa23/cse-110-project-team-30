@@ -33,41 +33,60 @@ import java.util.Collections;
 import java.util.Comparator;
 import javafx.scene.paint.Color;
 
-class DetailFooter extends DetailHeader {
+class DetailFooter extends HBox {
 
     private Button edit;
     private Button delete;
     private Button save;
     private Button back;
 
+    private Button cancel;
+
+    String tanLight = "#f1eae0", tanDark = "#ede1cf";
+    String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
+    String magenta = "#a64d79", green = "#a64d79";
+
     DetailFooter() {
         super();
         this.setPrefSize(500, 40);
-        this.setStyle("-fx-background-color: #f8f3c9;");
 
         edit = new Button("Edit");
         delete = new Button("Delete");
         save = new Button("Save");
         back = new Button("Back");
+        cancel = new Button("Cancel");
         this.setButtonStyle(back);
         this.setButtonStyle(edit);
         this.setButtonStyle(delete);
         this.setButtonStyle(save);
+        this.setButtonStyle(cancel);
+        cancel.setVisible(false);
 
-        this.getChildren().remove(this.getSave());
-        this.getChildren().remove(this.getBack());
-        this.getChildren().remove(this.getTitleText());
-        this.setMargin(save, new Insets(0, 0, 0, 10));
-        this.setMargin(delete, new Insets(0, 0, 0, 10));
-        this.setMargin(edit, new Insets(0, 0, 0, 10));
-        this.getChildren().addAll(back, edit, delete, save);
+        this.setSpacing(10);
+
+        this.getChildren().addAll(back, edit, delete, save, cancel);
         this.setAlignment(Pos.CENTER_RIGHT);
+        
+        this.setStyle("-fx-background-color: " + tanDark);
+    }
+
+    public void setButtonStyle(Button button) {
+        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10";
+        button.setStyle(defaultButtonStyle);
+        // Adding hover effect
+        button.setOnMouseEntered(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #7dedb3;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
+        button.setOnMouseExited(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
+        
+        // Adding click effect
+        button.setOnMousePressed(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #117e2c;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
+        button.setOnMouseReleased(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
     }
 
     public Button getEdit() {return edit;}
     public Button getDelete() {return delete;}
     public Button getSave() {return save;}
     public Button getBack() {return back;}
+    public Button getCancel() {return cancel;}
 }
 
 class DetailRecipe extends VBox {
@@ -77,12 +96,16 @@ class DetailRecipe extends VBox {
     private ArrayList<TextArea> steps;
     private Label mealtype;
 
+    String tanLight = "#f1eae0", tanDark = "#ede1cf";
+    String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
+    String magenta = "#a64d79", green = "#a64d79";
+
     DetailRecipe (Recipe recipe) {
         this.setPrefSize(500, 560); // sets size of task
         this.setMaxHeight(VBox.USE_PREF_SIZE); 
         this.setMinHeight(VBox.USE_PREF_SIZE);
         this.setSpacing(15);
-        this.setStyle("-fx-background-color: #f8f3c9;");
+        this.setStyle("-fx-background-color: " + tanLight);
 
         // initial recipe info
         recipe_name = new Label(recipe.getRecipeTitle().getText());
@@ -183,15 +206,6 @@ class DetailRecipe extends VBox {
     public Label getMealType() {return mealtype;}
 }
 
-class DetailHeader extends Header {
-
-    DetailHeader() {
-        super();
-        this.getChildren().remove(this.getAddButton());
-        this.setAlignment(Pos.CENTER_LEFT);
-    }
-}
-
 class Ingredient extends HBox {
     private TextField ingredient;
 
@@ -226,6 +240,15 @@ public class RecipeDetail {
 
     private boolean editMode;
 
+    private HBox header;
+    private Text titleText;
+
+    String tanLight = "#f1eae0", tanDark = "#ede1cf";
+    String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
+    String magenta = "#a64d79", green = "#a64d79";
+
+    DetailFooter dfooter;
+
     RecipeDetail(RecipeList rl, AppFrame af, Recipe r) {
         this.rl = rl;
         this.recipe = r;
@@ -234,21 +257,28 @@ public class RecipeDetail {
         recipeDB = recipeListAF.getRecipeDB();
 
         recipeViewAF = new AppFrame();
-        DetailHeader dhead = new DetailHeader();
-        DetailFooter dfooter = new DetailFooter(); 
 
+        //header
+        header = new HBox();
+        titleText = new Text("PantryPal");
+        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 40; -fx-fill: " + magenta);
+        header.getChildren().add(titleText);
+        header.setAlignment(Pos.CENTER);
+        header.setStyle("-fx-background-color: " + tanLight);
+
+        //footer
+        dfooter = new DetailFooter(); 
         ScrollPane scrollPane = new ScrollPane(new DetailRecipe(recipe));
-        this.recipe = recipe;
 
         dRecipe = new DetailRecipe(recipe);
         scrollPane = new ScrollPane(dRecipe);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
-        recipeViewAF.setTop(dhead);
+        recipeViewAF.setTop(header);
         recipeViewAF.setCenter(scrollPane);
         recipeViewAF.setBottom(dfooter);
 
-        addListeners(dfooter.getBack(), dfooter.getSave(), dfooter.getEdit(), dfooter.getDelete());
+        addListeners(dfooter.getBack(), dfooter.getSave(), dfooter.getEdit(), dfooter.getDelete(), dfooter.getCancel());
 
         editMode = false;
 
@@ -257,11 +287,13 @@ public class RecipeDetail {
 
     public void openDetailWindow(Recipe recipe) {
         rl.getPrimStage().setScene(recipeViewScene);
+        System.out.println("!!!!!!!!!");
         rl.getPrimStage().show();
     }
 
     public void closeDetailWindow() {
         rl.getPrimStage().setScene(recipeListScene);
+        System.out.println("?????");
         rl.getPrimStage().show();
     }
 
@@ -308,9 +340,19 @@ public class RecipeDetail {
         }
     }
 
-    public void addListeners(Button back, Button save, Button edit, Button delete) {
+    public void setCancellable(boolean b) {
+        if (b == true) {
+            dfooter.getCancel().setVisible(true);
+        }
+        else {
+            dfooter.getCancel().setVisible(false);
+        }   
+    }
+
+    public void addListeners(Button back, Button save, Button edit, Button delete, Button cancel) {
         // listener for Back
         back.setOnAction(e -> {
+            setCancellable(false);
             closeDetailWindow();
         });
         // listener for save
@@ -328,6 +370,13 @@ public class RecipeDetail {
             this.recipeListAF.getRecipeList().removeRecipe(this.recipe);
             recipeDB.deleteRecipe(this.recipe);
             this.recipeListAF.getDeleteButton().fire();
+            closeDetailWindow();
+        });
+
+        cancel.setOnAction(e -> {
+            //don't save recipe to list
+            this.recipeListAF.getRecipeList().removeRecipe(this.recipe);
+            recipeDB.deleteRecipe(this.recipe);
             closeDetailWindow();
         });
     }
