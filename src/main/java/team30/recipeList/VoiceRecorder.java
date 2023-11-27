@@ -232,8 +232,8 @@ public class VoiceRecorder {
             if (startedRecording == true) {
                 //cancel recording first
                 stopRecording();
-                completedRecording = false;
             }
+            completedRecording = false;
             closeDetailWindow();
         });
         continueButton.setOnAction(e -> {
@@ -322,11 +322,13 @@ public class VoiceRecorder {
     }
 
     public void closeDetailWindow() {
-        if (completionListener != null) {
+        rl.getPrimStage().setScene(recipeListScene);
+        if (successfulRecording() && completionListener != null) {
             completionListener.onRecordingCompleted(mealtype, ingredientsRaw);
         }
-        rl.getPrimStage().setScene(recipeListScene);
-        rl.getPrimStage().show();
+        else {
+            rl.getPrimStage().show();
+        }
     }
     
     public void setButtonStyle(Button button) {
@@ -342,7 +344,7 @@ public class VoiceRecorder {
     }
 
     public boolean successfulRecording() {
-        return completedIngredients; //everything's completed
+        return completedIngredients && completedRecording; //everything's completed
     }
 
     public String getIngredientAudio() {

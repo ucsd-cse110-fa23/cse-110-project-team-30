@@ -55,7 +55,6 @@ class List extends VBox {
 
     //updates indices on recipes in list
     public void updateTaskIndices() {
-        FXCollections.reverse(this.getChildren());
         int index = 1;
         for (int i = 0; i < this.getChildren().size(); i++) {
             if (this.getChildren().get(i) instanceof Recipe) {
@@ -127,7 +126,7 @@ class Header extends HBox {
 }
 
 
-class AppFrame extends BorderPane implements RecordingCompletionListener{
+class AppFrame extends BorderPane implements RecordingCompletionListener {
 
     private Header header;
     private List recipeList;
@@ -249,14 +248,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener{
             }
             
             Recipe cur = new Recipe(recipeName, mealType, ingredients, steps, imgurl);
-            recipeList.getChildren().add(cur);
-            recipeList.updateTaskIndices();
-            postButton.fire(); //click HTTP post button
-
-            cur.getRecipeTitle().setOnAction(f -> {
-                RecipeDetail ord = new RecipeDetail(rl, this, cur);
-                ord.openDetailWindow(cur);
-            });
+            addRecipe(cur);
 
             RecipeDetail tmp = new RecipeDetail(rl, this, cur);
             tmp.setCancellable(true);
@@ -265,6 +257,20 @@ class AppFrame extends BorderPane implements RecordingCompletionListener{
         } catch (Exception err) {
             err.printStackTrace();
         }
+    }
+
+    public void addRecipe(Recipe cur) {
+        FXCollections.reverse(recipeList.getChildren());
+        recipeList.getChildren().add(cur);
+        recipeList.updateTaskIndices();
+        postButton.fire(); //click HTTP post button
+
+        cur.getRecipeTitle().setOnAction(f -> {
+            RecipeDetail ord = new RecipeDetail(rl, this, cur);
+            ord.openDetailWindow(cur);
+        });
+        
+        FXCollections.reverse(recipeList.getChildren());
     }
 
     public void loadRecipes() {
@@ -277,14 +283,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener{
             while (it.hasNext()) {
                 Recipe cur = recipeDB.getRecipe(it.next());
                 
-                recipeList.getChildren().add(cur);
-                recipeList.updateTaskIndices();
-                postButton.fire(); //click HTTP post button
-
-                cur.getRecipeTitle().setOnAction(f -> {
-                    RecipeDetail ord = new RecipeDetail(rl, this, cur);
-                    ord.openDetailWindow(cur);
-                });
+                addRecipe(cur);
             }
         }
         catch (Exception e) {
