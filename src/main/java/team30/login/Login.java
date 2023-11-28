@@ -106,6 +106,7 @@ public class Login extends BorderPane{
     private LoginFooter loginFooter;
     private Button loginButton;
     private Button createButton;
+    private String username;
     private AccountDatabase db;
 
     public Login() {
@@ -144,4 +145,7 @@ public class Login extends BorderPane{
 
         return match;
     }
+
+    public String getUsername() {return username;}
+    public void setUsername(String username) {this.username = username;}
 }

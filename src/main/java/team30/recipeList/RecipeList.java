@@ -249,6 +249,7 @@ public class RecipeList extends Application {
     private Button loginCreateButton;
     private Button createAccountBackButton;
     private Button createAccountCreateButton;
+    private String username;
     
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -322,7 +323,12 @@ public class RecipeList extends Application {
             primStage.setScene(loginScene);
         });
         createAccountCreateButton.setOnAction(e -> {
-            createAccount.makeNewAccount();
+            String username = createAccount.makeNewAccount();
+            if (username != null) {         // != null means successfully create, then auto login
+                login.setUsername(username);
+                primStage.setScene(listScene);
+                this.username = username;
+            }      
         });
     }
 }

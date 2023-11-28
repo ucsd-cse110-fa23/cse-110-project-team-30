@@ -13,7 +13,7 @@ class CreateAccountCenter extends VBox{
     private Label CreateAccountTitLabel;
     private Label userNamLabel;
     private Label passwordLabel;
-    private Label prompt;
+    private Label invalidPrompt;
     private TextField userNameTextField;
     private TextField passwordTextField;
 
@@ -25,9 +25,9 @@ class CreateAccountCenter extends VBox{
         passwordLabel = new Label("Enter your password");
         CreateAccountTitLabel = new Label("Create Your Account");
         CreateAccountTitLabel.setFont(new Font(20));
-        prompt = new Label("Username Already Exist!");
-        prompt.setFont(new Font(12));;
-        prompt.setVisible(false);
+        invalidPrompt = new Label("Username Already Exist!");
+        invalidPrompt.setFont(new Font(12));;
+        invalidPrompt.setVisible(false);
 
         userNameTextField = new TextField();
         passwordTextField = new TextField();
@@ -39,16 +39,14 @@ class CreateAccountCenter extends VBox{
         this.getChildren().add(userNameTextField);
         this.getChildren().add(passwordLabel);
         this.getChildren().add(passwordTextField);
-        this.getChildren().add(prompt);
+        this.getChildren().add(invalidPrompt);
         this.setSpacing(20);
         this.setAlignment(Pos.TOP_CENTER);
     }
 
     public TextField getUserNameTextField() {return userNameTextField;}
     public TextField getPasswordTextField() {return passwordTextField;}
-    public void showPrompt() {prompt.setVisible(true);}
-    public void setExistPrompt() {prompt.setText("Username Already Exist");}
-    public void setSuccessPrompt() {prompt.setText("Account Successfully Created");}
+    public void showInvalidPrompt() {invalidPrompt.setVisible(true);}
 }
 
 class CreateAccountFooter extends HBox{
@@ -56,7 +54,7 @@ class CreateAccountFooter extends HBox{
     private Button backButton;
 
     CreateAccountFooter() {
-        createButton = new Button("Create Account");
+        createButton = new Button("Create & login");
         backButton = new Button("back");
 
         this.getChildren().add(backButton);
@@ -116,21 +114,20 @@ public class CreateAccount extends BorderPane {
     public Button getCreateButton() {return createButton;}
     public Button getBackButton() {return backButton;}
     
-    public void makeNewAccount() { 
+    public String makeNewAccount() { 
         String username = CreateAccountCenter.getUserNameTextField().getText();
         String password = CreateAccountCenter.getPasswordTextField().getText();
 
         boolean exist = db.accountExist(username);
 
         if (exist) {
-            CreateAccountCenter.setExistPrompt();
-            CreateAccountCenter.showPrompt();
+            CreateAccountCenter.showInvalidPrompt();
             CreateAccountCenter.getPasswordTextField().setText("");
+            return null;
         }
         else {
-            CreateAccountCenter.setSuccessPrompt();
-            CreateAccountCenter.showPrompt();
             db.createAccount(username, password);
+            return username;
         }
     }
 }
