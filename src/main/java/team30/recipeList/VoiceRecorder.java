@@ -14,6 +14,8 @@ import javafx.scene.text.Text;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 
+import team30.App.App;
+
 import java.io.*;
 import java.net.URISyntaxException;
 
@@ -87,7 +89,7 @@ class RecorderBorderPane extends BorderPane {
 
 public class VoiceRecorder {
     private RecorderBorderPane voiceAF; //current app frame
-    private RecipeList rl;
+    private App app;
 
     private Scene recipeListScene;
     private Scene voiceScene;
@@ -114,9 +116,9 @@ public class VoiceRecorder {
     private Whisper audioProcessor;
     private RecordingCompletionListener completionListener;
 
-    public VoiceRecorder(RecipeList rl, AppFrame af) {
-        this.rl = rl;
-        recipeListScene = rl.getScene();
+    public VoiceRecorder(App app, RecipeList af) {
+        this.app = app;
+        recipeListScene = app.getScene();
 
         voiceAF = new RecorderBorderPane();
         audioProcessor = new Whisper();
@@ -317,17 +319,17 @@ public class VoiceRecorder {
     }
 
     public void openDetailWindow() {
-        rl.getPrimStage().setScene(voiceScene);
-        rl.getPrimStage().show();
+        app.getPrimStage().setScene(voiceScene);
+        app.getPrimStage().show();
     }
 
     public void closeDetailWindow() {
-        rl.getPrimStage().setScene(recipeListScene);
+        app.getPrimStage().setScene(recipeListScene);
         if (successfulRecording() && completionListener != null) {
             completionListener.onRecordingCompleted(mealtype, ingredientsRaw);
         }
         else {
-            rl.getPrimStage().show();
+            app.getPrimStage().show();
         }
     }
     

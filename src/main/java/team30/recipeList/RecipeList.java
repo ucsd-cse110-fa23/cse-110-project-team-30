@@ -27,6 +27,7 @@ import team30.account.CreateAccount;
 import team30.account.Login;
 import team30.recipeList.VoiceRecorder.RecordingCompletionListener;
 import team30.server.RecipeDatabase;
+import team30.App.App;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,9 +47,9 @@ import javafx.scene.paint.Color;
 import com.mongodb.client.FindIterable;
 import org.bson.Document;
 
-class List extends VBox {
+class RecipeListCenter extends VBox {
 
-    List() {
+    RecipeListCenter() {
         this.setSpacing(10); // sets spacing between tasks
         
         this.setPrefSize(500, 560);
@@ -73,12 +74,12 @@ class List extends VBox {
     }
 }
 
-class Header extends HBox {
+class RecipeListHeader extends HBox {
 
     private Text titleText;
     private Button addButton;
 
-    Header() {
+    RecipeListHeader() {
         this.setPrefSize(500, 60);
         this.setStyle("-fx-background-color: #f8f3c9;");
 
@@ -128,30 +129,28 @@ class Header extends HBox {
 }
 
 
-class AppFrame extends BorderPane implements RecordingCompletionListener {
+public class RecipeList extends BorderPane implements RecordingCompletionListener {
 
-    private Header header;
-    private List recipeList;
+    private RecipeListHeader header;
+    private RecipeListCenter center;
     private ScrollPane scrollPane;
 
     private Recipe recipe;
     private Button addButton;
-    private RecipeList rl;
-
-    //unseen buttons for HTTP functions
-    private Button postButton, getButton, putButton, deleteButton;
-    private String query;
+    private App app;
 
     private RecipeDatabase recipeDB;
+
+    private ArrayList<Recipe> recipes;
 
     //voice recorder popup
     VoiceRecorder voiceRecorder;
 
-    AppFrame() {
-        header = new Header();
-        recipeList = new List();
+    public RecipeList() {
+        header = new RecipeListHeader();
+        center = new RecipeListCenter();
 
-        scrollPane = new ScrollPane(recipeList);
+        scrollPane = new ScrollPane(center);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
 
@@ -159,16 +158,10 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         this.setCenter(scrollPane);
 
         addButton = header.getAddButton();
-
-        postButton = new Button("Post");
-        getButton = new Button("Get");
-        putButton = new Button("Put");
-        deleteButton = new Button("Delete");
-
         recipe = new Recipe();
-        query = "";
+        recipeDB = app.getRecipeDB();
 
-        recipeDB = new RecipeDatabase();
+        recipes = new ArrayList<>();
         
         loadRecipes();
         addListeners();
@@ -176,7 +169,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
 
     public void getVoiceRecording() {
         System.out.println("starting voice recording...");
-        voiceRecorder = new VoiceRecorder(rl, this);
+        voiceRecorder = new VoiceRecorder(app, this);
         voiceRecorder.setCompletionListener(this);
         voiceRecorder.openDetailWindow();
     }
@@ -252,7 +245,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
             Recipe cur = new Recipe(recipeName, mealType, ingredients, steps, imgurl);
             addRecipe(cur);
 
-            RecipeDetail tmp = new RecipeDetail(rl, this, cur);
+            RecipeDetail tmp = new RecipeDetail(app, this, cur);
             tmp.setCancellable(true);
             System.out.println("OPENING NEW RECIPE...");
             tmp.openDetailWindow(cur);
@@ -262,17 +255,12 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
     }
 
     public void addRecipe(Recipe cur) {
-        FXCollections.reverse(recipeList.getChildren());
-        recipeList.getChildren().add(cur);
-        recipeList.updateTaskIndices();
-        postButton.fire(); //click HTTP post button
-
-        cur.getRecipeTitle().setOnAction(f -> {
-            RecipeDetail ord = new RecipeDetail(rl, this, cur);
-            ord.openDetailWindow(cur);
-        });
-        
-        FXCollections.reverse(recipeList.getChildren());
+        FXCollections.reverse(center.getChildren());
+        center.getChildren().add(cur);
+        center.updateTaskIndices();
+        app.getPostButton().fire(); //click HTTP post button        
+        recipes.add(cur);
+        FXCollections.reverse(center.getChildren());
     }
 
     public void loadRecipes() {
@@ -284,7 +272,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
             Iterator<Document> it = iterDoc.iterator();
             while (it.hasNext()) {
                 Recipe cur = recipeDB.getRecipe(it.next());
-                
+                app.getDetailOpenButtons().add(cur.getRecipeTitle());
                 addRecipe(cur);
             }
         }
@@ -307,117 +295,13 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         }
         return details;
     }
-
-    public Button getPostButton() {return postButton;}
-    public Button getGetButton() {return getButton;}
-    public Button getPutButton() {return putButton;}
-    public Button getDeleteButton() {return deleteButton;}
-    public String getQuery() {return query;}
+    
     public RecipeDatabase getRecipeDB() {return recipeDB;}
-
-    public void setRecipeList(RecipeList rl) {this.rl = rl;}
-    public Header getHeader() {return header;}
-    public List getRecipeList() {return recipeList;}
+    public void setRecipeList(App app) {this.app = app;}
+    public RecipeListHeader getRecipeListHeader() {return header;}
+    public RecipeListCenter getRecipeListCenter() {return center;}
     public ScrollPane getScrollPane() {return scrollPane;}
     public Button getAddButton() {return addButton;}
     public Recipe getRecipe() {return recipe;}
-}
-
-// edited from public class Main
-public class RecipeList extends Application {
-    private AppFrame root;
-    private Stage primStage;
-    private Scene listScene;
-    private Button postButton, getButton, putButton, deleteButton;
-    Controller controller;
-    private Login login;
-    private CreateAccount createAccount;
-    private Scene loginScene;
-    private Scene createAccountScene;
-    private Button loginButton;
-    private Button loginCreateButton;
-    private Button createAccountBackButton;
-    private Button createAccountCreateButton;
-    private String username;
-    
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        root = new AppFrame();
-        Model model = new Model();
-        listScene = new Scene(root, 500, 600);
-        login = new Login();
-        loginScene = new Scene(login, 250, 300);
-        createAccount = new CreateAccount();
-        createAccountScene = new Scene(createAccount, 250, 300);
-        
-        postButton = root.getPostButton();
-        getButton = root.getGetButton();
-        putButton = root.getPutButton();
-        deleteButton = root.getDeleteButton();
-        
-        controller = new Controller(this, model);
-        
-        loginButton = login.getLoginButton();
-        loginCreateButton = login.getCreateButton();
-        createAccountBackButton = createAccount.getBackButton();
-        createAccountCreateButton = createAccount.getCreateButton();
-
-        addLoginListeners();
-
-        this.primStage = primaryStage;
-        root.setRecipeList(this);
-        primaryStage.setTitle("PantryPal");
-        // primaryStage.setScene(listScene);
-        primaryStage.setScene(loginScene);
-        primaryStage.setResizable(false);
-        primaryStage.show();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-    public Stage getPrimStage() {return primStage;}
-    public Scene getScene() {return listScene;}
-    public void setAppFrame(AppFrame af) {root = af;}
-
-    public void setPostButtonAction(EventHandler<ActionEvent> eventHandler) {postButton.setOnAction(eventHandler);}
-    public void setGetButtonAction(EventHandler<ActionEvent> eventHandler) {getButton.setOnAction(eventHandler);}
-    public void setPutButtonAction(EventHandler<ActionEvent> eventHandler) {putButton.setOnAction(eventHandler);}
-    public void setDeleteButtonAction(EventHandler<ActionEvent> eventHandler) {deleteButton.setOnAction(eventHandler);}
-
-    public String getRecipeName() {return root.getRecipeName();}
-    public String[] getRecipeDetails() {return root.getRecipeDetails();}
-    public String getQuery() {return root.getQuery();}
-
-    public void showAlert(String title, String content) {
-        // Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        // alert.setTitle(title);
-        // alert.setHeaderText(null);
-        // alert.setContentText(content);
-        // alert.showAndWait();
-    }
-
-    public void addLoginListeners() {
-        loginButton.setOnAction(e -> {
-            int match = login.validUser();
-            if (match == 0) {
-                primStage.setScene(listScene); 
-            }
-        });   
-        loginCreateButton.setOnAction(e -> {
-            primStage.setScene(createAccountScene);
-        });
-        createAccountBackButton.setOnAction(e -> {
-            primStage.setScene(loginScene);
-        });
-        createAccountCreateButton.setOnAction(e -> {
-            String username = createAccount.makeNewAccount();
-            if (username != null) {         // != null means successfully create, then auto login
-                login.setUsername(username);
-                primStage.setScene(listScene);
-                this.username = username;
-            }      
-        });
-    }
+    public ArrayList<Recipe> getRecipes() {return recipes;}
 }

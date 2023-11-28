@@ -28,6 +28,7 @@ import java.io.*;
 import java.nio.file.StandardCopyOption;
 
 import javafx.util.Pair;
+import team30.App.App;
 import team30.server.RecipeDatabase;
 
 import java.util.ArrayList;
@@ -35,6 +36,22 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import javafx.scene.paint.Color;
+
+class DetailHeader extends HBox {
+    private Text titleText;
+
+    String tanLight = "#f1eae0", tanDark = "#ede1cf";
+    String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
+    String magenta = "#a64d79", green = "#a64d79";
+ 
+    DetailHeader() {
+        titleText = new Text("PantryPal");
+        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 40; -fx-fill: " + magenta);
+        this.getChildren().add(titleText);
+        this.setAlignment(Pos.CENTER);
+        this.setStyle("-fx-background-color: " + tanLight);
+    }
+}
 
 class DetailFooter extends HBox {
 
@@ -92,7 +109,7 @@ class DetailFooter extends HBox {
     public Button getCancel() {return cancel;}
 }
 
-class DetailRecipe extends VBox {
+class DetailCenter extends VBox {
     // recipe info
     private Label recipe_name;
     private TextArea ingredients;
@@ -103,7 +120,7 @@ class DetailRecipe extends VBox {
     String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
     String magenta = "#a64d79", green = "#a64d79";
 
-    DetailRecipe (Recipe recipe) {
+    DetailCenter (Recipe recipe) {
         this.setPrefSize(500, 560); // sets size of task
         this.setMaxHeight(VBox.USE_PREF_SIZE); 
         this.setMinHeight(VBox.USE_PREF_SIZE);
@@ -228,107 +245,72 @@ class Ingredient extends HBox {
 
 }
 
-public class RecipeDetail {
-    private AppFrame recipeListAF; //original app frame
-    private AppFrame recipeViewAF; //current app frame
-    private RecipeList rl;
+public class RecipeDetail extends BorderPane {
+    private App app;
+    
+    private DetailHeader header;
+    private DetailCenter center;
+    private DetailFooter footer;
 
-    private DetailRecipe dRecipe;
-    private Recipe recipe;
+    private Scene detailScene;
 
     private RecipeDatabase recipeDB;
 
-    private Scene recipeListScene;
-    private Scene recipeViewScene;
-
     private boolean editMode;
 
-    private HBox header;
-    private Text titleText;
+    private Recipe recipe;
 
-    String tanLight = "#f1eae0", tanDark = "#ede1cf";
-    String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
-    String magenta = "#a64d79", green = "#a64d79";
-
-    DetailFooter dfooter;
-
-    RecipeDetail(RecipeList rl, AppFrame af, Recipe r) {
-        this.rl = rl;
-        this.recipe = r;
-        recipeListAF = af;
-        recipeListScene = rl.getScene();
-        recipeDB = recipeListAF.getRecipeDB();
-
-        recipeViewAF = new AppFrame();
+    public RecipeDetail(App app, Recipe recipe) {
+        this.app = app;
+        this.recipe = recipe;
+        recipeDB = app.getRecipeDB();
 
         //header
-        header = new HBox();
-        titleText = new Text("PantryPal");
-        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 40; -fx-fill: " + magenta);
-        header.getChildren().add(titleText);
-        header.setAlignment(Pos.CENTER);
-        header.setStyle("-fx-background-color: " + tanLight);
-
-        //footer
-        dfooter = new DetailFooter(); 
-        ScrollPane scrollPane = new ScrollPane(new DetailRecipe(recipe));
-
-        dRecipe = new DetailRecipe(recipe);
-        scrollPane = new ScrollPane(dRecipe);
+        header = new DetailHeader();
+        
+        //center
+        ScrollPane scrollPane = new ScrollPane(new DetailCenter(recipe));
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
-        recipeViewAF.setTop(header);
-        recipeViewAF.setCenter(scrollPane);
-        recipeViewAF.setBottom(dfooter);
 
-        addListeners(dfooter.getBack(), dfooter.getSave(), dfooter.getEdit(), dfooter.getDelete(), dfooter.getCancel());
+        //footer
+        footer = new DetailFooter(); 
+        
+        addListeners(footer.getBack(), footer.getSave(), footer.getEdit(), footer.getDelete(), footer.getCancel());
 
         this.disableEdit();
-
-        recipeViewScene = new Scene(recipeViewAF, 500, 600);
     };
 
-    public void openDetailWindow(Recipe recipe) {
-        rl.getPrimStage().setScene(recipeViewScene);
-        System.out.println("!!!!!!!!!");
-        rl.getPrimStage().show();
-    }
-
-    public void closeDetailWindow() {
-        disableEdit();
-        rl.getPrimStage().setScene(recipeListScene);
-        System.out.println("?????");
-        rl.getPrimStage().show();
-    }
+    public Scene getDetailScene() {return new Scene(this, 500, 600);}
 
     public void enableEdit() {
         editMode = true;
-        ((DetailFooter)recipeViewAF.getBottom()).getEdit().setText("Stop");
-        dRecipe.getIngredients().setEditable(true);
-        dRecipe.getMealType().setEditable(true);
-        for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
-            dRecipe.getSteps().get(i).setEditable(true);
-            dRecipe.getSteps().get(i).setMouseTransparent(false);
+        footer.getEdit().setText("Stop");
+        center.getIngredients().setEditable(true);
+        center.getMealType().setEditable(true);
+        for (int i = 0; i < center.getSteps().size(); ++i) {
+            center.getSteps().get(i).setEditable(true);
+            center.getSteps().get(i).setMouseTransparent(false);
         }
     }
 
     public void disableEdit() {
         editMode = false;
-        ((DetailFooter)recipeViewAF.getBottom()).getEdit().setText("Edit");
-        dRecipe.getIngredients().setEditable(false);
-        dRecipe.getMealType().setEditable(false);
-        for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
-            dRecipe.getSteps().get(i).setEditable(false);
-            dRecipe.getSteps().get(i).setMouseTransparent(true);
+        footer.getEdit().setText("Edit");
+        center.getIngredients().setEditable(false);
+        center.getMealType().setEditable(false);
+        for (int i = 0; i < center.getSteps().size(); ++i) {
+            center.getSteps().get(i).setEditable(false);
+            center.getSteps().get(i).setMouseTransparent(true);
         }
     }
 
     public void updateRecipeList() {
-        recipe.setMealType(dRecipe.getMealType().getText());
-        recipe.setIngredients(dRecipe.getIngredients().getText());
+        recipe.setMealType(center.getMealType().getText());
+        recipe.setIngredients(center.getIngredients().getText());
         recipe.getSteps().clear();
-        for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
-            recipe.getSteps().add(dRecipe.getSteps().get(i).getText());
+        for (int i = 0; i < center.getSteps().size(); ++i) {
+            recipe.getSteps().add(center.getSteps().get(i).getText());
         }
     }
 
@@ -354,10 +336,10 @@ public class RecipeDetail {
 
     public void setCancellable(boolean b) {
         if (b == true) {
-            dfooter.getCancel().setVisible(true);
+            footer.getCancel().setVisible(true);
         }
         else {
-            dfooter.getCancel().setVisible(false);
+            footer.getCancel().setVisible(false);
         }   
     }
 
@@ -410,7 +392,7 @@ public class RecipeDetail {
      * @param showAlert - a flag that says whether to show the alert or not.
      */
     public void saveEvent(boolean showAlert){
-        String validMealType = Recipe.validateMealType(dRecipe.getMealType().getText());
+        String validMealType = Recipe.validateMealType(center.getMealType().getText());
         if(validMealType == null){
             if(showAlert){
                 String warningMessage = "Only breakfast, lunch, or dinner are valid mealTypes.";
@@ -419,25 +401,15 @@ public class RecipeDetail {
             }
             return;
         }
-        dRecipe.getMealType().setText(validMealType);
+        center.getMealType().setText(validMealType);
         disableEdit();
         updateRecipeList();
         saveRecipe();
     }
 
-    public Button getEditButton(){
-        return ((DetailFooter)recipeViewAF.getBottom()).getEdit();
-    }
-
-    // public TextField getMealTypeTextField(){
-    //     return this.dRecipe.getMealType();
-    // }
-
-    // public TextArea getIngredientsTextArea(){
-    //     return this.dRecipe.getIngredients();
-    // }
-
-    // public ArrayList<TextArea> getStepsTextAreas(){
-    //     return this.dRecipe.getSteps();
-    // }
+    public Button getEditButton() {return footer.getEdit();}
+    public Button getDeleteButton() {return footer.getDelete();}
+    public Button getSaveButton() {return footer.getSave();}
+    public Button getBackButton() {return footer.getBack();}
+    public Button getCancelButton() {return footer.getCancel();}
 }

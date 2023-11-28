@@ -1,12 +1,13 @@
 package team30.recipeList;
 
 import javafx.event.ActionEvent;
+import team30.App.App;
 
 public class Controller {
-    private RecipeList view;
+    private App view;
     private Model model;
 
-    public Controller(RecipeList view, Model model) {
+    public Controller(App view, Model model) {
         this.view = view;
         this.model = model;
         
