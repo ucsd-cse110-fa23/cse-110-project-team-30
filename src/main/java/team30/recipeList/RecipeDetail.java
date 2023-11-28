@@ -104,7 +104,7 @@ class DetailRecipe extends VBox {
     String magenta = "#a64d79", green = "#a64d79";
 
     DetailRecipe (Recipe recipe) {
-        this.setPrefSize(500, 560); // sets size of task
+        this.setPrefSize(500, 800); // sets size of task
         this.setMaxHeight(VBox.USE_PREF_SIZE); 
         this.setMinHeight(VBox.USE_PREF_SIZE);
         this.setSpacing(15);
@@ -135,6 +135,16 @@ class DetailRecipe extends VBox {
         
         title_mealtype_HBox.getChildren().add(recipe_name);
         title_mealtype_HBox.getChildren().add(mealtype);
+
+
+        //adding image
+        VBox image_VBox = new VBox();
+        image_VBox.setPrefSize(200, 200); // sets size of task
+        image_VBox.setMaxHeight(VBox.USE_PREF_SIZE);
+        image_VBox.setMinHeight(VBox.USE_PREF_SIZE);
+        image_VBox.setSpacing(15);
+        image_VBox.setAlignment(Pos.CENTER);
+
 
         // adding second row: ingredients
         HBox ingredients_HBox = new HBox();
@@ -198,6 +208,8 @@ class DetailRecipe extends VBox {
         }
 
         this.getChildren().add(title_mealtype_HBox);
+        //add image
+        this.getChildren().add(image_VBox);
         this.getChildren().add(ingredients_HBox);
         this.getChildren().add(steps_VBox);
         this.setSpacing(10);
