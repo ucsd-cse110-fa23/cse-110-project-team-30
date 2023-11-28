@@ -23,12 +23,9 @@ import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
 import java.io.*;
 import javafx.util.Pair;
-<<<<<<< HEAD
 import team30.account.CreateAccount;
 import team30.account.Login;
-=======
 import team30.recipeList.VoiceRecorder.RecordingCompletionListener;
->>>>>>> main
 import team30.server.RecipeDatabase;
 
 import java.util.ArrayList;
