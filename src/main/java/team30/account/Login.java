@@ -1,4 +1,4 @@
-package team30.login;
+package team30.account;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
