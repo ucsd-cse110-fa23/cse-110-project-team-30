@@ -322,7 +322,7 @@ public class RecipeList extends Application {
             primStage.setScene(loginScene);
         });
         createAccountCreateButton.setOnAction(e -> {
-            // TODO
+            createAccount.makeNewAccount();
         });
     }
 }

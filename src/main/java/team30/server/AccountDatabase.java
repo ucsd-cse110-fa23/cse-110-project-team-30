@@ -16,8 +16,7 @@ public class AccountDatabase {
     MongoCollection<Document> accountCollection;
     MongoClient mongoClient;
 
-    // String uri = "mongodb+srv://lil043:VA4U7rBgvZ0EqlNO@cse110.ltw8f69.mongodb.net/?retryWrites=true&w=majority";
-    String uri = "mongodb+srv://m1ren:IHcPb6UPAHtXNQfK@cluster0.nybipuz.mongodb.net/?retryWrites=true&w=majority";
+    String uri = "mongodb+srv://lil043:VA4U7rBgvZ0EqlNO@cse110.ltw8f69.mongodb.net/?retryWrites=true&w=majority";
 
     public AccountDatabase() {
         mongoClient = MongoClients.create(uri);
@@ -59,6 +58,23 @@ public class AccountDatabase {
             else return 1;
         } else {
             return -1;
+        }
+    }
+
+    /**
+     * return true, username not repeated
+     * return false, username already exists
+     */
+    public boolean accountExist(String username) {
+        Bson filter = eq("username", username);
+        MongoCursor<Document> cursor = accountCollection.find(filter).iterator();
+        if (cursor.hasNext()) {
+            String db_username = cursor.next().getString("username");
+            System.out.println("Data base username is: " + db_username + ", new Username is: " + username);
+            if (db_username.equals(username)) return true;
+            else return false;
+        } else {
+            return false;
         }
     }
 }
