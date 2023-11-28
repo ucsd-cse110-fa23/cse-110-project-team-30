@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.collections.ArrayChangeListener;
+import javafx.collections.FXCollections;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
@@ -22,8 +23,12 @@ import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
 import java.io.*;
 import javafx.util.Pair;
+<<<<<<< HEAD
 import team30.account.CreateAccount;
 import team30.account.Login;
+=======
+import team30.recipeList.VoiceRecorder.RecordingCompletionListener;
+>>>>>>> main
 import team30.server.RecipeDatabase;
 
 import java.util.ArrayList;
@@ -31,6 +36,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.TargetDataLine;
 
 import javafx.scene.paint.Color;
 
@@ -46,6 +58,7 @@ class List extends VBox {
         this.setStyle("-fx-background-color: #f8f3c9;-fx-padding: 10;");
     }
 
+    //updates indices on recipes in list
     public void updateTaskIndices() {
         int index = 1;
         for (int i = 0; i < this.getChildren().size(); i++) {
@@ -56,9 +69,7 @@ class List extends VBox {
         }
     }
 
-    /**
-     * Removes the recipe from the list.
-     */
+    //removes recipe from list
     void removeRecipe(Recipe recipeToRemove){
         this.getChildren().removeIf(recipe -> recipe instanceof Recipe && ((Recipe)recipe).equals(recipeToRemove));
         this.updateTaskIndices();
@@ -120,7 +131,7 @@ class Header extends HBox {
 }
 
 
-class AppFrame extends BorderPane {
+class AppFrame extends BorderPane implements RecordingCompletionListener {
 
     private Header header;
     private List recipeList;
@@ -135,6 +146,9 @@ class AppFrame extends BorderPane {
     private String query;
 
     private RecipeDatabase recipeDB;
+
+    //voice recorder popup
+    VoiceRecorder voiceRecorder;
 
     AppFrame() {
         header = new Header();
@@ -163,20 +177,105 @@ class AppFrame extends BorderPane {
         addListeners();
     }
 
+    public void getVoiceRecording() {
+        System.out.println("starting voice recording...");
+        voiceRecorder = new VoiceRecorder(rl, this);
+        voiceRecorder.setCompletionListener(this);
+        voiceRecorder.openDetailWindow();
+    }
+
+
     public void addListeners() {
         addButton.setOnAction(e -> {
-            Recipe recipe = new Recipe();
-            recipeList.getChildren().add(recipe);
-            recipeList.updateTaskIndices();
-            postButton.fire(); //click HTTP post button
+            getVoiceRecording();
 
+            String ingredientsRaw = voiceRecorder.getIngredientAudio();
+            String mealtype = voiceRecorder.getMealType();
+
+            if (voiceRecorder.successfulRecording()) {
+                onRecordingCompleted(mealtype, ingredientsRaw);
+            }
+        });  
+    }
+
+    public void onRecordingCompleted(String mealType, String ingredientsRaw) {
+        // This method will be called when the voice recording is completed
+        // generate recipe with chatGPT
+        System.out.println("Recording completed!");
+        System.out.println("Meal Type: " + mealType);
+        System.out.println("Ingredients: " + ingredientsRaw);
+
+        ChatGPT chatGPT = new ChatGPT();
+        try {
+            // Generate recipe
+            String generatedRecipe = chatGPT.generateRecipe(mealType, ingredientsRaw);
+            System.out.println("Generated Recipe: ");
+            //System.out.println(generatedRecipe);
+
+            String[] lines = generatedRecipe.split("\\r?\\n|\\r");
+            String recipeName = "", ingredients = "", imgurl = "";
+            ArrayList<String> steps = new ArrayList<>();
+            int count = 0; //0- recipeName, 1- ingredients, 2- instructions
+            for (int i = 0; i < lines.length; i++) {
+                System.out.println(lines[i]);
+                if (!(lines[i].replaceAll("\\s", "") == "") && !(lines[i].replaceAll("\\n", "") == "") && count == 0) {
+                    //recipeName (unlabelled)
+                    recipeName = lines[i].toLowerCase();
+                    count = 100;
+                }
+                if (lines[i].contains("Recipe Name: ")) {
+                    //recipeName (labelled)
+                    recipeName = lines[i].substring(13).toLowerCase();
+                    count = 100;
+                }
+
+                if (lines[i].contains("Ingredients:")) {
+                    count = 1;
+                    continue;
+                }
+                else if (lines[i].contains("Instructions:")) {
+                    count = 2;
+                    continue;
+                }
+                
+                if (count == 1) {
+                    //ingredients
+                    if (!ingredients.equals("") && !(lines[i].replaceAll("\\n", "") == ""))
+                        ingredients += ", ";
+                    ingredients += lines[i].toLowerCase().replaceAll("-", "");
+                }
+
+                if (count == 2) {
+                    //steps
+                    if (!(lines[i].replaceAll("\\s", "") == "") && !(lines[i].replaceAll("\\n", "") == ""))
+                        steps.add(lines[i]);
+                }
+            }
             
-            // set button action for open detail windown button
-            recipe.getRecipeTitle().setOnAction(f -> {
-                RecipeDetail ord = new RecipeDetail(rl, this, recipe);
-                ord.openDetailWindow(recipe);
-            });
+            Recipe cur = new Recipe(recipeName, mealType, ingredients, steps, imgurl);
+            addRecipe(cur);
+
+            RecipeDetail tmp = new RecipeDetail(rl, this, cur);
+            tmp.setCancellable(true);
+            System.out.println("OPENING NEW RECIPE...");
+            tmp.openDetailWindow(cur);
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+    }
+
+    public void addRecipe(Recipe cur) {
+        FXCollections.reverse(recipeList.getChildren());
+        recipeList.getChildren().add(cur);
+        recipeList.updateTaskIndices();
+        postButton.fire(); //click HTTP post button
+
+        cur.getRecipeTitle().setOnAction(f -> {
+            RecipeDetail ord = new RecipeDetail(rl, this, cur);
+            ord.openDetailWindow(cur);
         });
+        
+        FXCollections.reverse(recipeList.getChildren());
     }
 
     public void loadRecipes() {
@@ -189,14 +288,7 @@ class AppFrame extends BorderPane {
             while (it.hasNext()) {
                 Recipe cur = recipeDB.getRecipe(it.next());
                 
-                recipeList.getChildren().add(cur);
-                recipeList.updateTaskIndices();
-                postButton.fire(); //click HTTP post button
-
-                cur.getRecipeTitle().setOnAction(f -> {
-                    RecipeDetail ord = new RecipeDetail(rl, this, cur);
-                    ord.openDetailWindow(cur);
-                });
+                addRecipe(cur);
             }
         }
         catch (Exception e) {
@@ -302,11 +394,11 @@ public class RecipeList extends Application {
     public String getQuery() {return root.getQuery();}
 
     public void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+        // Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        // alert.setTitle(title);
+        // alert.setHeaderText(null);
+        // alert.setContentText(content);
+        // alert.showAndWait();
     }
 
     public void addLoginListeners() {
