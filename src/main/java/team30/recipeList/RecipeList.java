@@ -75,6 +75,7 @@ class Header extends HBox {
 
     private Text titleText;
     private Button addButton;
+    private Image recipe_Image;
 
     Header() {
         this.setPrefSize(500, 60);
