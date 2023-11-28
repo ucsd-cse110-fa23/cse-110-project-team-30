@@ -23,6 +23,8 @@ import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
 import java.io.*;
 import javafx.util.Pair;
+import team30.account.CreateAccount;
+import team30.account.Login;
 import team30.recipeList.VoiceRecorder.RecordingCompletionListener;
 import team30.server.RecipeDatabase;
 
@@ -328,12 +330,25 @@ public class RecipeList extends Application {
     private Scene listScene;
     private Button postButton, getButton, putButton, deleteButton;
     Controller controller;
+    private Login login;
+    private CreateAccount createAccount;
+    private Scene loginScene;
+    private Scene createAccountScene;
+    private Button loginButton;
+    private Button loginCreateButton;
+    private Button createAccountBackButton;
+    private Button createAccountCreateButton;
+    private String username;
     
     @Override
     public void start(Stage primaryStage) throws Exception {
         root = new AppFrame();
         Model model = new Model();
         listScene = new Scene(root, 500, 600);
+        login = new Login();
+        loginScene = new Scene(login, 250, 300);
+        createAccount = new CreateAccount();
+        createAccountScene = new Scene(createAccount, 250, 300);
         
         postButton = root.getPostButton();
         getButton = root.getGetButton();
@@ -341,11 +356,19 @@ public class RecipeList extends Application {
         deleteButton = root.getDeleteButton();
         
         controller = new Controller(this, model);
+        
+        loginButton = login.getLoginButton();
+        loginCreateButton = login.getCreateButton();
+        createAccountBackButton = createAccount.getBackButton();
+        createAccountCreateButton = createAccount.getCreateButton();
+
+        addLoginListeners();
 
         this.primStage = primaryStage;
         root.setRecipeList(this);
         primaryStage.setTitle("PantryPal");
-        primaryStage.setScene(listScene);
+        // primaryStage.setScene(listScene);
+        primaryStage.setScene(loginScene);
         primaryStage.setResizable(false);
         primaryStage.show();
     }
@@ -373,5 +396,28 @@ public class RecipeList extends Application {
         // alert.setHeaderText(null);
         // alert.setContentText(content);
         // alert.showAndWait();
+    }
+
+    public void addLoginListeners() {
+        loginButton.setOnAction(e -> {
+            int match = login.validUser();
+            if (match == 0) {
+                primStage.setScene(listScene); 
+            }
+        });   
+        loginCreateButton.setOnAction(e -> {
+            primStage.setScene(createAccountScene);
+        });
+        createAccountBackButton.setOnAction(e -> {
+            primStage.setScene(loginScene);
+        });
+        createAccountCreateButton.setOnAction(e -> {
+            String username = createAccount.makeNewAccount();
+            if (username != null) {         // != null means successfully create, then auto login
+                login.setUsername(username);
+                primStage.setScene(listScene);
+                this.username = username;
+            }      
+        });
     }
 }
