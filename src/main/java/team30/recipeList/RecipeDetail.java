@@ -25,6 +25,7 @@ import javafx.geometry.Insets;
 import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
 import java.io.*;
+import java.net.URI;
 import java.nio.file.StandardCopyOption;
 
 import javafx.util.Pair;
@@ -98,6 +99,7 @@ class DetailRecipe extends VBox {
     private TextArea ingredients;
     private ArrayList<TextArea> steps;
     private TextField mealtype;
+    private Image recipeImage;
 
     String tanLight = "#f1eae0", tanDark = "#ede1cf";
     String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
@@ -138,12 +140,25 @@ class DetailRecipe extends VBox {
 
 
         //adding image
-        VBox image_VBox = new VBox();
+        // VBox image_VBox = new VBox();
+        File file = new File("/Users/leahkuruvila/Desktop/pantrypal/cse-110-project-team-30/src/main/java/team30/recipeList/recipe_image.jpeg");
+        URI fileURI = file.toURI();
+        ImageView imageView = new ImageView();
+        recipeImage = new Image(fileURI.toString());
+        imageView.setImage(recipeImage);
+        imageView.setFitWidth(200);
+        imageView.setFitHeight(200);
+        imageView.setPreserveRatio(false);
+        VBox image_VBox = new VBox(imageView);
+        
         image_VBox.setPrefSize(200, 200); // sets size of task
         image_VBox.setMaxHeight(VBox.USE_PREF_SIZE);
         image_VBox.setMinHeight(VBox.USE_PREF_SIZE);
         image_VBox.setSpacing(15);
         image_VBox.setAlignment(Pos.CENTER);
+        
+
+        //image_VBox.getChildren().add(imageView);
 
 
         // adding second row: ingredients
