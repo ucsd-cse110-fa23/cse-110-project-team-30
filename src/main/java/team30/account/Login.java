@@ -6,6 +6,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.control.Label;
 import javafx.scene.text.*;
+import javafx.scene.control.CheckBox;
 
 import team30.server.AccountDatabase;
 
@@ -16,6 +17,7 @@ class LoginCenter extends VBox{
     private Label invalidPrompt;
     private TextField userNameTextField;
     private TextField passwordTextField;
+    private CheckBox autoLoginBox;
 
     LoginCenter() {
         this.setWidth(250);
@@ -31,6 +33,9 @@ class LoginCenter extends VBox{
 
         userNameTextField = new TextField();
         passwordTextField = new TextField();
+
+        autoLoginBox = new CheckBox("Auto Log me in next time");
+        autoLoginBox.setFont(new Font(12));
         
         HBox userNameHBox = new HBox();
         HBox passwodHBox = new HBox();
@@ -48,6 +53,7 @@ class LoginCenter extends VBox{
 
         this.getChildren().add(loginTitLabel);
         this.getChildren().addAll(userNameHBox, passwodHBox);
+        this.getChildren().add(autoLoginBox);
         this.getChildren().add(invalidPrompt);
         this.setSpacing(20);
         this.setAlignment(Pos.TOP_CENTER);
@@ -58,6 +64,7 @@ class LoginCenter extends VBox{
     public void showInvalidPrompt() {invalidPrompt.setVisible(true);}
     public void setInvalidPassword() {invalidPrompt.setText("Incorrect Password");}
     public void setInvalidUsername() {invalidPrompt.setText("Username Does Not Exist");}
+    public CheckBox getAutoLoginBox() {return autoLoginBox;}
 }
 
 class LoginFooter extends HBox{
@@ -107,6 +114,7 @@ public class Login extends BorderPane{
     private Button loginButton;
     private Button createButton;
     private String username;
+    private CheckBox isAutoLogin;
     private AccountDatabase db;
 
     public Login() {
@@ -115,6 +123,7 @@ public class Login extends BorderPane{
         loginButton = loginFooter.getLoginButton();
         createButton = loginFooter.getCreateButton();
         db = new AccountDatabase();
+        isAutoLogin = loginCenter.getAutoLoginBox();
 
         this.setCenter(loginCenter);
         this.setBottom(loginFooter);
@@ -145,7 +154,9 @@ public class Login extends BorderPane{
 
         return match;
     }
-
-    public String getUsername() {return username;}
+    
+    public boolean isAutoLogin() {return isAutoLogin.isSelected();}
+    public String getUsername() {return loginCenter.getUserNameTextField().getText();}
+    public String getPassword() {return loginCenter.getPasswordTextField().getText();}
     public void setUsername(String username) {this.username = username;}
 }
