@@ -141,11 +141,13 @@ class DetailRecipe extends VBox {
 
         //adding image
         // VBox image_VBox = new VBox();
-        File file = new File("/Users/leahkuruvila/Desktop/pantrypal/cse-110-project-team-30/src/main/java/team30/recipeList/recipe_image.jpeg");
-        URI fileURI = file.toURI();
         ImageView imageView = new ImageView();
-        recipeImage = new Image(fileURI.toString());
-        imageView.setImage(recipeImage);
+        if(recipe.getImageURL() != null){
+            File file = new File(recipe.getImageURL());
+            URI fileURI = file.toURI();
+            recipeImage = new Image(fileURI.toString());
+            imageView.setImage(recipeImage);
+        }
         imageView.setFitWidth(200);
         imageView.setFitHeight(200);
         imageView.setPreserveRatio(false);
@@ -156,10 +158,6 @@ class DetailRecipe extends VBox {
         image_VBox.setMinHeight(VBox.USE_PREF_SIZE);
         image_VBox.setSpacing(15);
         image_VBox.setAlignment(Pos.CENTER);
-        
-
-        //image_VBox.getChildren().add(imageView);
-
 
         // adding second row: ingredients
         HBox ingredients_HBox = new HBox();
