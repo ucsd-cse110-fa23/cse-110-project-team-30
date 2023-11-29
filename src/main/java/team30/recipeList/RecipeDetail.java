@@ -1,43 +1,20 @@
 package team30.recipeList;
 
-import javafx.application.Application;
-import javafx.scene.control.ComboBox;
-import javafx.collections.ArrayChangeListener;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.*;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.geometry.Insets;
 import javafx.scene.text.*;
-import javafx.geometry.Rectangle2D;
-import java.io.*;
-import java.nio.file.StandardCopyOption;
-
-import javafx.util.Pair;
 import team30.server.RecipeDatabase;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-
-import org.bson.types.ObjectId;
-
-import javafx.scene.paint.Color;
 
 class DetailFooter extends HBox {
 
@@ -131,8 +108,7 @@ class DetailRecipe extends VBox {
         title_mealtype_HBox.setAlignment(Pos.BASELINE_CENTER);
 
         recipe_name.setPrefSize(315, 40);
-        recipe_name.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-insets: 5, -fx-background-insets: 5; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10;-fx-font-size: 20;-fx-alignment: CENTER;");
-
+        recipe_name.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-insets: 5, -fx-background-insets: 5; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10;-fx-font-size: 20;-fx-alignment: CENTER");
         mealtype.setStyle("-fx-background-color: #EDDCF0; -fx-background-radius: 20;-fx-alignment: CENTER;-fx-font-size: 20");
         mealtype.setPrefSize(120, 30);
         
@@ -222,7 +198,6 @@ class Ingredient extends HBox {
         //index.setTextAlignment(TextAlignment.LEFT); // set alignment of text field
         ingredient.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
         this.getChildren().add(ingredient); // add textlabel to contact
-        // this.getChildren().addAll(ingredient);
 
         this.ingredient.setPromptText("Ingredient");
     }
@@ -334,31 +309,11 @@ public class RecipeDetail {
     }
 
     public void saveRecipe() {
-        if (recipe.getObjectID() == null) {  //insert new recipe to database
-            try {
-                recipeDB.insertRecipe(recipe);
-            }
-            catch (Exception e) {
-                System.out.println("couldn't save to database!");
-            }
-        }
-        else { //updating existing recipe in database
-            try {
-                recipeDB.editRecipe(recipe);
-            }
-            catch (Exception e) {
-                System.out.println("couldn't edit database!");
-            }
-        }
+        rl.getController().saveRecipe(recipe);
     }
 
     public void setCancellable(boolean b) {
-        if (b == true) {
-            dfooter.getCancel().setVisible(true);
-        }
-        else {
-            dfooter.getCancel().setVisible(false);
-        }   
+        dfooter.getCancel().setVisible(b);
     }
 
     public void addListeners(Button back, Button save, Button edit, Button delete, Button cancel) {

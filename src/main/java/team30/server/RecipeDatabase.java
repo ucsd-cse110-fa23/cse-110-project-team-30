@@ -43,6 +43,19 @@ public class RecipeDatabase {
         }
     }
 
+    public void upsertRecipe(Recipe r) {
+        if (getRecipe(r.getObjectID()) == null) {
+            //insert
+            System.out.println("inserting recipe...");
+            insertRecipe(r);
+        }
+        else {
+            //edit
+            System.out.println("editing recipe...");
+            editRecipe(r);
+        }
+    }
+
     //insert recipe into database
     public void insertRecipe(Recipe r) {
         Document recipe = new Document("_id", r.getObjectID());
@@ -86,14 +99,13 @@ public class RecipeDatabase {
         }
         Recipe r = new Recipe();
         ArrayList<String> details = new ArrayList<>();
-        r.setRecipeDetails(null);
-        r.setObjectID(id);
 
         details.add(d.get("name").toString());
         details.add(d.get("meal_type").toString());
         details.add(d.get("ingredients").toString());
         details.add(d.get("imageurl").toString());
-        details.add(d.get("steps").toString());      
+        details.add(d.get("steps").toString());   
+        r.setObjectID(id);   
         r.setRecipeDetails(details);
         return r;
     }

@@ -3,14 +3,10 @@ package team30.recipeList;
 import org.bson.types.ObjectId;
 
 import javafx.collections.FXCollections;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.scene.layout.HBox;
 import team30.recipeList.VoiceRecorder.RecordingCompletionListener;
 import team30.server.RecipeDatabase;
@@ -18,23 +14,21 @@ import team30.server.RecipeDatabase;
 import java.util.ArrayList;
 
 /*
- * UI class
- * For list spacing
+ * UI class for list spacing
  */
 class ListVBox extends VBox {
 
     ListVBox() {
         this.setSpacing(10); // sets spacing between tasks   
         this.setPrefSize(500, 560);
-        this.setStyle("-fx-background-color: #f8f3c9;-fx-padding: 10;");
     }
     //updates indices on recipes in list
     public void updateTaskIndices() {
-        int index = 1;
+        int index = this.getChildren().size();
         for (int i = 0; i < this.getChildren().size(); i++) {
             if (this.getChildren().get(i) instanceof Recipe) {
                 ((Recipe) this.getChildren().get(i)).setTaskIndex(index);
-                index++;
+                index--;
             }
         }
     }
@@ -46,8 +40,7 @@ class ListVBox extends VBox {
 }
 
 /*
- * UI class
- * For entire recipe list sreen
+ * UI class for entire recipe list sreen
  */
 class RecipeListUI extends DefaultBorderPane implements RecordingCompletionListener {
     private ListVBox recipeList;
@@ -61,19 +54,20 @@ class RecipeListUI extends DefaultBorderPane implements RecordingCompletionListe
     private Button postButton, getButton, putButton, deleteButton;
     private String query;
 
-    private RecipeDatabase recipeDB; //loaded by controller when server starts
+    //loaded by controller when server starts
+    private RecipeDatabase recipeDB; 
 
     //voice recorder popup
     VoiceRecorder voiceRecorder;
 
     RecipeListUI() {
         recipeList = new ListVBox();
+        recipeList.setStyle("-fx-background-color: " + tanLight + ";-fx-padding: 10;");
 
         scrollPane = new ScrollPane(recipeList);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
 
-        this.setTop(header);
         this.setCenter(scrollPane);
 
         addButton = new Button("Generate");
@@ -98,7 +92,6 @@ class RecipeListUI extends DefaultBorderPane implements RecordingCompletionListe
         voiceRecorder.setCompletionListener(this);
         voiceRecorder.openDetailWindow();
     }
-
 
     public void addListeners() {
         addButton.setOnAction(e -> {

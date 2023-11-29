@@ -37,6 +37,10 @@ public class Recipe extends HBox {
     private String imageurl;
 
     private ObjectId objectID; //mongodb id
+    
+    String tanLight = "#f1eae0", tanDark = "#ede1cf";
+    String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
+    String magenta = "#a64d79", green = "#a64d79";
 
     public Recipe() {
         this.setPrefSize(450, 40); // sets size of task
@@ -46,8 +50,7 @@ public class Recipe extends HBox {
 
         // index number
         index = new Label();
-        index.setStyle("-fx-background-color: #e5da3e; -fx-background-radius: 20");
-        index.setText(""); // create index label
+        index.setStyle("-fx-background-color: " + tanDark + "; -fx-background-radius: 20; -fx-border-width: 1.5px; -fx-border-color: black; -fx-border-radius: 20");
         index.setPrefSize(40, 40); // set size of Index label
         index.setTextAlignment(TextAlignment.CENTER); // Set alignment of index label
         index.setAlignment(Pos.CENTER);
@@ -57,15 +60,15 @@ public class Recipe extends HBox {
         // button
         recipe_title = new Button("example");
         recipe_title.setPrefSize(400, 40);
-        recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10");
+        recipe_title.setStyle("-fx-background-color: " + tanDark + "; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10");
 
         // Adding hover effect
-        recipe_title.setOnMouseEntered(e -> recipe_title.setStyle("-fx-background-color: #dccf1e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        recipe_title.setOnMouseExited(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
+        recipe_title.setOnMouseEntered(e -> recipe_title.setStyle("-fx-background-color: #dabc94; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
+        recipe_title.setOnMouseExited(e -> recipe_title.setStyle("-fx-background-color: " + tanDark + "; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
         
         // Adding click effect
-        recipe_title.setOnMousePressed(e -> recipe_title.setStyle("-fx-background-color: #b4a918; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
-        recipe_title.setOnMouseReleased(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
+        recipe_title.setOnMousePressed(e -> recipe_title.setStyle("-fx-background-color: #dabc94; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
+        recipe_title.setOnMouseReleased(e -> recipe_title.setStyle("-fx-background-color: " + tanDark + "; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
         this.getChildren().add(recipe_title);
 
         steps = new ArrayList<>();
@@ -141,6 +144,7 @@ public class Recipe extends HBox {
     public void setRecipeDetails(ArrayList<String> details) {
         if (details.size() < 5) {
             System.out.println("ERROR: recipe details doesn't have the right amount of information");
+            return;
         }
         recipe_title.setText(details.get(0));
         meal_type = details.get(1);

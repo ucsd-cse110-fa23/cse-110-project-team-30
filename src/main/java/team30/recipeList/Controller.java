@@ -21,7 +21,7 @@ public class Controller {
         this.recipeListUI = view.getRecipeListUI();
         this.model = model;
 
-        loadRecipes();
+        recipeDB = new RecipeDatabase();
         
         this.view.setPostButtonAction(this::handlePostButton);
         this.view.setGetButtonAction(this::handleGetButton);
@@ -43,6 +43,16 @@ public class Controller {
         }
         catch (Exception e) {
             System.out.println("couldn't open database!");
+        }
+    }
+
+    public void saveRecipe(Recipe r) {
+        try {
+            recipeDB.upsertRecipe(r);
+        }
+        catch (Exception e) {
+            System.out.println("couldn't upsert to database!");
+            e.printStackTrace();
         }
     }
 

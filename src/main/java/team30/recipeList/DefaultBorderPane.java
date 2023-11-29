@@ -14,7 +14,7 @@ public class DefaultBorderPane extends BorderPane {
     VBox middle;
 
     Text titleText;
-    String defaultButtonStyle = "-fx-font-style: italic; -fx-padding: 10; -fx-background-insets: 5; -fx-font-weight: bold; -fx-font: 11 arial; ";
+    String defaultButtonStyle = "-fx-font-style: italic; -fx-padding: 10; -fx-background-insets: 5; -fx-font-weight: bold; -fx-font: 11 arial";
 
     DefaultBorderPane() {
         header = new HBox();
