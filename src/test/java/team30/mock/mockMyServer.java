@@ -1,6 +1,8 @@
 package team30.mock;
 
-import team30.server.RequestHandler;
+import team30.recipeList.Recipe;
+import team30.server.RecipeDatabase;
+import team30.server.RecipeHandler;
 
 import com.sun.net.httpserver.*;
 
@@ -24,15 +26,15 @@ public class mockMyServer {
     // create a thread pool to handle requests
     ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
 
-    // create a map to store data
-    Map<String, String> data = new HashMap<>();
+
+    RecipeDatabase recipeDB = new RecipeDatabase();
 
     // create a server
     HttpServer server = HttpServer.create(
         new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT),
         0);
 
-    HttpContext context = server.createContext("/", new RequestHandler(data));
+    HttpContext context = server.createContext("/recipe", new RecipeHandler(recipeDB));
     server.setExecutor(threadPoolExecutor);
     server.start();
   }

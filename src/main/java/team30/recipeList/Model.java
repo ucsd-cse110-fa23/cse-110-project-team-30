@@ -9,10 +9,9 @@ import java.net.URI;
 
 
 public class Model {
-    public String performRequest(String method, String language, String year, String query) {
-        // Implement your HTTP request logic here and return the response
+    public String performRequest(String method, String language, Recipe recipe, String query) {
         try {
-            String urlString = "http://localhost:8100/";
+            String urlString = "http://localhost:8100/recipe/";
             if (query != null) {
                 urlString += "?=" + query;
             }
@@ -23,7 +22,7 @@ public class Model {
 
             if (method.equals("POST") || method.equals("PUT")) {
                 OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
-                out.write(language + "," + year);
+                out.write(language + "," + recipe);
                 out.flush();
                 out.close();
             }

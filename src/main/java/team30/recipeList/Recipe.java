@@ -2,6 +2,8 @@ package team30.recipeList;
 
 import java.util.ArrayList;
 
+import org.bson.types.ObjectId;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -34,7 +36,7 @@ public class Recipe extends HBox {
     private ArrayList<String> steps;
     private String imageurl;
 
-    private String objectID; //mongodb id
+    private ObjectId objectID; //mongodb id
 
     public Recipe() {
         this.setPrefSize(450, 40); // sets size of task
@@ -66,14 +68,8 @@ public class Recipe extends HBox {
         recipe_title.setOnMouseReleased(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
         this.getChildren().add(recipe_title);
 
-        ingredients = "example ingredients";
         steps = new ArrayList<>();
-        steps.add("step 1...");
-        steps.add("step 2...");
-        steps.add("step 3...");
-        meal_type = "lunch";
-        imageurl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxcSpK0Chn1awF4y-TYCY_BSsBy1psaade2G957ylydxSDx3fVWbSlLtjE2-FXafRVf8E&usqp=CAU"; //random image
-        objectID = ""; //will be set if saved
+        objectID = new ObjectId(); 
     }
 
     public Recipe(String recipe_name, String mealType, String ingredients, ArrayList<String> steps, String imageurl) {
@@ -90,11 +86,11 @@ public class Recipe extends HBox {
         this.index.setText(num + ""); // num to String
     }
 
-    public void setObjectID(String id) {
+    public void setObjectID(ObjectId id) {
         this.objectID = id;
     }
 
-    public String getObjectID() {
+    public ObjectId getObjectID() {
         return this.objectID;
     }
 
@@ -127,14 +123,34 @@ public class Recipe extends HBox {
     }
 
     public boolean equals(Recipe other){
-        if(!(this.index.getText().equals(other.index.getText()))) return false;
-        if(!(this.ingredients.equals(other.ingredients))) return false;
-        if(!(this.recipe_title.getText().equals(other.recipe_title.getText()))) return false;
-        if(!this.meal_type.equals(other.meal_type)) return false;
-        if(this.steps.size() != other.steps.size()) return false;
-        for(int i = 0 ; i < steps.size() ; i++){
-            if(!(this.steps.get(i).equals(other.steps.get(i)))) return false;
+        return (this.objectID == other.getObjectID());
+    }
+
+    public ArrayList<String> getRecipeDetails() {
+        ArrayList<String> details = new ArrayList<>();
+        details.add(this.getRecipeTitle().getText()); //0 - name
+        details.add(this.getMealType()); //1 - meal type
+        details.add(this.getIngredients()); //2 - ingredients
+        details.add(this.getImageURL()); //3 - imageurl
+        for (int i = 0; i < this.getSteps().size(); ++i) { //4 - inf: recipe steps
+            details.add(this.getSteps().get(i));
         }
-        return true;
+        return details;
+    }
+
+    public void setRecipeDetails(ArrayList<String> details) {
+        if (details.size() < 5) {
+            System.out.println("ERROR: recipe details doesn't have the right amount of information");
+        }
+        recipe_title.setText(details.get(0));
+        meal_type = details.get(1);
+        ingredients = details.get(2);
+        imageurl = details.get(3);
+
+        steps = new ArrayList<>();
+
+        for (int i = 4; i < details.size(); i++) {
+            steps.add(details.get(i));
+        }
     }
 } 

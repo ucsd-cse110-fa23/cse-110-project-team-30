@@ -34,6 +34,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+
+import org.bson.types.ObjectId;
+
 import javafx.scene.paint.Color;
 
 class DetailFooter extends HBox {
@@ -290,14 +293,12 @@ public class RecipeDetail {
 
     public void openDetailWindow(Recipe recipe) {
         rl.getPrimStage().setScene(recipeViewScene);
-        System.out.println("!!!!!!!!!");
         rl.getPrimStage().show();
     }
 
     public void closeDetailWindow() {
         disableEdit();
         rl.getPrimStage().setScene(recipeListScene);
-        System.out.println("?????");
         rl.getPrimStage().show();
     }
 
@@ -333,10 +334,9 @@ public class RecipeDetail {
     }
 
     public void saveRecipe() {
-        if (recipe.getObjectID() == "") {  //insert new recipe to database
+        if (recipe.getObjectID() == null) {  //insert new recipe to database
             try {
-                String newID = recipeDB.insertRecipe(recipe);
-                recipe.setObjectID(newID);
+                recipeDB.insertRecipe(recipe);
             }
             catch (Exception e) {
                 System.out.println("couldn't save to database!");
@@ -428,16 +428,4 @@ public class RecipeDetail {
     public Button getEditButton(){
         return ((DetailFooter)recipeViewAF.getBottom()).getEdit();
     }
-
-    // public TextField getMealTypeTextField(){
-    //     return this.dRecipe.getMealType();
-    // }
-
-    // public TextArea getIngredientsTextArea(){
-    //     return this.dRecipe.getIngredients();
-    // }
-
-    // public ArrayList<TextArea> getStepsTextAreas(){
-    //     return this.dRecipe.getSteps();
-    // }
 }

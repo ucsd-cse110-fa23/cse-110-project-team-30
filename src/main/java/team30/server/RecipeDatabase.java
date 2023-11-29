@@ -1,6 +1,7 @@
 package team30.server;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.in;
 import static com.mongodb.client.model.Updates.set;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
@@ -42,9 +44,8 @@ public class RecipeDatabase {
     }
 
     //insert recipe into database
-    //returns document id
-    public String insertRecipe(Recipe r) {
-        Document recipe = new Document("_id", new ObjectId());
+    public void insertRecipe(Recipe r) {
+        Document recipe = new Document("_id", r.getObjectID());
         //recipe.put("name", r.getRecipeTitle().getText());
         recipe.append("name", r.getRecipeTitle().getText())
                 .append("meal_type", r.getMealType())
@@ -58,7 +59,6 @@ public class RecipeDatabase {
         catch (Exception e) {
             e.printStackTrace();
         }
-        return recipe.get("_id").toString();
     }
 
     //gets recipe from document
@@ -73,20 +73,41 @@ public class RecipeDatabase {
         ArrayList<String> steps = stepsFromString(stepsString);
 
         Recipe r = new Recipe(name, meal_type, ingredients, steps, imageurl);
-        r.setObjectID(d.get("_id").toString());
+        r.setObjectID(d.get("_id", ObjectId.class));
+        return r;
+    }
+
+    //gets recipe by objectID
+    public Recipe getRecipe(ObjectId id) {
+        Document d = recipeDB.getCollection("recipes").find(eq("_id", id)).first();
+        if (d == null) {
+            System.out.println("failed to get recipe");
+            return null;
+        }
+        Recipe r = new Recipe();
+        ArrayList<String> details = new ArrayList<>();
+        r.setRecipeDetails(null);
+        r.setObjectID(id);
+
+        details.add(d.get("name").toString());
+        details.add(d.get("meal_type").toString());
+        details.add(d.get("ingredients").toString());
+        details.add(d.get("imageurl").toString());
+        details.add(d.get("steps").toString());      
+        r.setRecipeDetails(details);
         return r;
     }
 
     //edits recipe document
     public void editRecipe(Recipe r) {
-        String objectID = r.getObjectID();
-        if (objectID == "") {
+        ObjectId objectID = r.getObjectID();
+        if (objectID == null) {
             System.out.println("ERROR: cannot find matching document to edit");
             return;
         }
 
-        Bson filter = eq("_id", new ObjectId(objectID));
-        recipesCollection.updateMany(filter,
+        Bson filter = eq("_id", objectID);
+        recipesCollection.updateMany(filter, 
                 Updates.combine(Updates.set("meal_type", r.getMealType()),
                                 Updates.set("ingredients", r.getIngredients()),
                                 Updates.set("steps", stepsToString(r.getSteps())),
@@ -97,12 +118,20 @@ public class RecipeDatabase {
 
     //deletes recipe document
     public void deleteRecipe(Recipe r) {
-        String objectID = r.getObjectID();
-        if (objectID == "") { //wasn't in database
+        ObjectId objectID = r.getObjectID();
+        if (objectID == null) { //wasn't in database
             return;
         }
 
-        Bson filter = eq("_id", new ObjectId(objectID));
+        Bson filter = eq("_id", objectID);
+        recipesCollection.findOneAndDelete(filter);
+        System.out.println("deleted recipe successfully!");
+
+    }
+
+    //deletes recipe document
+    public void deleteRecipe(ObjectId id) {
+        Bson filter = eq("_id", id);
         recipesCollection.findOneAndDelete(filter);
         System.out.println("deleted recipe successfully!");
 
@@ -113,7 +142,7 @@ public class RecipeDatabase {
         String s = "";
         for (String step : steps) {
             if (s != "") 
-                s += ";;"; //separate steps with ;;
+                s += ";; "; //separate steps with ;;
             s += step;
         }
         return s;
@@ -122,19 +151,10 @@ public class RecipeDatabase {
     //convert steps from string form to arraylist form
     ArrayList<String> stepsFromString(String steps) {
         ArrayList<String> al = new ArrayList<>();
-        String stepsText = "";
-        for (int i = 0; i < steps.length() - 1; i++) {
-            if (steps.substring(i, i+2).equals(";;")) {
-                i += 1;
-                al.add(stepsText);
-                stepsText = "";
-            }
-            else {
-                stepsText += steps.substring(i, i+1);
-            }
+        String[] stepsArray = steps.split(";; ");
+        for (int i = 0; i < stepsArray.length; i++) {
+            al.add(stepsArray[i]);
         }
-        if (stepsText != "")
-            al.add(stepsText);
         return al;
     }
 

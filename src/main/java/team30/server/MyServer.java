@@ -1,6 +1,9 @@
 package team30.server;
 
 import com.sun.net.httpserver.*;
+
+import team30.recipeList.Recipe;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -17,15 +20,14 @@ public class MyServer {
     // create a thread pool to handle requests
     ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
 
-    // create a map to store data
-    Map<String, String> data = new HashMap<>();
+    RecipeDatabase recipeDB = new RecipeDatabase();
 
     // create a server
     HttpServer server = HttpServer.create(
         new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT),
         0);
 
-    HttpContext context = server.createContext("/", new RequestHandler(data));
+    HttpContext context = server.createContext("/recipe", new RecipeHandler(recipeDB));
     server.setExecutor(threadPoolExecutor);
     server.start();
 

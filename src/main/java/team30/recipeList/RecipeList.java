@@ -43,6 +43,7 @@ import javafx.scene.paint.Color;
 
 import com.mongodb.client.FindIterable;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 class List extends VBox {
 
@@ -246,13 +247,12 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
                         steps.add(lines[i]);
                 }
             }
-            
             Recipe cur = new Recipe(recipeName, mealType, ingredients, steps, imgurl);
             addRecipe(cur);
 
             RecipeDetail tmp = new RecipeDetail(rl, this, cur);
             tmp.setCancellable(true);
-            System.out.println("OPENING NEW RECIPE...");
+            System.out.println("Opening new recipe...");
             tmp.openDetailWindow(cur);
         } catch (Exception err) {
             err.printStackTrace();
@@ -263,6 +263,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         FXCollections.reverse(recipeList.getChildren());
         recipeList.getChildren().add(cur);
         recipeList.updateTaskIndices();
+        recipe = cur;
         postButton.fire(); //click HTTP post button
 
         cur.getRecipeTitle().setOnAction(f -> {
@@ -282,7 +283,6 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
             Iterator<Document> it = iterDoc.iterator();
             while (it.hasNext()) {
                 Recipe cur = recipeDB.getRecipe(it.next());
-                
                 addRecipe(cur);
             }
         }
@@ -291,19 +291,8 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         }
     }
 
-    public String getRecipeName() {
-        return recipe.getRecipeTitle().getText();
-    }
-
-    public String[] getRecipeDetails() {
-        String[] details = new String[3];
-        details[0] = recipe.getMealType();
-        details[1] = recipe.getIngredients();
-        details[2] = "";
-        for (int i = 0; i < recipe.getSteps().size(); ++i) {
-            details[2] += recipe.getSteps().get(i);
-        }
-        return details;
+    public ObjectId getRecipeObjectID() {
+        return recipe.getObjectID();
     }
 
     public Button getPostButton() {return postButton;}
@@ -363,8 +352,8 @@ public class RecipeList extends Application {
     public void setPutButtonAction(EventHandler<ActionEvent> eventHandler) {putButton.setOnAction(eventHandler);}
     public void setDeleteButtonAction(EventHandler<ActionEvent> eventHandler) {deleteButton.setOnAction(eventHandler);}
 
-    public String getRecipeName() {return root.getRecipeName();}
-    public String[] getRecipeDetails() {return root.getRecipeDetails();}
+    public ObjectId getRecipeObjectID() {return root.getRecipeObjectID();}
+    public Recipe getRecipe() {return root.getRecipe();}
     public String getQuery() {return root.getQuery();}
 
     public void showAlert(String title, String content) {
