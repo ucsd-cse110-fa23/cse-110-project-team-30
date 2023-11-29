@@ -2,6 +2,8 @@ package team30.recipeList;
 
 import java.util.ArrayList;
 
+import org.bson.types.ObjectId;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -9,7 +11,12 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.TextAlignment;
 
+//Recipe UI
 public class Recipe extends HBox {
+    
+    String tanLight = "#f1eae0", tanDark = "#ede1cf";
+    String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
+    String magenta = "#a64d79", green = "#a64d79";
 
     static String[] validMealTypes = {"Breakfast","Lunch","Dinner"};
 
@@ -35,6 +42,8 @@ public class Recipe extends HBox {
     private String imageurl;
 
     private String objectID; //mongodb id
+
+    private Label meal_tag;
 
     public Recipe() {
         this.setPrefSize(450, 40); // sets size of task
@@ -66,14 +75,9 @@ public class Recipe extends HBox {
         recipe_title.setOnMouseReleased(e -> recipe_title.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10"));
         this.getChildren().add(recipe_title);
 
-        ingredients = "example ingredients";
         steps = new ArrayList<>();
-        steps.add("step 1...");
-        steps.add("step 2...");
-        steps.add("step 3...");
-        meal_type = "lunch";
-        imageurl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxcSpK0Chn1awF4y-TYCY_BSsBy1psaade2G957ylydxSDx3fVWbSlLtjE2-FXafRVf8E&usqp=CAU"; //random image
-        objectID = ""; //will be set if saved
+        objectID = "";
+
     }
 
     public Recipe(String recipe_name, String mealType, String ingredients, ArrayList<String> steps, String imageurl) {
@@ -84,6 +88,44 @@ public class Recipe extends HBox {
         this.steps = steps;
         this.meal_type = mealType;
         this.imageurl = imageurl;
+        setMealTag(meal_type);
+    }
+
+    public void setMealTag(String mealType) {
+        //meal tag
+        boolean newMealTag = false;
+        boolean validMealTag = true;
+        if (meal_tag == null) {
+            newMealTag = true;
+            meal_tag = new Label();
+            meal_tag.setTextAlignment(TextAlignment.CENTER);
+            meal_tag.setPrefSize(100, 40);
+            meal_tag.setAlignment(Pos.CENTER);
+            //make space
+            recipe_title.setPrefSize(300, 40);
+        }
+
+        if (mealType.toLowerCase().equals("breakfast")) {
+            meal_tag.setText("breakfast");
+            meal_tag.setStyle("-fx-background-color: " + pink + "; -fx-background-radius: 20; -fx-border-width: 1.5px; -fx-border-color: black; -fx-border-radius: 20");
+        }
+        else if (mealType.toLowerCase().equals("lunch")) {
+            meal_tag.setText("lunch");
+            meal_tag.setStyle("-fx-background-color: " + purple + "; -fx-background-radius: 20; -fx-border-width: 1.5px; -fx-border-color: black; -fx-border-radius: 20");
+        }
+        else if (mealType.toLowerCase().equals("dinner")) {
+            meal_tag.setText("dinner");
+            meal_tag.setStyle("-fx-background-color: " + blue + "; -fx-background-radius: 20; -fx-border-width: 1.5px; -fx-border-color: black; -fx-border-radius: 20");
+        }
+        else {
+            System.out.println("ERROR: invalid meal type: [" + mealType + "]");
+            validMealTag = false;
+        }
+
+        if (validMealTag && newMealTag) {
+            this.getChildren().add(meal_tag);
+        }
+
     }
 
     public void setTaskIndex(int num) {
