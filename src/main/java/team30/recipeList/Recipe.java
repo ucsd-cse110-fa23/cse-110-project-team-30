@@ -33,6 +33,7 @@ public class Recipe extends HBox {
     private String ingredients;
     private ArrayList<String> steps;
     private String imageurl;
+    private boolean imageGenerated;
 
     private String objectID; //mongodb id
 
@@ -76,7 +77,7 @@ public class Recipe extends HBox {
         objectID = ""; //will be set if saved
     }
 
-    public Recipe(String recipe_name, String mealType, String ingredients, ArrayList<String> steps, String imageurl) {
+    public Recipe(String recipe_name, String mealType, String ingredients, ArrayList<String> steps, String imageurl, boolean imageGenerated) {
         this();
 
         this.recipe_title.setText(recipe_name);
@@ -84,6 +85,7 @@ public class Recipe extends HBox {
         this.steps = steps;
         this.meal_type = mealType;
         this.imageurl = imageurl;
+        this.imageGenerated = imageGenerated;
     }
 
     public void setTaskIndex(int num) {
@@ -124,6 +126,14 @@ public class Recipe extends HBox {
 
     public String getImageURL() {
         return this.imageurl;
+    }
+
+    public boolean getImageGenerated(){
+        return this.imageGenerated;
+    }
+
+    public void setImageGenerated(boolean imageGenerated){
+        this.imageGenerated = imageGenerated;
     }
 
     public boolean equals(Recipe other){

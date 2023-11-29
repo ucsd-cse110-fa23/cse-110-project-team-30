@@ -253,7 +253,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
             DallE dallE = new DallE();
             dallE.generateImage(recipeName, imgurl);
             
-            Recipe cur = new Recipe(recipeName, mealType, ingredients, steps, imgurl);
+            Recipe cur = new Recipe(recipeName, mealType, ingredients, steps, imgurl,true);
             addRecipe(cur);
 
             RecipeDetail tmp = new RecipeDetail(rl, this, cur);
