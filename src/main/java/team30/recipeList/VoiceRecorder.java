@@ -21,72 +21,8 @@ import javax.sound.sampled.*;
 
 import org.json.JSONException;
 
-class RecorderBorderPane extends BorderPane {
-    String tanLight = "#f1eae0", tanDark = "#ede1cf";
-    String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
-    String magenta = "#a64d79", green = "#a64d79";
-
-    private HBox header;
-    private HBox footer;
-    private VBox middle;
-
-    private Text titleText;
-    private Button backButton;
-    private Button startButton;
-    private Button stopButton;
-    private Button continueButton;
-
-    String defaultButtonStyle = "-fx-font-style: italic; -fx-padding: 10; -fx-background-insets: 5; -fx-font-weight: bold; -fx-font: 11 arial; ";
-    
-    RecorderBorderPane() {
-        header = new HBox();
-        titleText = new Text("PantryPal");
-        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 40; -fx-fill: " + magenta);
-        header.getChildren().add(titleText);
-        header.setAlignment(Pos.CENTER);
-
-        footer = new HBox();
-        backButton = new Button("Cancel");
-        backButton.setStyle(defaultButtonStyle + "-fx-background-color: " + blue);
-        continueButton = new Button("Continue");
-        continueButton.setStyle(defaultButtonStyle + "-fx-background-color: " + purple);
-        footer.getChildren().addAll(backButton, continueButton);
-        footer.setAlignment(Pos.CENTER);
-
-        middle = new VBox();
-        startButton = new Button("Start Recording");
-        startButton.setStyle(defaultButtonStyle + "-fx-background-color: " + pink + "; -fx-font: 14 arial;");
-        stopButton = new Button("Stop Recording");
-        stopButton.setStyle(defaultButtonStyle + "-fx-background-color: " + pink + "; -fx-font: 14 arial;");
-        middle.getChildren().addAll(startButton, stopButton);
-        middle.setAlignment(Pos.CENTER);
-        
-        this.setStyle("-fx-background-color: " + tanLight);
-        this.setTop(header);
-        this.setCenter(middle);
-        this.setBottom(footer);
-    }
-
-    public Button getStartButton() {
-        return startButton;
-    }
-    public Button getStopButton() {
-        return stopButton;
-    }
-    public Button getBackButton() {
-        return backButton;
-    }
-    public Button getContinueButton() {
-        return continueButton;
-    }
-    public VBox getMiddle() {
-        return middle;
-    }
-}
-
-
 public class VoiceRecorder {
-    private RecorderBorderPane voiceAF; //current app frame
+    private VoiceRecorderUI voiceAF; //current app frame
     private RecipeList rl;
 
     private Scene recipeListScene;
@@ -114,11 +50,11 @@ public class VoiceRecorder {
     private Whisper audioProcessor;
     private RecordingCompletionListener completionListener;
 
-    public VoiceRecorder(RecipeList rl, AppFrame af) {
+    public VoiceRecorder(RecipeList rl, RecipeListUI af) {
         this.rl = rl;
         recipeListScene = rl.getScene();
 
-        voiceAF = new RecorderBorderPane();
+        voiceAF = new VoiceRecorderUI();
         audioProcessor = new Whisper();
 
         startButton = voiceAF.getStartButton();

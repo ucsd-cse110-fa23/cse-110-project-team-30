@@ -232,8 +232,8 @@ class Ingredient extends HBox {
 }
 
 public class RecipeDetail {
-    private AppFrame recipeListAF; //original app frame
-    private AppFrame recipeViewAF; //current app frame
+    private RecipeListUI recipeListAF; //original app frame
+    private RecipeListUI recipeViewAF; //current app frame
     private RecipeList rl;
 
     private DetailRecipe dRecipe;
@@ -255,14 +255,14 @@ public class RecipeDetail {
 
     DetailFooter dfooter;
 
-    RecipeDetail(RecipeList rl, AppFrame af, Recipe r) {
+    RecipeDetail(RecipeList rl, RecipeListUI af, Recipe r) {
         this.rl = rl;
         this.recipe = r;
         recipeListAF = af;
         recipeListScene = rl.getScene();
         recipeDB = recipeListAF.getRecipeDB();
 
-        recipeViewAF = new AppFrame();
+        recipeViewAF = new RecipeListUI();
 
         //header
         header = new HBox();
