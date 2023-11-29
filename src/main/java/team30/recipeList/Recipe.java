@@ -1,13 +1,18 @@
 package team30.recipeList;
 
+import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.TextAlignment;
+
+
 
 public class Recipe extends HBox {
 
@@ -134,6 +139,31 @@ public class Recipe extends HBox {
 
     public void setImageGenerated(boolean imageGenerated){
         this.imageGenerated = imageGenerated;
+    }
+
+    /**
+     * Takes an image from the recipe's url, and if the recipe has not had an image generated for it, 
+     * generate one to return.
+     * @return the linked image if generatedImage is true, and a newly generated image if not.
+     */
+    public Image getImage(){
+        Image recipeImage;
+            
+        if(!imageGenerated){
+            //TODO: If the server stuff gets fixed, change this to use the server
+            DallE dallE = new DallE();
+            try{
+                dallE.generateImage(this.getRecipeTitle().getText(), imageurl);
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        
+        File file = new File(this.getImageURL());
+        URI fileURI = file.toURI();
+        recipeImage = new Image(fileURI.toString());
+        return recipeImage;
     }
 
     public boolean equals(Recipe other){
