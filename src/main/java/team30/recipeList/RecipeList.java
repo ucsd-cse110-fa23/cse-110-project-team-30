@@ -57,11 +57,11 @@ class List extends VBox {
 
     //updates indices on recipes in list
     public void updateTaskIndices() {
-        int index = 1;
+        int index = this.getChildren().size();
         for (int i = 0; i < this.getChildren().size(); i++) {
             if (this.getChildren().get(i) instanceof Recipe) {
                 ((Recipe) this.getChildren().get(i)).setTaskIndex(index);
-                index++;
+                index--;
             }
         }
     }
