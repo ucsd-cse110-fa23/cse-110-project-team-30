@@ -139,15 +139,10 @@ class DetailRecipe extends VBox {
         title_mealtype_HBox.getChildren().add(mealtype);
 
 
-        //adding image
-        // VBox image_VBox = new VBox();
+        //Add second row: Image
         ImageView imageView = new ImageView();
-        if(recipe.getImageURL() != null){
-            File file = new File(recipe.getImageURL());
-            URI fileURI = file.toURI();
-            recipeImage = new Image(fileURI.toString());
-            imageView.setImage(recipeImage);
-        }
+        recipeImage = recipe.getImage();
+        imageView.setImage(recipeImage);
         imageView.setFitWidth(200);
         imageView.setFitHeight(200);
         imageView.setPreserveRatio(false);
@@ -159,7 +154,7 @@ class DetailRecipe extends VBox {
         image_VBox.setSpacing(15);
         image_VBox.setAlignment(Pos.CENTER);
 
-        // adding second row: ingredients
+        // adding third row: ingredients
         HBox ingredients_HBox = new HBox();
         ingredients_HBox.setPrefSize(450, 70);
         ingredients_HBox.setMaxHeight(HBox.USE_PREF_SIZE); 
