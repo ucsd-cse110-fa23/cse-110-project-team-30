@@ -1,23 +1,13 @@
 package team30.recipeList;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-
 import java.io.*;
 import java.net.URISyntaxException;
 
 import javax.sound.sampled.*;
+import java.util.*;
 
 import org.json.JSONException;
 
@@ -50,6 +40,8 @@ public class VoiceRecorder {
     private Whisper audioProcessor;
     private RecordingCompletionListener completionListener;
 
+    ArrayList<Label> labels;
+
     public VoiceRecorder(RecipeList rl, RecipeListUI af) {
         this.rl = rl;
         recipeListScene = rl.getScene();
@@ -61,6 +53,8 @@ public class VoiceRecorder {
         stopButton = voiceAF.getStopButton();
         backButton = voiceAF.getBackButton();
         continueButton = voiceAF.getContinueButton();
+
+        //debug issue with colors later
         
         recordingLabel = new Label("Recording...");
         instructionsMealTypeLabel = new Label("Please select your mealtype 'breakfast', 'lunch', or 'dinner'");
@@ -69,19 +63,15 @@ public class VoiceRecorder {
         instructionsIngredientsLabel = new Label("Please list the ingredients you have.");
         successfulIngredientsLabel = new Label("You said: ");
 
-        recordingLabel.setStyle(defaultLabelStyle);
-        instructionsMealTypeLabel.setStyle(defaultLabelStyle);
-        failedMealTypeLabel.setStyle(defaultLabelStyle);
-        successfulMealTypeLabel.setStyle(defaultLabelStyle);
-        instructionsIngredientsLabel.setStyle(defaultLabelStyle);
-        successfulIngredientsLabel.setStyle(defaultLabelStyle);
+        labels = new ArrayList<>();
+        labels.add(recordingLabel);
+        labels.add(instructionsMealTypeLabel);
+        labels.add(failedMealTypeLabel);
+        labels.add(successfulMealTypeLabel);
+        labels.add(instructionsIngredientsLabel);
+        labels.add(successfulIngredientsLabel);
 
-        recordingLabel.setWrapText(true);
-        instructionsMealTypeLabel.setWrapText(true);
-        failedMealTypeLabel.setWrapText(true);
-        successfulMealTypeLabel.setWrapText(true);
-        instructionsIngredientsLabel.setWrapText(true);
-        successfulIngredientsLabel.setWrapText(true);
+        setLabelStyle(defaultLabelStyle);
 
         audioFormat = getAudioFormat();
 
@@ -100,12 +90,16 @@ public class VoiceRecorder {
     };
 
     private void hideLabels() {
-        recordingLabel.setVisible(false);
-        instructionsMealTypeLabel.setVisible(false);
-        failedMealTypeLabel.setVisible(false);
-        successfulMealTypeLabel.setVisible(false);
-        instructionsIngredientsLabel.setVisible(false);
-        successfulIngredientsLabel.setVisible(false);
+        for (Label l : labels) {
+            l.setVisible(false);
+        }
+    }
+
+    private void setLabelStyle(String labelStyle) {
+        for (Label l : labels) {
+            l.setStyle(labelStyle);
+            l.setWrapText(true);
+        }
     }
 
     public void addListeners() {

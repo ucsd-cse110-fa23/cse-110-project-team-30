@@ -55,6 +55,7 @@ public class RecipeHandler implements HttpHandler {
             Recipe recipe = recipeDB.getRecipe(new ObjectId(objectID)); // Retrieve data from hashmap
             if (recipe != null) {
                 response = detailsToString(recipe.getRecipeDetails());
+                System.out.println("get successful!");
                 System.out.println("Queried for " + objectID + " and found " + detailsToString(recipe.getRecipeDetails()));
             } else {
                 response = "No data found for " + objectID;
