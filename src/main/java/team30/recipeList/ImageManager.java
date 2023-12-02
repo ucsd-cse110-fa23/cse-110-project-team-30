@@ -21,7 +21,7 @@ public class ImageManager {
     static String generateImage(String name){
         String imgurl = createUniqueURI(name);
         try{
-            dallE.generateImage(name, imgurl);
+            dallE.generateImage(name, path + imgurl);
         }
         catch(Exception e){
             e.printStackTrace();
@@ -40,7 +40,7 @@ public class ImageManager {
      */
     static String ensurePathValid(String path, String name, boolean regenerate){
         String imgurl = path;
-        if(regenerate || !(new File(imgurl).exists())){
+        if(regenerate || !(new File(ImageManager.path + imgurl).exists())){
             imgurl = generateImage(name);
         }
         return imgurl;
@@ -52,8 +52,8 @@ public class ImageManager {
      * @param path - path of the image.
      * @return image in the given path.
      */
-        File file = new File(path);
     static Image getImage(String path){
+        File file = new File(ImageManager.path + path);
         URI fileURI = file.toURI();
         return new Image(fileURI.toString());
     }
@@ -66,7 +66,7 @@ public class ImageManager {
     static String createUniqueURI(String name){
         String url = name + ".png";
         int counter = 0;
-        while((new File(url)).exists())
+        while((new File(path + url)).exists())
             url = name + "(" + (counter++) + ")" + ".png";
         return url;
     }
