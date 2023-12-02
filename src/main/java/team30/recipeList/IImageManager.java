@@ -1,6 +1,8 @@
 package team30.recipeList;
 
 import javafx.scene.image.Image;
+import java.io.File;
+import java.net.URI;
 
 /**
  * A basic interface for an ImageManager.
@@ -63,16 +65,26 @@ class ImageManager extends IImageManager{
 
     @Override
     public String ensurePathValid(String path, String name, boolean regenerate){
-        return null;
+        String imgurl = path;
+        if(regenerate || !(new File(imgurl).exists())){
+            imgurl = this.generateImage(name);
+        }
+        return imgurl;
     }
 
     @Override 
     public Image getImage(String path){
-        return null;
+        File file = new File(path);
+        URI fileURI = file.toURI();
+        return new Image(fileURI.toString());
     }
 
     @Override
     public String createUniqueURI(String name){
-        return null;
+        String url = name + ".png";
+        int counter = 0;
+        while((new File(url)).exists())
+            url = name + "(" + (counter++) + ")" + ".png";
+        return url;
     }
 }
