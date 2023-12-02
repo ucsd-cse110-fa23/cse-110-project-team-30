@@ -51,6 +51,13 @@ class ImageManager extends IImageManager{
     //TODO: Once the Server is cleaned up, have this instead make a call to the server to generate the image.
     @Override
     public String generateImage(String name){
+        String imgurl = createUniqueURI(name);
+        try{
+            dallE.generateImage(name, imgurl);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
         return null;
     }
 
