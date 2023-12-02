@@ -4,21 +4,21 @@ import javafx.scene.image.Image;
 import java.io.File;
 import java.net.URI;
 
-public class ImageManager{
-    DallE dallE = new DallE();
+public class ImageManager {
+
+    static DallE dallE = new DallE();
 
 
     public static final String path = "";
 
     //TODO: Once the Server is cleaned up, have this instead make a call to the server to generate the image.
-
     /**
      * Creates an image with the given name if the name is clear.
      * If not, a new path will be made to hold the image.
      * @param name - the expected name for the image
      * @return - a path in the files to the image
      */
-    public String generateImage(String name){
+    static String generateImage(String name){
         String imgurl = createUniqueURI(name);
         try{
             dallE.generateImage(name, imgurl);
@@ -26,9 +26,9 @@ public class ImageManager{
         catch(Exception e){
             e.printStackTrace();
         }
-        return null;
+        return name;
     }
-    
+
     /**
      * Meant to ensure that a given path is good for use.
      * If the path does not exist, or the regenerate flag is true,
@@ -38,32 +38,32 @@ public class ImageManager{
      * @param regenerate - flag that sets whether to regenerate the image or not.
      * @return the original path, if valid, and a path to a new image if not.
      */
-    public String ensurePathValid(String path, String name, boolean regenerate){
+    static String ensurePathValid(String path, String name, boolean regenerate){
         String imgurl = path;
         if(regenerate || !(new File(imgurl).exists())){
-            imgurl = this.generateImage(name);
+            imgurl = generateImage(name);
         }
         return imgurl;
     }
-    
+
     /**
      * Attempts to get an image in the given path.
-     * It is recommended to run ensurePathValid first to ensure that the path does have an image.
+     * It is recommended to run ensurePathValid first to ensure that the path could be used.
      * @param path - path of the image.
      * @return image in the given path.
      */
-    public Image getImage(String path){
         File file = new File(path);
+    static Image getImage(String path){
         URI fileURI = file.toURI();
         return new Image(fileURI.toString());
     }
-    
+
     /**
-     * Creates a unique URI for the 
+     * Creates a unique URI with the given name.
      * @param name - the expected name for the URI
      * @return the path of the URI as a String
      */
-    public String createUniqueURI(String name){
+    static String createUniqueURI(String name){
         String url = name + ".png";
         int counter = 0;
         while((new File(url)).exists())
