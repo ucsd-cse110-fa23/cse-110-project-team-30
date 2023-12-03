@@ -6,7 +6,7 @@ import java.net.URI;
 
 public class ImageManager {
 
-    static DallE dallE = new DallE();
+    static IDallE dallE = new DallE();
 
 
     public static String path = "";
@@ -33,9 +33,9 @@ public class ImageManager {
      * Runs the generateImage function with the given DallE.
      * Intended for testing purposes only.
      */
-    static String generateImage(String name, DallE otherDallE){
-        DallE hold = dallE;
-        dallE = otherDallE;
+    public static String generateImage(String name, String path){
+        IDallE hold = dallE;
+        dallE = new MockDallE(path);
         String result = generateImage(name);
         dallE = hold;
         return result;

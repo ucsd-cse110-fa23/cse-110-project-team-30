@@ -1,5 +1,6 @@
 package team30.recipeList;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -8,12 +9,19 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.CopyOption;
 import java.nio.file.Paths;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class DallE {
+interface IDallE {
+    public void generateImage(String prompt, String loc) throws Exception;
+}
+
+public class DallE implements IDallE {
     private static final String API_ENDPOINT = "https://api.openai.com/v1/images/generations";
     private static final String API_KEY = "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";
     private static final String MODEL = "dall-e-2";
@@ -23,7 +31,7 @@ public class DallE {
      * @param prompt - the prompt to design the image by
      * @param loc - intended file location for the image
      */
-    public void generateImage(String prompt, String loc) throws IOException, InterruptedException, URISyntaxException{
+    public void generateImage(String prompt, String loc) throws Exception{
         int n = 1;
 
         JSONObject requestBody = new JSONObject();
@@ -62,5 +70,25 @@ public class DallE {
         {
             Files.copy(in, Paths.get(loc));
         }
+    }
+}
+
+class MockDallE implements IDallE{
+
+    String imgPath;
+
+    MockDallE(String imgPath){
+        this.imgPath = imgPath;
+    }
+
+    /**
+     * As a mock, just grabs an image with the prompt's name from a predetermined area to plant in the loc
+     */
+    public void generateImage(String prompt, String loc) throws Exception{
+        Path get = Paths.get(imgPath + File.separator + prompt);
+        Path set = Paths.get(loc);
+        set.toFile().createNewFile();
+        set.toFile().deleteOnExit();
+        Files.copy(get,set,(CopyOption)StandardCopyOption.COPY_ATTRIBUTES);
     }
 }
