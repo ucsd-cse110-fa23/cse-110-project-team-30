@@ -22,7 +22,17 @@ import javafx.geometry.Insets;
 import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.util.Arrays;
+
 import javafx.util.Pair;
+import team30.account.CreateAccount;
+import team30.account.Login;
 import team30.recipeList.VoiceRecorder.RecordingCompletionListener;
 import team30.server.RecipeDatabase;
 
@@ -55,11 +65,11 @@ class List extends VBox {
 
     //updates indices on recipes in list
     public void updateTaskIndices() {
-        int index = 1;
+        int index = this.getChildren().size();
         for (int i = 0; i < this.getChildren().size(); i++) {
             if (this.getChildren().get(i) instanceof Recipe) {
                 ((Recipe) this.getChildren().get(i)).setTaskIndex(index);
-                index++;
+                index--;
             }
         }
     }
@@ -76,6 +86,7 @@ class Header extends HBox {
     private Text titleText;
     private Button addButton;
     private Image recipe_Image;
+    private Button logoutButton;
 
     Header() {
         this.setPrefSize(500, 60);
@@ -86,19 +97,25 @@ class Header extends HBox {
         this.getChildren().add(titleText);
         titleText.setFill(Color.GRAY); // Set the font color
         
-        this.setMargin(this.getTitleText(), new Insets(0, 200, 0, 0));
+        this.setMargin(this.getTitleText(), new Insets(0, 150, 0, 0));
 
         addButton = new Button("Generate");
         setButtonStyle(addButton);
-        this.getChildren().add(addButton);
+        this.setMargin(this.getAddButton(), new Insets(0, 10, 0, 0));
+        logoutButton = new Button("Log Out");
+        setButtonStyle(logoutButton);
+        this.getChildren().addAll(addButton, logoutButton);
         this.setAlignment(Pos.CENTER_LEFT);
-
     }
 
     public Text getTitleText() {return titleText;}
 
     public Button getAddButton() {
         return addButton;
+    }
+
+    public Button getLogoutButton() {
+        return logoutButton;
     }
 
     public void setButtonStyle(Button button) {
@@ -135,6 +152,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
 
     private Recipe recipe;
     private Button addButton;
+    private Button logoutButton;
     private RecipeList rl;
 
     //unseen buttons for HTTP functions
@@ -158,6 +176,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         this.setCenter(scrollPane);
 
         addButton = header.getAddButton();
+        logoutButton = header.getLogoutButton();
 
         postButton = new Button("Post");
         getButton = new Button("Get");
@@ -180,6 +199,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         voiceRecorder.openDetailWindow();
     }
 
+    public Button getLogoutButton() {return logoutButton;}
 
     public void addListeners() {
         addButton.setOnAction(e -> {
@@ -331,24 +351,67 @@ public class RecipeList extends Application {
     private Scene listScene;
     private Button postButton, getButton, putButton, deleteButton;
     Controller controller;
+    private Login login;
+    private CreateAccount createAccount;
+    private Scene loginScene;
+    private Scene createAccountScene;
+    private Button loginButton;
+    private Button loginCreateButton;
+    private Button createAccountBackButton;
+    private Button createAccountCreateButton;
+    private Button logoutButton;
+    private String username;
     
     @Override
     public void start(Stage primaryStage) throws Exception {
         root = new AppFrame();
         Model model = new Model();
         listScene = new Scene(root, 500, 600);
+        login = new Login();
+        loginScene = new Scene(login, 250, 300);
+        createAccount = new CreateAccount();
+        createAccountScene = new Scene(createAccount, 250, 300);
         
         postButton = root.getPostButton();
         getButton = root.getGetButton();
         putButton = root.getPutButton();
         deleteButton = root.getDeleteButton();
+        logoutButton = root.getLogoutButton();
         
         controller = new Controller(this, model);
+        
+        loginButton = login.getLoginButton();
+        loginCreateButton = login.getCreateButton();
+        createAccountBackButton = createAccount.getBackButton();
+        createAccountCreateButton = createAccount.getCreateButton();
+
+        addLoginListeners();
 
         this.primStage = primaryStage;
         root.setRecipeList(this);
         primaryStage.setTitle("PantryPal");
-        primaryStage.setScene(listScene);
+        // primaryStage.setScene(listScene);
+
+        // check if autologin enable
+        String filePath = "autoLogin.csv";
+        Path path = Paths.get(filePath);
+        if (Files.exists(path) && Files.isRegularFile(path)) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+                String line;
+                if ((line = reader.readLine()) != null) {
+                    String[] data = line.split(",");
+                    username = data[0];
+                }
+                System.out.println("Log in user: " + username);
+                primaryStage.setScene(listScene);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            primaryStage.setScene(loginScene);
+
+        }
         primaryStage.setResizable(false);
         primaryStage.show();
     }
@@ -376,5 +439,69 @@ public class RecipeList extends Application {
         // alert.setHeaderText(null);
         // alert.setContentText(content);
         // alert.showAndWait();
+    }
+
+    public void addLoginListeners() {
+        loginButton.setOnAction(e -> {
+            int match = login.validUser();
+            if (match == 0) {
+                generateAutoLoginFile();
+                primStage.setScene(listScene); 
+            }
+        });   
+        loginCreateButton.setOnAction(e -> {
+            primStage.setScene(createAccountScene);
+        });
+        createAccountBackButton.setOnAction(e -> {
+            primStage.setScene(loginScene);
+        });
+        createAccountCreateButton.setOnAction(e -> {
+            String username = createAccount.makeNewAccount();
+            if (username != null) {         // != null means successfully create, then auto login
+                login.setUsername(username);
+                primStage.setScene(listScene);
+                this.username = username;
+            }      
+        });
+        logoutButton.setOnAction(e -> {
+            String filePath = "autoLogin.csv";
+            try{
+                Path path = Paths.get(filePath);
+                Files.deleteIfExists(path);
+            }
+            catch (Exception f) {
+                f.printStackTrace();
+            }
+
+            primStage.setScene(loginScene);
+        });
+    }
+
+    public void generateAutoLoginFile() {
+        String filePath = "autoLogin.csv";
+        try{
+            Path path = Paths.get(filePath);
+            Files.deleteIfExists(path);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (login.isAutoLogin()) {
+            try {
+
+                String[] acc_info = {login.getUsername(), login.getPassword()};
+                FileWriter writer = new FileWriter(filePath);
+                for (int i = 0; i < acc_info.length; i++) {
+                    writer.append(acc_info[i]);
+                    if (i < acc_info.length - 1) {
+                        writer.append(",");
+                    }
+                }
+                writer.append("\n");
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
