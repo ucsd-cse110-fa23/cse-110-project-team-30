@@ -1,6 +1,8 @@
-package team30.recipeList;
+//package team30.recipeList;
 
 import team30.recipeList.RecipeList;
+import team30.recipeList.ImageManager;
+
 
 import org.junit.jupiter.api.Test;
 import org.mockito.internal.matchers.Null;
@@ -33,5 +35,36 @@ import javafx.scene.control.TextField;
 import java.io.File;
 
 public class ImageManagerTest{
-    
+
+    @Test
+    void testGenerator(){
+        //Test Generator with a new thing
+        //Make sure the url given matches the thing given.
+    }
+
+    @Test
+    void testEnsurePathValid(){
+        //Check if path exists and not regen
+
+        //Test if path doesn't exist, should make a call
+
+        //Test if path doesn't exist
+    }
+
+    @Test
+    void testImageGetter(){
+        //Given a valid path, it should be valid
+    }
+
+    @Test
+    void testURIGenerator(){
+        ImageManager.path = "images1";
+        //For each, add a file unless not
+        //Test a unique
+        //Test nonunique
+        //Test nonunique second.
+        //Test new
+        //Test final
+        //Delete everything
+    }
 }
