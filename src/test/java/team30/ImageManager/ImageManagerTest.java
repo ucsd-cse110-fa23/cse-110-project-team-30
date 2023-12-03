@@ -78,9 +78,6 @@ public class ImageManagerTest{
         assertTrue((new File(ImageManager.path + File.separator + "test1.png")).exists());
         assertFalse((new File(ImageManager.path + File.separator + "test1(0).png")).exists());
 
-    @Test
-    void testImageGetter(){
-        //Given a valid path, it should be valid
     }
 
     @Test
