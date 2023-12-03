@@ -9,7 +9,7 @@ public class ImageManager {
     static IDallE dallE = new DallE();
 
 
-    public static String path = "";
+    public static String path = "src" + File.separator + "main" + File.separator + "java" + File.separator + "team30" + File.separator + "recipeList" + File.separator + "images";
 
     //TODO: Once the Server is cleaned up, have this instead make a call to the server to generate the image.
     /**
