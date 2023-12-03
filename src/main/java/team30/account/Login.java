@@ -62,6 +62,7 @@ class LoginCenter extends VBox{
     public TextField getUserNameTextField() {return userNameTextField;}
     public TextField getPasswordTextField() {return passwordTextField;}
     public void showInvalidPrompt() {invalidPrompt.setVisible(true);}
+    public void hideInvalidPrompt() {invalidPrompt.setVisible(false);}
     public void setInvalidPassword() {invalidPrompt.setText("Incorrect Password");}
     public void setInvalidUsername() {invalidPrompt.setText("Username Does Not Exist");}
     public CheckBox getAutoLoginBox() {return autoLoginBox;}
@@ -152,6 +153,7 @@ public class Login extends BorderPane{
             loginCenter.getPasswordTextField().setText("");
         }
 
+        username = loginCenter.getUserNameTextField().getText();
         return match;
     }
     
@@ -159,4 +161,5 @@ public class Login extends BorderPane{
     public String getUsername() {return loginCenter.getUserNameTextField().getText();}
     public String getPassword() {return loginCenter.getPasswordTextField().getText();}
     public void setUsername(String username) {this.username = username;}
+    public void hideInvalidPrompt() {loginCenter.hideInvalidPrompt();}
 }

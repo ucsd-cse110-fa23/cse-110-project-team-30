@@ -442,6 +442,8 @@ public class RecipeList extends Application {
         loginButton.setOnAction(e -> {
             int match = login.validUser();
             if (match == 0) {
+                username = login.getUsername();
+                System.out.println("Welcome user: " + username);
                 generateAutoLoginFile();
                 primStage.setScene(listScene); 
             }
@@ -469,7 +471,9 @@ public class RecipeList extends Application {
             catch (Exception f) {
                 f.printStackTrace();
             }
-
+            
+            login.hideInvalidPrompt();
+            username = null;
             primStage.setScene(loginScene);
         });
     }
