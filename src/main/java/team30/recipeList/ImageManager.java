@@ -26,7 +26,19 @@ public class ImageManager {
         catch(Exception e){
             e.printStackTrace();
         }
-        return name;
+        return imgurl;
+    }
+
+    /**
+     * Runs the generateImage function with the given DallE.
+     * Intended for testing purposes only.
+     */
+    static String generateImage(String name, DallE otherDallE){
+        DallE hold = dallE;
+        dallE = otherDallE;
+        String result = generateImage(name);
+        dallE = hold;
+        return result;
     }
 
     /**
