@@ -248,10 +248,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
                 }
             }
 
-            //Generates Image here
-            imgurl = generateImageURL(recipeName);
-            DallE dallE = new DallE();
-            dallE.generateImage(recipeName, imgurl);
+            imgurl = ImageManager.generateImage(recipeName);
             
             Recipe cur = new Recipe(recipeName, mealType, ingredients, steps, imgurl,true);
             addRecipe(cur);
@@ -263,21 +260,6 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         } catch (Exception err) {
             err.printStackTrace();
         }
-    }
-
-    /**
-     * Given a name, this attempts to find a unique path to use with the given name.
-     * It adds and increments a number on the side until an unused path is found.
-     * @param name - the main part of the name for the path.
-     * @return an unused path name for a file.-
-     */
-    private String generateImageURL(String name){
-        //Need to add a path
-        String url = name + ".png";
-        int counter = 0;
-        while((new File(url)).exists())
-            url = name + "(" + (counter++) + ")" + ".png";
-        return url;
     }
 
     public void addRecipe(Recipe cur) {

@@ -34,6 +34,7 @@ public class Recipe extends HBox {
 
     private Label index;
     private Button recipe_title;
+    private String recipe_title_String;
     private String meal_type;
     private String ingredients;
     private ArrayList<String> steps;
@@ -141,29 +142,18 @@ public class Recipe extends HBox {
         this.imageGenerated = imageGenerated;
     }
 
+    public String getName(){
+        return this.recipe_title.getText();
+    }
+
     /**
      * Takes an image from the recipe's url, and if the recipe has not had an image generated for it, 
      * generate one to return.
      * @return the linked image if generatedImage is true, and a newly generated image if not.
      */
     public Image getImage(){
-        Image recipeImage;
-            
-        if(!imageGenerated){
-            //TODO: If the server stuff gets fixed, change this to use the server
-            DallE dallE = new DallE();
-            try{
-                dallE.generateImage(this.getRecipeTitle().getText(), imageurl);
-            }
-            catch(Exception e){
-                e.printStackTrace();
-            }
-        }
-        
-        File file = new File(this.getImageURL());
-        URI fileURI = file.toURI();
-        recipeImage = new Image(fileURI.toString());
-        return recipeImage;
+        imageurl = ImageManager.ensurePathExists(imageurl, this.getName(), !imageGenerated);
+        return ImageManager.getImage(imageurl);
     }
 
     public boolean equals(Recipe other){
