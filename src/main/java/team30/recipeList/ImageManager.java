@@ -13,7 +13,7 @@ public class ImageManager {
 
     //TODO: Once the Server is cleaned up, have this instead make a call to the server to generate the image.
     /**
-     * Creates an image with the given name if the name is clear.
+     * Creates an image with the given name if the name is not taken.
      * If not, a new path will be made to hold the image.
      * @param name - the expected name for the image
      * @return - a path in the files to the image
@@ -50,7 +50,7 @@ public class ImageManager {
      * @param regenerate - flag that sets whether to regenerate the image or not.
      * @return the original path, if valid, and a path to a new image if not.
      */
-    static String ensurePathValid(String path, String name, boolean regenerate){
+    static String ensurePathExists(String path, String name, boolean regenerate){
         String imgurl = path;
         if(regenerate || !(new File(combinePathAndName(path)).exists())){
             imgurl = generateImage(name);
@@ -60,7 +60,7 @@ public class ImageManager {
 
     /**
      * Attempts to get an image in the given path.
-     * It is recommended to run ensurePathValid first to ensure that the path could be used.
+     * It is recommended to run ensurePathValid first to ensure that the path exists.
      * @param path - path of the image.
      * @return image in the given path.
      */
