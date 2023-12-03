@@ -9,7 +9,7 @@ public class ImageManager {
     static DallE dallE = new DallE();
 
 
-    public static final String path = "";
+    public static String path = "";
 
     //TODO: Once the Server is cleaned up, have this instead make a call to the server to generate the image.
     /**
@@ -75,7 +75,7 @@ public class ImageManager {
      * @param name - the expected name for the URI
      * @return the path of the URI as a String
      */
-    static String createUniqueURI(String name){
+    public static String createUniqueURI(String name){
         String url = name + ".png";
         int counter = 0;
         while((new File(combinePathAndName(url))).exists())
