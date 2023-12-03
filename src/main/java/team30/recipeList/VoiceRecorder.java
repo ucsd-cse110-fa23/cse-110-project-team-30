@@ -3,6 +3,10 @@ package team30.recipeList;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+
 import java.io.*;
 import java.net.URISyntaxException;
 
@@ -112,8 +116,8 @@ public class VoiceRecorder {
                 completedRecording = false;
         });
         stopButton.setOnAction(e -> {
-            stopRecording();
             if (startedRecording == true) {
+                stopRecording();
                 completedRecording = true;
             }
             //process voice recording for meal type
@@ -259,18 +263,6 @@ public class VoiceRecorder {
         else {
             rl.getPrimStage().show();
         }
-    }
-    
-    public void setButtonStyle(Button button) {
-        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10";
-        button.setStyle(defaultButtonStyle);
-        // Adding hover effect
-        button.setOnMouseEntered(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #7dedb3;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
-        button.setOnMouseExited(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
-        
-        // Adding click effect
-        button.setOnMousePressed(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #117e2c;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
-        button.setOnMouseReleased(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
     }
 
     public boolean successfulRecording() {

@@ -11,16 +11,18 @@ import org.bson.types.ObjectId;
 // edited from public class Main
 // the "App" in MVC
 public class RecipeList extends Application {
-    private RecipeListUI root;
     private Stage primStage;
     private Scene listScene;
     private Button postButton, getButton, putButton, deleteButton;
-    private Controller controller;
+
+    private Controller controller; 
+    private Model model;
+    private RecipeListUI root; //view
     
     @Override
     public void start(Stage primaryStage) throws Exception {
         root = new RecipeListUI();
-        Model model = new Model();
+        model = new Model();
         listScene = new Scene(root, 500, 600);
         
         postButton = root.getPostButton();
@@ -29,7 +31,7 @@ public class RecipeList extends Application {
         deleteButton = root.getDeleteButton();
         
         controller = new Controller(this, model);
-        controller.loadRecipes();
+        model.loadRecipes();
 
         this.primStage = primaryStage;
         root.setRecipeList(this);
@@ -58,6 +60,7 @@ public class RecipeList extends Application {
 
     public RecipeListUI getRecipeListUI() {return root;}
     public Controller getController() {return controller;}
+    public Model getModel() {return model;}
 
     public void showAlert(String title, String content) {
         // Alert alert = new Alert(Alert.AlertType.INFORMATION);

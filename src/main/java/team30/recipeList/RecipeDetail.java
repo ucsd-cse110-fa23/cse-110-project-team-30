@@ -309,7 +309,7 @@ public class RecipeDetail {
     }
 
     public void saveRecipe() {
-        rl.getController().saveRecipe(recipe);
+        rl.getModel().saveRecipe(recipe);
     }
 
     public void setCancellable(boolean b) {

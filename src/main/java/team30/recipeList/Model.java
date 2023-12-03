@@ -5,6 +5,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import org.bson.Document;
+
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCursor;
+
 import java.net.URI;
 
 
@@ -36,4 +42,14 @@ public class Model {
             return "Error: " + ex.getMessage();
         }
     }
+
+    public void loadRecipes() {
+        //fix to just call get on list of objectIDs in database
+    }
+
+    public void saveRecipe(Recipe r) {
+        String objectID = r.getObjectID().toString();
+        performRequest("PUT", objectID, r, null);
+    }
+
 }

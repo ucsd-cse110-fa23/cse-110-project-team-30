@@ -12,16 +12,16 @@ class VoiceRecorderUI extends DefaultBorderPane {
     
     public VoiceRecorderUI() {
         backButton = new Button("Cancel");
-        backButton.setStyle(defaultButtonStyle + "-fx-background-color: " + blue);
+        backButton.setStyle(defaultButtonStyle + "; -fx-background-color: " + blue);
         continueButton = new Button("Continue");
-        continueButton.setStyle(defaultButtonStyle + "-fx-background-color: " + purple);
+        continueButton.setStyle(defaultButtonStyle + "; -fx-background-color: " + purple);
         footer.getChildren().addAll(backButton, continueButton);
         footer.setAlignment(Pos.CENTER);
 
         startButton = new Button("Start Recording");
-        startButton.setStyle(defaultButtonStyle + "-fx-background-color: " + pink + "; -fx-font: 14 arial;");
+        startButton.setStyle(defaultButtonStyle + "; -fx-background-color: " + pink + "; -fx-font: 14 arial;");
         stopButton = new Button("Stop Recording");
-        stopButton.setStyle(defaultButtonStyle + "-fx-background-color: " + pink + "; -fx-font: 14 arial;");
+        stopButton.setStyle(defaultButtonStyle + "; -fx-background-color: " + pink + "; -fx-font: 14 arial;");
         middle.getChildren().addAll(startButton, stopButton);
         middle.setAlignment(Pos.CENTER);
     }

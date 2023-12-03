@@ -42,7 +42,7 @@ class ListVBox extends VBox {
 /*
  * UI class for entire recipe list sreen
  */
-class RecipeListUI extends DefaultBorderPane implements RecordingCompletionListener {
+public class RecipeListUI extends DefaultBorderPane implements RecordingCompletionListener {
     private ListVBox recipeList;
     private ScrollPane scrollPane;
 
