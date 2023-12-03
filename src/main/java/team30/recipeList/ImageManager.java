@@ -61,6 +61,18 @@ public class ImageManager {
     }
 
     /**
+     * It changes the DallE to a mock version for the duration of the method, then calls the other ensurePathExists.
+     * For testing only
+     */
+    public static String ensurePathExists(String path, String name, boolean regenerate, String path2){
+        IDallE hold = dallE;
+        dallE = new MockDallE(path2);
+        String result = ensurePathExists(path, name, regenerate);
+        dallE = hold;
+        return result;
+    }
+
+    /**
      * Attempts to get an image in the given path.
      * It is recommended to run ensurePathValid first to ensure that the path exists.
      * @param path - path of the image.
