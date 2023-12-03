@@ -83,7 +83,7 @@ public class ImageManagerTest{
     @Test
     void testCreateUniqueURI(){
         ImageManager.path = "src" + File.separator + "test" + File.separator + "java" + File.separator + "team30" + File.separator + "ImageManager" + File.separator + "URIGenEx";
-        assertEquals("src\\test\\java\\team30\\ImageManager\\URIGenEx",ImageManager.path);
+        assertEquals("src" + File.separator + "test" + File.separator + "java" + File.separator + "team30" + File.separator + "ImageManager" + File.separator + "URIGenEx",ImageManager.path);
         assertEquals((new File(ImageManager.path)).exists(),true);
         //Test a unique
         assertEquals("test0.png", ImageManager.createUniqueURI("test0"));
