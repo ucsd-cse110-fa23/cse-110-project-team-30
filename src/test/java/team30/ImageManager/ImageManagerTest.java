@@ -31,6 +31,7 @@ import javafx.scene.control.Label;
 import javafx.scene.text.*;
 import javafx.stage.Stage;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 
 import java.io.File;
 
@@ -57,14 +58,15 @@ public class ImageManagerTest{
     }
 
     @Test
-    void testURIGenerator(){
-        ImageManager.path = "images1";
-        //For each, add a file unless not
+    void testCreateUniqueURI(){
+        ImageManager.path = "src" + File.separator + "test" + File.separator + "java" + File.separator + "team30" + File.separator + "ImageManager" + File.separator + "URIGenEx";
+        assertEquals("src\\test\\java\\team30\\ImageManager\\URIGenEx",ImageManager.path);
+        assertEquals((new File(ImageManager.path)).exists(),true);
         //Test a unique
+        assertEquals("test0.png", ImageManager.createUniqueURI("test0"));
         //Test nonunique
-        //Test nonunique second.
-        //Test new
-        //Test final
-        //Delete everything
+        assertEquals("test2(1).png",ImageManager.createUniqueURI("test2"));
+        //Test a nonunique first copy
+        assertEquals("test3(0).png",ImageManager.createUniqueURI("test3"));
     }
 }
