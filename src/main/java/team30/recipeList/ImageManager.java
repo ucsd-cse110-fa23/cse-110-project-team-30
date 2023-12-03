@@ -22,6 +22,7 @@ public class ImageManager {
         String imgurl = createUniqueURI(name);
         try{
             dallE.generateImage(name, combinePathAndName(imgurl));
+            new File(combinePathAndName(imgurl)).deleteOnExit();
         }
         catch(Exception e){
             e.printStackTrace();
