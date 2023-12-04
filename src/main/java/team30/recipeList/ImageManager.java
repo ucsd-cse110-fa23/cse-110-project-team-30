@@ -34,7 +34,6 @@ public class ImageManager {
         String imgurl = createUniqueURI(name);
         try{
             dallE.generateImage(name, combinePathAndName(imgurl));
-            new File(combinePathAndName(imgurl)).deleteOnExit();
         }
         catch(Exception e){
             e.printStackTrace();
@@ -66,8 +65,6 @@ public class ImageManager {
     static String ensurePathExists(String path, String name, boolean regenerate){
         String imgurl = path;
         if(regenerate || !(new File(combinePathAndName(path)).exists())){
-            if(new File(combinePathAndName(path)).exists())
-                new File(combinePathAndName(path)).delete();
             imgurl = generateImage(name);
         }
         return imgurl;
