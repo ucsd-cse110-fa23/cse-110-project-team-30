@@ -17,6 +17,7 @@ public class AccountDatabase {
     MongoClient mongoClient;
 
     String uri = "mongodb+srv://lil043:VA4U7rBgvZ0EqlNO@cse110.ltw8f69.mongodb.net/?retryWrites=true&w=majority";
+    // String uri = "mongodb+srv://m1ren:IHcPb6UPAHtXNQfK@cluster0.nybipuz.mongodb.net/?retryWrites=true&w=majority";
 
     public AccountDatabase() {
         mongoClient = MongoClients.create(uri);

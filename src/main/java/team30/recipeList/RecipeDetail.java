@@ -130,7 +130,7 @@ class DetailRecipe extends VBox {
         title_mealtype_HBox.setAlignment(Pos.BASELINE_CENTER);
 
         recipe_name.setPrefSize(315, 40);
-        recipe_name.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-insets: 5, -fx-background-insets: 5; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10;-fx-font-size: 20;-fx-alignment: CENTER;");
+        recipe_name.setStyle("-fx-background-color: #e5da3e; -fx-border-width: 1.5px; -fx-border-insets: 5; -fx-background-insets: 5; -fx-border-color: black; -fx-background-radius: 10; -fx-border-radius: 10;-fx-font-size: 20;-fx-alignment: CENTER;");
 
         mealtype.setStyle("-fx-background-color: #EDDCF0; -fx-background-radius: 20;-fx-alignment: CENTER;-fx-font-size: 20");
         mealtype.setPrefSize(120, 30);

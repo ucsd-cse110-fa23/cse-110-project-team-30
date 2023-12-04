@@ -27,6 +27,7 @@ public class RecipeDatabase {
     MongoClient mongoClient;
 
     String uri = "mongodb+srv://lil043:VA4U7rBgvZ0EqlNO@cse110.ltw8f69.mongodb.net/?retryWrites=true&w=majority";
+    // String uri = "mongodb+srv://m1ren:IHcPb6UPAHtXNQfK@cluster0.nybipuz.mongodb.net/?retryWrites=true&w=majority";
 
     //default constructor
     public RecipeDatabase() {
@@ -47,6 +48,7 @@ public class RecipeDatabase {
         Document recipe = new Document("_id", new ObjectId());
         //recipe.put("name", r.getRecipeTitle().getText());
         recipe.append("name", r.getRecipeTitle().getText())
+                .append("username", r.getUsername())
                 .append("meal_type", r.getMealType())
                 .append("ingredients", r.getIngredients())
                 .append("steps", stepsToString(r.getSteps()))
@@ -62,7 +64,7 @@ public class RecipeDatabase {
     }
 
     //gets recipe from document
-    public Recipe getRecipe(Document d) {
+    public Recipe getRecipe(Document d, String username) {
         String name, meal_type, ingredients, stepsString, imageurl;
         name = d.get("name").toString();
         meal_type = d.get("meal_type").toString();
@@ -72,7 +74,8 @@ public class RecipeDatabase {
 
         ArrayList<String> steps = stepsFromString(stepsString);
 
-        Recipe r = new Recipe(name, meal_type, ingredients, steps, imageurl, false);
+        Recipe r = new Recipe(name, meal_type, ingredients, steps, imageurl, false, username);
+
         r.setObjectID(d.get("_id").toString());
         return r;
     }
@@ -146,4 +149,8 @@ public class RecipeDatabase {
         return recipesCollection.find();
     }
 
+    public FindIterable<Document> find_by_user(String username) {
+        Document filter = new Document("username", username);
+        return recipesCollection.find(filter);
+    }
 }
