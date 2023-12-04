@@ -9,8 +9,16 @@ public class ImageManager {
     static IDallE dallE = new DallE();
 
 
-    public static String path = "src" + File.separator + "main" + File.separator + "java" + File.separator + "team30" + File.separator + "recipeList" + File.separator + "images";
+    public static String path = preparepath("src" + File.separator + "main" + File.separator + "java" + File.separator + "team30" + File.separator + "recipeList" + File.separator + "images");
 
+    /**
+     * Returns the path
+     * @return the path given
+     */
+    static String preparepath(String path){
+        new File(path).mkdir();
+        return path;
+    }
     //TODO: Once the Server is cleaned up, have this instead make a call to the server to generate the image.
     /**
      * Creates an image with the given name if the name is not taken.
