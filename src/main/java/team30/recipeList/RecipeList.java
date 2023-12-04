@@ -450,6 +450,12 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         int num = 1;
         for (Recipe recipe : list_of_recipes) {
             recipeList.getChildren().add(recipe);
+
+            recipe.getRecipeTitle().setOnAction(f -> {
+            RecipeDetail ord = new RecipeDetail(rl, this, recipe);
+            ord.openDetailWindow(recipe);
+            });
+
             recipe.setTaskIndex(num);
             num++;
         }
@@ -483,6 +489,12 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         int num = 1;
         for (Recipe recipe : list_of_recipes) {
             recipeList.getChildren().add(recipe);
+
+            recipe.getRecipeTitle().setOnAction(f -> {
+            RecipeDetail ord = new RecipeDetail(rl, this, recipe);
+            ord.openDetailWindow(recipe);
+            });
+
             recipe.setTaskIndex(num);
             num++;
         }
@@ -512,6 +524,12 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         int num = 1;
         for (Recipe recipe : list_of_recipes) {
             recipeList.getChildren().add(recipe);
+
+            recipe.getRecipeTitle().setOnAction(f -> {
+            RecipeDetail ord = new RecipeDetail(rl, this, recipe);
+            ord.openDetailWindow(recipe);
+            });
+
             recipe.setTaskIndex(num);
             num++;
         }
@@ -542,6 +560,12 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         int num = 1;
         for (int i = list_of_recipes.size() - 1; i >= 0; i--) {
             recipeList.getChildren().add(list_of_recipes.get(i));
+
+            recipe.getRecipeTitle().setOnAction(f -> {
+            RecipeDetail ord = new RecipeDetail(rl, this, recipe);
+            ord.openDetailWindow(recipe);
+            });
+
             list_of_recipes.get(i).setTaskIndex(num);
             num++;
             
