@@ -16,7 +16,11 @@ public class ImageManager {
      * @return the path given
      */
     static String preparepath(String path){
-        new File(path).mkdir();
+        File file = new File(path);
+        if(!file.isDirectory()){
+            file = new File(path);
+            System.out.println(file.mkdir());
+        }
         return path;
     }
     //TODO: Once the Server is cleaned up, have this instead make a call to the server to generate the image.
