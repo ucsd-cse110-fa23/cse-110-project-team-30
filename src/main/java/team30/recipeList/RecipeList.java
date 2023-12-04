@@ -85,6 +85,7 @@ class Header extends HBox {
 
     private Text titleText;
     private Button addButton;
+    private Image recipe_Image;
     private Button logoutButton;
 
     Header() {
@@ -266,8 +267,11 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
                         steps.add(lines[i]);
                 }
             }
+
+            imgurl = ImageManager.generateImage(recipeName);
             
-            Recipe cur = new Recipe(recipeName, mealType, ingredients, steps, imgurl, rl.getUsername());
+            Recipe cur = new Recipe(recipeName, mealType, ingredients, steps, imgurl, true, rl.getUsername());
+
             addRecipe(cur);
 
             RecipeDetail tmp = new RecipeDetail(rl, this, cur);

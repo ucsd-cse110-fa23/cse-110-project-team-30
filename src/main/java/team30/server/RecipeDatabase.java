@@ -70,11 +70,12 @@ public class RecipeDatabase {
         meal_type = d.get("meal_type").toString();
         ingredients = d.get("ingredients").toString();
         stepsString = d.get("steps").toString();      
-        imageurl = d.get("steps").toString();       
+        imageurl = d.get("imageurl").toString();       
 
         ArrayList<String> steps = stepsFromString(stepsString);
 
-        Recipe r = new Recipe(name, meal_type, ingredients, steps, imageurl, username);
+        Recipe r = new Recipe(name, meal_type, ingredients, steps, imageurl, false, username);
+
         r.setObjectID(d.get("_id").toString());
         return r;
     }

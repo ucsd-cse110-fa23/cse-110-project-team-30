@@ -199,6 +199,7 @@ public class VoiceRecorder {
                 System.out.println(mealtype.toLowerCase());
                 //check mealtype validity
                 mealtype = mealtype.toLowerCase().replaceAll("[.]", "");
+                //mealtype = "breakfast";
                 if (mealtype.equals("breakfast") || mealtype.equals("lunch") || mealtype.equals("dinner")) {
                     //valid
                     successfulMealTypeLabel.setText("You said: " + mealtype);

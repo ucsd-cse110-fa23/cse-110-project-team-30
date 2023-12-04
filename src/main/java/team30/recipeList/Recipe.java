@@ -1,5 +1,7 @@
 package team30.recipeList;
 
+import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 
 import org.bson.types.ObjectId;
@@ -8,6 +10,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.TextAlignment;
 
@@ -36,10 +39,12 @@ public class Recipe extends HBox {
 
     private Label index;
     private Button recipe_title;
+    private String recipe_title_String;
     private String meal_type;
     private String ingredients;
     private ArrayList<String> steps;
     private String imageurl;
+    private boolean imageGenerated;
     private String username;
 
     private String objectID; //mongodb id
@@ -81,7 +86,8 @@ public class Recipe extends HBox {
 
     }
 
-    public Recipe(String recipe_name, String mealType, String ingredients, ArrayList<String> steps, String imageurl, String username) {
+    public Recipe(String recipe_name, String mealType, String ingredients, ArrayList<String> steps, String imageurl, boolean imageGenerated, String username) {
+
         this();
 
         this.recipe_title.setText(recipe_name);
@@ -89,6 +95,7 @@ public class Recipe extends HBox {
         this.steps = steps;
         this.meal_type = mealType;
         this.imageurl = imageurl;
+        this.imageGenerated = imageGenerated;
         this.username = username;
         setMealTag(meal_type);
     }
@@ -176,6 +183,29 @@ public class Recipe extends HBox {
 
     public String getImageURL() {
         return this.imageurl;
+    }
+
+    public boolean getImageGenerated(){
+        return this.imageGenerated;
+    }
+
+    public void setImageGenerated(boolean imageGenerated){
+        this.imageGenerated = imageGenerated;
+    }
+
+    public String getName(){
+        return this.recipe_title.getText();
+    }
+
+    /**
+     * Takes an image from the recipe's url, and if the recipe has not had an image generated for it, 
+     * generate one to return. It also changes imageGenerated to true to reflect the changes.
+     * @return the linked image if generatedImage is true, and a newly generated image if not.
+     */
+    public Image getImage(){
+        imageurl = ImageManager.ensurePathExists(imageurl, this.getName(), !imageGenerated);
+        imageGenerated = true;
+        return ImageManager.getImage(imageurl);
     }
 
     public boolean equals(Recipe other){
