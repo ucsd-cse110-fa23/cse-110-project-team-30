@@ -53,6 +53,7 @@ import javafx.scene.paint.Color;
 
 import com.mongodb.client.FindIterable;
 import org.bson.Document;
+import javafx.scene.Node;
 
 class List extends VBox {
 
@@ -86,7 +87,7 @@ class Header extends HBox {
     private Text titleText;
     private Button addButton;
     private Image recipe_Image;
-    private Button logoutButton;
+    //private Button logoutButton;
 
     Header() {
         this.setPrefSize(500, 60);
@@ -102,11 +103,13 @@ class Header extends HBox {
         addButton = new Button("Generate");
         setButtonStyle(addButton);
         this.setMargin(this.getAddButton(), new Insets(0, 10, 0, 0));
-        logoutButton = new Button("Log Out");
-        setButtonStyle(logoutButton);
-        this.getChildren().addAll(addButton, logoutButton);
+        // logoutButton = new Button("Log Out");
+        // setButtonStyle(logoutButton);
+        this.getChildren().addAll(addButton);
         this.setAlignment(Pos.CENTER_LEFT);
     }
+
+   
 
     public Text getTitleText() {return titleText;}
 
@@ -114,9 +117,9 @@ class Header extends HBox {
         return addButton;
     }
 
-    public Button getLogoutButton() {
-        return logoutButton;
-    }
+    // public Button getLogoutButton() {
+    //     return logoutButton;
+    // }
 
     public void setButtonStyle(Button button) {
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10";
@@ -143,16 +146,80 @@ class Header extends HBox {
     }
 }
 
+class Footer extends HBox {
+    private Button logoutButton;
+    private Button sortButton;
+
+        Footer() {
+        this.setPrefSize(500, 60);
+        this.setStyle("-fx-background-color: #f8f3c9;");
+
+    
+        // logoutButton = new Button("Log Out");
+        // setButtonStyle(logoutButton);
+        
+
+        sortButton = new Button("Sort");
+        setButtonStyle(sortButton);
+        logoutButton = new Button("Log Out");
+        setButtonStyle(logoutButton);
+        this.getChildren().addAll( sortButton, logoutButton);
+        this.setAlignment(Pos.CENTER_RIGHT);
+
+        
+    }
+
+
+        public Button getLogoutButton() {
+            return logoutButton;
+        }
+
+        public Button getSortButton() {
+            return sortButton;
+        }
+
+        
+
+        
+        public void setButtonStyle(Button button) {
+        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10";
+        button.setStyle(defaultButtonStyle);
+        // Adding hover effect
+        button.setOnMouseEntered(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #7dedb3;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
+        button.setOnMouseExited(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
+        
+        // Adding click effect
+        button.setOnMousePressed(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #117e2c;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
+        button.setOnMouseReleased(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
+    }
+
+    public void setButtonStyle(Button button, String style, String hover_enter, String hover_exist, String click_press, String click_release) {
+        button.setStyle(style);
+
+        // Adding hover effect
+        button.setOnMouseEntered(e -> button.setStyle(hover_enter));
+        button.setOnMouseExited(e -> button.setStyle(hover_exist));
+        
+        // Adding click effect
+        button.setOnMousePressed(e -> button.setStyle(click_press));
+        button.setOnMouseReleased(e -> button.setStyle(click_release));
+    }
+
+
+}
+
 
 class AppFrame extends BorderPane implements RecordingCompletionListener {
 
     private Header header;
+    private Footer footer;
     private List recipeList;
     private ScrollPane scrollPane;
 
     private Recipe recipe;
     private Button addButton;
     private Button logoutButton;
+    private Button sortButton;
     private RecipeList rl;
 
     //unseen buttons for HTTP functions
@@ -166,6 +233,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
 
     AppFrame() {
         header = new Header();
+        footer = new Footer();
         recipeList = new List();
 
         scrollPane = new ScrollPane(recipeList);
@@ -173,10 +241,17 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         scrollPane.setFitToWidth(true);
 
         this.setTop(header);
+        this.setBottom(footer);
         this.setCenter(scrollPane);
 
         addButton = header.getAddButton();
-        logoutButton = header.getLogoutButton();
+        
+        sortButton = footer.getSortButton();
+        logoutButton = footer.getLogoutButton();
+        
+        footer.setPadding(new Insets(10));
+        footer.setSpacing(350);
+        
 
         postButton = new Button("Post");
         getButton = new Button("Get");
@@ -316,6 +391,39 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
             System.out.println("couldn't open database!");
         }
     }
+
+    public void sortAtoZ() {
+
+        //get list of recipes nodes
+        ArrayList<Recipe> list_of_recipes = new ArrayList<>();
+        for (Node node : recipeList.getChildren()) {
+            list_of_recipes.add((Recipe) node);
+        }
+          
+        // Clear the current list of recipes
+        for (Recipe recipe : list_of_recipes) {
+            recipeList.removeRecipe(recipe); // Remove the recipe from the list
+            
+        }
+    
+        // Sort the list of recipes from A to Z
+        Comparator<Recipe> compareAtoZ = new Comparator<Recipe>() {
+            @Override
+            public int compare(Recipe r1, Recipe r2) {
+                return r1.getRecipeTitle().getText().compareTo(r2.getRecipeTitle().getText());
+            }
+        };
+        Collections.sort(list_of_recipes, compareAtoZ);
+    
+        // Add the sorted recipes back to the container
+        for (Recipe recipe : list_of_recipes) {
+            recipeList.getChildren().add(recipe);
+        }
+    }
+
+
+
+
 
     public String getRecipeName() {
         return recipe.getRecipeTitle().getText();
