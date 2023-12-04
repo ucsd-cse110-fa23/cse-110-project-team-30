@@ -267,7 +267,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
                 }
             }
             
-            Recipe cur = new Recipe(recipeName, mealType, ingredients, steps, imgurl);
+            Recipe cur = new Recipe(recipeName, mealType, ingredients, steps, imgurl, rl.getUsername());
             addRecipe(cur);
 
             RecipeDetail tmp = new RecipeDetail(rl, this, cur);
@@ -297,11 +297,13 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         try {
             long totalRecipes = recipeDB.countDocuments();
             System.out.println("Total recipes: " + totalRecipes);
+            recipeList.getChildren().clear();
 
-            FindIterable<Document> iterDoc = recipeDB.find();
+            String username = rl.getUsername();
+            FindIterable<Document> iterDoc = recipeDB.find_by_user(username);
             Iterator<Document> it = iterDoc.iterator();
             while (it.hasNext()) {
-                Recipe cur = recipeDB.getRecipe(it.next());
+                Recipe cur = recipeDB.getRecipe(it.next(), username);
                 
                 addRecipe(cur);
             }
@@ -399,7 +401,8 @@ public class RecipeList extends Application {
                     String[] data = line.split(",");
                     username = data[0];
                 }
-                System.out.println("Log in user: " + username);
+                root.loadRecipes();
+                System.out.println("Welcome user: " + username);
                 primaryStage.setScene(listScene);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -429,6 +432,7 @@ public class RecipeList extends Application {
     public String getRecipeName() {return root.getRecipeName();}
     public String[] getRecipeDetails() {return root.getRecipeDetails();}
     public String getQuery() {return root.getQuery();}
+    public String getUsername() {return username;}
 
     public void showAlert(String title, String content) {
         // Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -442,7 +446,10 @@ public class RecipeList extends Application {
         loginButton.setOnAction(e -> {
             int match = login.validUser();
             if (match == 0) {
+                username = login.getUsername();
+                System.out.println("Welcome user: " + username);
                 generateAutoLoginFile();
+                root.loadRecipes();
                 primStage.setScene(listScene); 
             }
         });   
@@ -469,7 +476,9 @@ public class RecipeList extends Application {
             catch (Exception f) {
                 f.printStackTrace();
             }
-
+            
+            login.hideInvalidPrompt();
+            username = null;
             primStage.setScene(loginScene);
         });
     }

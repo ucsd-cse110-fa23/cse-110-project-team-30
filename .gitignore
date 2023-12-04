@@ -4,3 +4,4 @@ gradle/*
 build/tmp/*
 /lib
 src/main/java/team30/recipeList/recipes.csv
+autoLogin.csv

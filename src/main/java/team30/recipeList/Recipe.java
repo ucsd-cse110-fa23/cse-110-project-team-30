@@ -40,6 +40,7 @@ public class Recipe extends HBox {
     private String ingredients;
     private ArrayList<String> steps;
     private String imageurl;
+    private String username;
 
     private String objectID; //mongodb id
 
@@ -80,7 +81,7 @@ public class Recipe extends HBox {
 
     }
 
-    public Recipe(String recipe_name, String mealType, String ingredients, ArrayList<String> steps, String imageurl) {
+    public Recipe(String recipe_name, String mealType, String ingredients, ArrayList<String> steps, String imageurl, String username) {
         this();
 
         this.recipe_title.setText(recipe_name);
@@ -88,6 +89,7 @@ public class Recipe extends HBox {
         this.steps = steps;
         this.meal_type = mealType;
         this.imageurl = imageurl;
+        this.username = username;
         setMealTag(meal_type);
     }
 
@@ -155,6 +157,14 @@ public class Recipe extends HBox {
     public String getIngredients() {
         return this.ingredients;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    } 
 
     public void setIngredients(String ingredients){
         this.ingredients = ingredients;
