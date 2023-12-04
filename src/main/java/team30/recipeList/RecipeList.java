@@ -109,7 +109,6 @@ class Header extends HBox {
         
 
         sortButton = new MenuButton("Sort");
-        //setButtonStyle(sortButton);
         sortButton.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10");
         
 
@@ -166,9 +165,7 @@ class Footer extends HBox {
         logoutButton = new Button("Log Out");
         setButtonStyle(logoutButton);
         this.getChildren().addAll(logoutButton);
-        this.setAlignment(Pos.CENTER_RIGHT);
-
-        
+        this.setAlignment(Pos.CENTER_RIGHT);        
     }
 
         public Button getLogoutButton() {
@@ -243,10 +240,8 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         addButton = header.getAddButton();
         
         
-        // sortButton.getItems().addAll(sortAZ, sortZA, newOld, OldNew);
         sortButton = header.getSortButton();
         header.setSpacing(10);
-        //header.setPadding(new Insets(10));
       
         logoutButton = footer.getLogoutButton();
         
@@ -267,8 +262,6 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         loadRecipes();
         addListeners();
 
-
-        
     }
 
     public void getVoiceRecording() {
@@ -453,7 +446,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         };
         Collections.sort(list_of_recipes, compareAtoZ);
     
-        // Add the sorted recipes back to the container
+        // Add the sorted recipes back to the recipe list
         int num = 1;
         for (Recipe recipe : list_of_recipes) {
             recipeList.getChildren().add(recipe);
@@ -486,7 +479,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         };
         Collections.sort(list_of_recipes, compareAtoZ);
     
-        // Add the sorted recipes back to the container
+        // Add the sorted recipes back to the recipe list
         int num = 1;
         for (Recipe recipe : list_of_recipes) {
             recipeList.getChildren().add(recipe);
@@ -515,7 +508,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
             
         }
         
-        // Add new to old recipes back to the container
+        // Add new to old recipes back to the recipe list
         int num = 1;
         for (Recipe recipe : list_of_recipes) {
             recipeList.getChildren().add(recipe);
@@ -545,7 +538,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
             
         }
 
-        // Add new to old recipes back to the container
+        // Add new to old recipes back to the recipe list
         int num = 1;
         for (int i = list_of_recipes.size() - 1; i >= 0; i--) {
             recipeList.getChildren().add(list_of_recipes.get(i));
@@ -555,9 +548,6 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         }
 
     }
-
-
-
 
 
     public String getRecipeName() {
