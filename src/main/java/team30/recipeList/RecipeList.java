@@ -202,24 +202,14 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
 
     public void addListeners() {
         addButton.setOnAction(e -> {
-            // getVoiceRecording();
+            getVoiceRecording();
 
-            // String ingredientsRaw = voiceRecorder.getIngredientAudio();
-            // String mealtype = voiceRecorder.getMealType();
+            String ingredientsRaw = voiceRecorder.getIngredientAudio();
+            String mealtype = voiceRecorder.getMealType();
 
-            // if (voiceRecorder.successfulRecording()) {
-            //     onRecordingCompleted(mealtype, ingredientsRaw);
-            // }
-            ArrayList<String> steps = new ArrayList<>();
-            steps.add("1");
-            steps.add("2");
-            steps.add("3");
-            Recipe cur = new Recipe("example", "breakfast", "some ingredients", steps, "imgurl", rl.getUsername());
-            addRecipe(cur);
-            RecipeDetail tmp = new RecipeDetail(rl, this, cur);
-            tmp.setCancellable(true);
-            System.out.println("OPENING NEW RECIPE...");
-            tmp.openDetailWindow(cur);
+            if (voiceRecorder.successfulRecording()) {
+                onRecordingCompleted(mealtype, ingredientsRaw);
+            }
         });  
     }
 
