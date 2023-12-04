@@ -44,17 +44,19 @@ public class RecipeDatabase {
 
     //insert recipe into database
     //returns document id
-    public String insertRecipe(Recipe r) {
+    public String insertRecipe(Recipe r, String username) {
         Document recipe = new Document("_id", new ObjectId());
         //recipe.put("name", r.getRecipeTitle().getText());
         recipe.append("name", r.getRecipeTitle().getText())
-                .append("username", r.getUsername())
+                .append("username", username)
                 .append("meal_type", r.getMealType())
                 .append("ingredients", r.getIngredients())
                 .append("steps", stepsToString(r.getSteps()))
                 .append("imageurl", r.getImageURL());
         try {
             recipesCollection.insertOne(recipe);
+            System.out.println("Name: " + r.getRecipeTitle().getText() + ", username: " + username + ", mealtype: " + r.getMealType() + ", ingredients: " + r.getIngredients()
+                                + ", steps: " + stepsToString(r.getSteps()) + ", imageurl: " + r.getImageURL());
             System.out.println("inserted new recipe!");
         }
         catch (Exception e) {

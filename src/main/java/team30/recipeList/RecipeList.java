@@ -230,6 +230,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
             tmp.setCancellable(true);
             System.out.println("OPENING NEW RECIPE...");
             tmp.openDetailWindow(cur);
+            tmp.enableRefresh();
         } catch (Exception err) {
             err.printStackTrace();
         }
@@ -244,6 +245,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         cur.getRecipeTitle().setOnAction(f -> {
             RecipeDetail ord = new RecipeDetail(rl, this, cur);
             ord.openDetailWindow(cur);
+            ord.disableRefresh();
         });
         
         FXCollections.reverse(recipeList.getChildren());
@@ -377,6 +379,7 @@ public class RecipeList extends Application {
     }
 
     public Stage getPrimStage() {return primStage;}
+    public void setPrimStage(Stage stg) {primStage = stg;}
     public Scene getScene() {return listScene;}
     public void setAppFrame(AppFrame af) {root = af;}
 

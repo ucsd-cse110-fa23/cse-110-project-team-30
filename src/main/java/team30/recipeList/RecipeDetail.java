@@ -349,6 +349,14 @@ public class RecipeDetail {
         }
     }
 
+    public void enableRefresh() {
+        ((DetailFooter)recipeViewAF.getBottom()).getRefresh().setVisible(true);
+    }
+    
+    public void disableRefresh() {
+        ((DetailFooter)recipeViewAF.getBottom()).getRefresh().setVisible(false);
+    }
+
     public void updateRecipeList() {
         recipe.setMealType(dRecipe.getMealType().getText());
         recipe.setIngredients(dRecipe.getIngredients().getText());
@@ -361,8 +369,9 @@ public class RecipeDetail {
     public void saveRecipe() {
         if (recipe.getObjectID() == "") {  //insert new recipe to database
             try {
-                String newID = recipeDB.insertRecipe(recipe);
+                String newID = recipeDB.insertRecipe(recipe, rl.getUsername());
                 recipe.setObjectID(newID);
+                disableRefresh();
             }
             catch (Exception e) {
                 System.out.println("couldn't save to database!");
@@ -370,7 +379,9 @@ public class RecipeDetail {
         }
         else { //updating existing recipe in database
             try {
+                System.out.println("Vincent: Updating existing");
                 recipeDB.editRecipe(recipe);
+                disableRefresh();
             }
             catch (Exception e) {
                 System.out.println("couldn't edit database!");
@@ -392,6 +403,7 @@ public class RecipeDetail {
         back.setOnAction(e -> {
             setCancellable(false);
             closeDetailWindow();
+            rl.getRoot().loadRecipes();
         });
         // listener for save
         save.setOnAction(e -> {
@@ -405,26 +417,26 @@ public class RecipeDetail {
 
         delete.setOnAction(e -> {
             deleteEvent();
+            rl.getRoot().loadRecipes();
         });
 
         cancel.setOnAction(e -> {
             //don't save recipe to list
             this.recipeListAF.getRecipeList().removeRecipe(this.recipe);
             recipeDB.deleteRecipe(this.recipe);
+            rl.getRoot().loadRecipes();
             closeDetailWindow();
         });
 
         refresh.setOnAction(e -> {
             ChatGPT chatGPT = new ChatGPT();
             Recipe refreshed = chatGPT.makeRecipeByChatGPTResponse(recipe.getMealType(), recipe.getIngredients(), rl.getUsername());
-            refreshed.setObjectID(recipe.getObjectID());
             recipe = refreshed;
-            scrollPane = new ScrollPane(new DetailRecipe(refreshed));
-            // TODO: start here tmrw
-            // recipeViewAF.setCenter(scrollPane);
-            // recipeViewScene = new Scene(recipeViewAF, 500, 600);
-            // rl.getPrimStage().setScene(recipeViewScene);
-            // rl.getPrimStage().show();
+            dRecipe = new DetailRecipe(refreshed);
+            recipeViewAF.setCenter(new ScrollPane(dRecipe));
+            recipeViewScene = new Scene(recipeViewAF, 500, 600);
+            rl.getPrimStage().setScene(recipeViewScene);
+            rl.getPrimStage().show();
         });
     }
 
