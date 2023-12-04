@@ -46,6 +46,8 @@ class DetailFooter extends HBox {
 
     private Button cancel;
 
+    private Button refresh;
+
     String tanLight = "#f1eae0", tanDark = "#ede1cf";
     String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
     String magenta = "#a64d79", green = "#a64d79";
@@ -59,16 +61,18 @@ class DetailFooter extends HBox {
         save = new Button("Save");
         back = new Button("Back");
         cancel = new Button("Cancel");
+        refresh = new Button("Refresh");
         this.setButtonStyle(back);
         this.setButtonStyle(edit);
         this.setButtonStyle(delete);
         this.setButtonStyle(save);
         this.setButtonStyle(cancel);
+        this.setButtonStyle(refresh);
         cancel.setVisible(false);
 
         this.setSpacing(10);
 
-        this.getChildren().addAll(back, edit, delete, save, cancel);
+        this.getChildren().addAll(back, edit, delete, save, refresh, cancel);
         this.setAlignment(Pos.CENTER_RIGHT);
         
         this.setStyle("-fx-background-color: " + tanDark);
@@ -91,6 +95,7 @@ class DetailFooter extends HBox {
     public Button getSave() {return save;}
     public Button getBack() {return back;}
     public Button getCancel() {return cancel;}
+    public Button getRefresh() {return refresh;}
 }
 
 class DetailRecipe extends VBox {
@@ -266,6 +271,8 @@ public class RecipeDetail {
     private HBox header;
     private Text titleText;
 
+    private ScrollPane scrollPane;
+
     String tanLight = "#f1eae0", tanDark = "#ede1cf";
     String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
     String magenta = "#a64d79", green = "#a64d79";
@@ -291,7 +298,6 @@ public class RecipeDetail {
 
         //footer
         dfooter = new DetailFooter(); 
-        ScrollPane scrollPane = new ScrollPane(new DetailRecipe(recipe));
 
         dRecipe = new DetailRecipe(recipe);
         scrollPane = new ScrollPane(dRecipe);
@@ -301,7 +307,7 @@ public class RecipeDetail {
         recipeViewAF.setCenter(scrollPane);
         recipeViewAF.setBottom(dfooter);
 
-        addListeners(dfooter.getBack(), dfooter.getSave(), dfooter.getEdit(), dfooter.getDelete(), dfooter.getCancel());
+        addListeners(dfooter.getBack(), dfooter.getSave(), dfooter.getEdit(), dfooter.getDelete(), dfooter.getCancel(), dfooter.getRefresh());
 
         this.disableEdit();
 
@@ -381,7 +387,7 @@ public class RecipeDetail {
         }   
     }
 
-    public void addListeners(Button back, Button save, Button edit, Button delete, Button cancel) {
+    public void addListeners(Button back, Button save, Button edit, Button delete, Button cancel, Button refresh) {
         // listener for Back
         back.setOnAction(e -> {
             setCancellable(false);
@@ -390,6 +396,7 @@ public class RecipeDetail {
         // listener for save
         save.setOnAction(e -> {
             saveEvent(true);
+            rl.getRoot().loadRecipes();
         });
         // listener for edit
         edit.setOnAction(e -> {
@@ -405,6 +412,19 @@ public class RecipeDetail {
             this.recipeListAF.getRecipeList().removeRecipe(this.recipe);
             recipeDB.deleteRecipe(this.recipe);
             closeDetailWindow();
+        });
+
+        refresh.setOnAction(e -> {
+            ChatGPT chatGPT = new ChatGPT();
+            Recipe refreshed = chatGPT.makeRecipeByChatGPTResponse(recipe.getMealType(), recipe.getIngredients(), rl.getUsername());
+            refreshed.setObjectID(recipe.getObjectID());
+            recipe = refreshed;
+            scrollPane = new ScrollPane(new DetailRecipe(refreshed));
+            // TODO: start here tmrw
+            // recipeViewAF.setCenter(scrollPane);
+            // recipeViewScene = new Scene(recipeViewAF, 500, 600);
+            // rl.getPrimStage().setScene(recipeViewScene);
+            // rl.getPrimStage().show();
         });
     }
 
