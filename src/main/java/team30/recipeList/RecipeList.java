@@ -10,9 +10,12 @@ import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -87,7 +90,7 @@ class Header extends HBox {
     private Text titleText;
     private Button addButton;
     private Image recipe_Image;
-    //private Button logoutButton;
+    private MenuButton sortButton;
 
     Header() {
         this.setPrefSize(500, 60);
@@ -103,9 +106,14 @@ class Header extends HBox {
         addButton = new Button("Generate");
         setButtonStyle(addButton);
         this.setMargin(this.getAddButton(), new Insets(0, 10, 0, 0));
-        // logoutButton = new Button("Log Out");
-        // setButtonStyle(logoutButton);
-        this.getChildren().addAll(addButton);
+        
+
+        sortButton = new MenuButton("Sort");
+        //setButtonStyle(sortButton);
+        sortButton.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10");
+        
+
+        this.getChildren().addAll(sortButton, addButton);
         this.setAlignment(Pos.CENTER_LEFT);
     }
 
@@ -117,11 +125,11 @@ class Header extends HBox {
         return addButton;
     }
 
-    // public Button getLogoutButton() {
-    //     return logoutButton;
-    // }
+    public MenuButton getSortButton() {
+            return sortButton;
+        }
 
-    public void setButtonStyle(Button button) {
+    public void setButtonStyle(ButtonBase button) {
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10";
         button.setStyle(defaultButtonStyle);
         // Adding hover effect
@@ -133,7 +141,7 @@ class Header extends HBox {
         button.setOnMouseReleased(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
     }
 
-    public void setButtonStyle(Button button, String style, String hover_enter, String hover_exist, String click_press, String click_release) {
+    public void setButtonStyle(ButtonBase button, String style, String hover_enter, String hover_exist, String click_press, String click_release) {
         button.setStyle(style);
 
         // Adding hover effect
@@ -148,40 +156,28 @@ class Header extends HBox {
 
 class Footer extends HBox {
     private Button logoutButton;
-    private Button sortButton;
+    //private MenuButton sortButton;
 
         Footer() {
         this.setPrefSize(500, 60);
         this.setStyle("-fx-background-color: #f8f3c9;");
 
-    
-        // logoutButton = new Button("Log Out");
-        // setButtonStyle(logoutButton);
-        
 
-        sortButton = new Button("Sort");
-        setButtonStyle(sortButton);
         logoutButton = new Button("Log Out");
         setButtonStyle(logoutButton);
-        this.getChildren().addAll( sortButton, logoutButton);
+        this.getChildren().addAll(logoutButton);
         this.setAlignment(Pos.CENTER_RIGHT);
 
         
     }
 
-
         public Button getLogoutButton() {
             return logoutButton;
         }
 
-        public Button getSortButton() {
-            return sortButton;
-        }
-
         
-
         
-        public void setButtonStyle(Button button) {
+        public void setButtonStyle(ButtonBase button) {
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10";
         button.setStyle(defaultButtonStyle);
         // Adding hover effect
@@ -193,7 +189,7 @@ class Footer extends HBox {
         button.setOnMouseReleased(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
     }
 
-    public void setButtonStyle(Button button, String style, String hover_enter, String hover_exist, String click_press, String click_release) {
+    public void setButtonStyle(ButtonBase button, String style, String hover_enter, String hover_exist, String click_press, String click_release) {
         button.setStyle(style);
 
         // Adding hover effect
@@ -219,7 +215,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
     private Recipe recipe;
     private Button addButton;
     private Button logoutButton;
-    private Button sortButton;
+    private MenuButton sortButton;
     private RecipeList rl;
 
     //unseen buttons for HTTP functions
@@ -246,11 +242,16 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
 
         addButton = header.getAddButton();
         
-        sortButton = footer.getSortButton();
+        
+        // sortButton.getItems().addAll(sortAZ, sortZA, newOld, OldNew);
+        sortButton = header.getSortButton();
+        header.setSpacing(10);
+        //header.setPadding(new Insets(10));
+      
         logoutButton = footer.getLogoutButton();
         
         footer.setPadding(new Insets(10));
-        footer.setSpacing(350);
+        footer.setSpacing(330);
         
 
         postButton = new Button("Post");
@@ -265,6 +266,9 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         
         loadRecipes();
         addListeners();
+
+
+        
     }
 
     public void getVoiceRecording() {
@@ -277,6 +281,13 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
     public Button getLogoutButton() {return logoutButton;}
 
     public void addListeners() {
+        MenuItem sortAZ = new MenuItem("A-Z");
+        MenuItem sortZA = new MenuItem("Z-A");
+        MenuItem newOld = new MenuItem("Newest to Oldest");
+        MenuItem oldNew = new MenuItem("Oldest to Newest");
+        sortButton.getItems().addAll(sortAZ, sortZA, newOld, oldNew);
+
+
         addButton.setOnAction(e -> {
             getVoiceRecording();
 
@@ -286,7 +297,29 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
             if (voiceRecorder.successfulRecording()) {
                 onRecordingCompleted(mealtype, ingredientsRaw);
             }
-        });  
+        });
+        
+        sortAZ.setOnAction(e -> {
+            sortAtoZ();
+            
+        });
+
+        sortZA.setOnAction(e -> {
+            sortZtoA();
+            
+        });
+
+        newOld.setOnAction(e -> {
+            newToOld();
+            
+        });
+
+        oldNew.setOnAction(e -> {
+            oldToNew();
+            
+        });
+
+        
     }
 
     public void onRecordingCompleted(String mealType, String ingredientsRaw) {
@@ -358,6 +391,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         }
     }
 
+    ArrayList<Recipe> old_to_new_recipes = new ArrayList<>();
     public void addRecipe(Recipe cur) {
         FXCollections.reverse(recipeList.getChildren());
         recipeList.getChildren().add(cur);
@@ -370,6 +404,10 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         });
         
         FXCollections.reverse(recipeList.getChildren());
+
+        //keep track of new recipes added
+        old_to_new_recipes.add(cur);
+
     }
 
     public void loadRecipes() {
@@ -416,9 +454,106 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         Collections.sort(list_of_recipes, compareAtoZ);
     
         // Add the sorted recipes back to the container
+        int num = 1;
         for (Recipe recipe : list_of_recipes) {
             recipeList.getChildren().add(recipe);
+            recipe.setTaskIndex(num);
+            num++;
         }
+         
+    }
+
+    public void sortZtoA() {
+
+        //get list of recipes nodes
+        ArrayList<Recipe> list_of_recipes = new ArrayList<>();
+        for (Node node : recipeList.getChildren()) {
+            list_of_recipes.add((Recipe) node);
+        }
+          
+        // Clear the current list of recipes
+        for (Recipe recipe : list_of_recipes) {
+            recipeList.removeRecipe(recipe); // Remove the recipe from the list
+            
+        }
+    
+        // Sort the list of recipes from A to Z
+        Comparator<Recipe> compareAtoZ = new Comparator<Recipe>() {
+            @Override
+            public int compare(Recipe r1, Recipe r2) {
+                return r2.getRecipeTitle().getText().compareTo(r1.getRecipeTitle().getText());
+            }
+        };
+        Collections.sort(list_of_recipes, compareAtoZ);
+    
+        // Add the sorted recipes back to the container
+        int num = 1;
+        for (Recipe recipe : list_of_recipes) {
+            recipeList.getChildren().add(recipe);
+            recipe.setTaskIndex(num);
+            num++;
+        }
+        
+    }
+
+    public void oldToNew() {
+
+        //get current list of recipes and save it
+        ArrayList<Recipe> list_of_recipes = new ArrayList<>();
+        for (Node node : recipeList.getChildren()) {
+            list_of_recipes.add((Recipe) node);
+        }
+
+        //add new recipes to the top of the list
+        if(!old_to_new_recipes.isEmpty()) {
+            list_of_recipes.addAll(0, old_to_new_recipes);
+        }
+
+        // Clear the current list of recipes
+        for (Recipe recipe : list_of_recipes) {
+            recipeList.removeRecipe(recipe); // Remove the recipe from the list
+            
+        }
+        
+        // Add new to old recipes back to the container
+        int num = 1;
+        for (Recipe recipe : list_of_recipes) {
+            recipeList.getChildren().add(recipe);
+            recipe.setTaskIndex(num);
+            num++;
+        }
+        
+        
+    }
+
+    public void newToOld() {
+        //get current list of recipes and save it
+        ArrayList<Recipe> list_of_recipes = new ArrayList<>();
+        Collections.reverse(list_of_recipes);
+        for (Node node : recipeList.getChildren()) {
+            list_of_recipes.add((Recipe) node);
+        }
+
+        //add new recipes to the top of the list
+        if(!old_to_new_recipes.isEmpty()) {
+            list_of_recipes.addAll(old_to_new_recipes);
+        }
+
+        // Clear the current list of recipes
+        for (Recipe recipe : list_of_recipes) {
+            recipeList.removeRecipe(recipe); // Remove the recipe from the list
+            
+        }
+
+        // Add new to old recipes back to the container
+        int num = 1;
+        for (int i = list_of_recipes.size() - 1; i >= 0; i--) {
+            recipeList.getChildren().add(list_of_recipes.get(i));
+            list_of_recipes.get(i).setTaskIndex(num);
+            num++;
+            
+        }
+
     }
 
 
