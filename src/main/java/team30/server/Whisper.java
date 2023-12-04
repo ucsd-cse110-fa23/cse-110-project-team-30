@@ -1,4 +1,4 @@
-package team30.recipeList;
+package team30.server;
 
 import java.io.*;
 import java.net.*;

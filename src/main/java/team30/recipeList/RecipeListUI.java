@@ -8,42 +8,18 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
-import team30.recipeList.VoiceRecorder.RecordingCompletionListener;
+import team30.server.ChatGPT;
 import team30.server.RecipeDatabase;
+import team30.server.VoiceRecorder;
+import team30.server.VoiceRecorder.RecordingCompletionListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-/*
- * UI class for list spacing
- */
-class ListVBox extends VBox {
-
-    ListVBox() {
-        this.setSpacing(10); // sets spacing between tasks   
-        this.setPrefSize(500, 560);
-    }
-    //updates indices on recipes in list
-    public void updateTaskIndices() {
-        int index = this.getChildren().size();
-        for (int i = 0; i < this.getChildren().size(); i++) {
-            if (this.getChildren().get(i) instanceof Recipe) {
-                ((Recipe) this.getChildren().get(i)).setTaskIndex(index);
-                index--;
-            }
-        }
-    }
-    //removes recipe from list
-    void removeRecipe(Recipe recipeToRemove){
-        this.getChildren().removeIf(recipe -> recipe instanceof Recipe && ((Recipe)recipe).equals(recipeToRemove));
-        this.updateTaskIndices();
-    }
-}
-
-/*
- * UI class for entire recipe list sreen
- */
-public class RecipeListUI extends DefaultBorderPane implements RecordingCompletionListener {
-    private ListVBox recipeList;
+// UI class for entire recipe list sreen
+public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ implements RecordingCompletionListener { //implements RecordingCompletionListener
+    private VBox recipeListUI;
     private ScrollPane scrollPane;
 
     private Recipe recipe;
@@ -54,17 +30,20 @@ public class RecipeListUI extends DefaultBorderPane implements RecordingCompleti
     private Button postButton, getButton, putButton, deleteButton;
     private String query;
 
-    //loaded by controller when server starts
+    //loaded when server starts
     private RecipeDatabase recipeDB; 
+    private List<Recipe> recipeList;
 
     //voice recorder popup
     VoiceRecorder voiceRecorder;
 
-    RecipeListUI() {
-        recipeList = new ListVBox();
-        recipeList.setStyle("-fx-background-color: " + tanLight + ";-fx-padding: 10;");
+    public RecipeListUI() {
+        recipeListUI = new VBox();
+        recipeListUI.setSpacing(10); // sets spacing between tasks   
+        recipeListUI.setPrefSize(500, 560);
+        recipeListUI.setStyle("-fx-background-color: " + tanLight + ";-fx-padding: 10;");
 
-        scrollPane = new ScrollPane(recipeList);
+        scrollPane = new ScrollPane(recipeListUI);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
 
@@ -80,11 +59,28 @@ public class RecipeListUI extends DefaultBorderPane implements RecordingCompleti
         getButton = new Button("Get");
         putButton = new Button("Put");
         deleteButton = new Button("Delete");
-
-        recipe = new Recipe();
         query = "";
 
         addListeners();
+    }
+
+    //updates indices on recipes in list
+    public void updateTaskIndices() {
+        int index = recipeListUI.getChildren().size();
+        for (int i = 0; i < recipeListUI.getChildren().size(); i++) {
+            if (this.getChildren().get(i) instanceof RecipeUI) {
+                ((RecipeUI) recipeListUI.getChildren().get(i)).setTaskIndex(index);
+                index--;
+            }
+        }
+    }
+
+    public void update() {
+        recipeListUI.getChildren().clear();
+        for (Recipe recipe : recipeList) {
+            RecipeUI recipeUI = new RecipeUI(recipe);
+            this.getChildren().add(recipeUI);
+        }
     }
 
     public void getVoiceRecording() {
@@ -171,18 +167,31 @@ public class RecipeListUI extends DefaultBorderPane implements RecordingCompleti
     }
 
     public void addRecipe(Recipe cur) {
-        FXCollections.reverse(recipeList.getChildren());
-        recipeList.getChildren().add(cur);
-        recipeList.updateTaskIndices();
+        Collections.reverse(recipeList);
+        recipeListUI.getChildren().add(cur);
+        update();
+        this.updateTaskIndices();
         recipe = cur;
         //postButton.fire(); //click HTTP post button
 
-        cur.getRecipeTitle().setOnAction(f -> {
+        getRecipeUI(cur).getRecipeTitle().setOnAction(f -> {
             RecipeDetail ord = new RecipeDetail(rl, this, cur);
             ord.openDetailWindow(cur);
         });
         
-        FXCollections.reverse(recipeList.getChildren());
+        Collections.reverse(recipeList);
+    }
+
+    public RecipeUI getRecipeUI(Recipe cur) {
+        for (int i = 0; i < recipeListUI.getChildren().size(); i++) {
+            if (this.getChildren().get(i) instanceof RecipeUI) {
+                String uiID = ((RecipeUI) recipeListUI.getChildren().get(i)).getRecipe().getObjectID().toString();
+                if (uiID.equals(cur.getObjectID().toString())) {
+                    return (RecipeUI) recipeListUI.getChildren().get(i);
+                }
+            }
+        }
+        return null;
     }
 
     public ObjectId getRecipeObjectID() {
@@ -198,7 +207,7 @@ public class RecipeListUI extends DefaultBorderPane implements RecordingCompleti
 
     public void setRecipeList(RecipeList rl) {this.rl = rl;}
     public HBox getHeader() {return header;}
-    public ListVBox getRecipeList() {return recipeList;}
+    public List<Recipe> getRecipeList() {return recipeList;}
     public ScrollPane getScrollPane() {return scrollPane;}
     public Button getAddButton() {return addButton;}
     public Recipe getRecipe() {return recipe;}

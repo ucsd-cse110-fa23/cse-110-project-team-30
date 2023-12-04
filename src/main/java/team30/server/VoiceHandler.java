@@ -1,5 +1,4 @@
 package team30.server;
-
 import com.sun.net.httpserver.*;
 
 import team30.recipeList.Recipe;
@@ -10,12 +9,12 @@ import java.util.*;
 
 import org.bson.types.ObjectId;
 
-public class RecipeHandler implements HttpHandler {
+public class VoiceHandler implements HttpHandler {
 
     //private final Map<String, Recipe> data; //ObjectID, recipe
     private RecipeDatabase recipeDB;
 
-    public RecipeHandler(RecipeDatabase data) {
+    public VoiceHandler(RecipeDatabase data) {
         this.recipeDB = data;
     }
 
@@ -54,8 +53,8 @@ public class RecipeHandler implements HttpHandler {
             System.out.println((new ObjectId(objectID)).toString());
             Recipe recipe = recipeDB.getRecipe(new ObjectId(objectID)); // Retrieve data from hashmap
             if (recipe != null) {
-                System.out.println("get successful!");
                 response = detailsToString(recipe.getRecipeDetails());
+                System.out.println("get successful!");
                 System.out.println("Queried for " + objectID + " and found " + detailsToString(recipe.getRecipeDetails()));
             } else {
                 response = "No data found for " + objectID;

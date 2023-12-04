@@ -1,11 +1,11 @@
-package team30.recipeList;
+package team30.server;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
+import team30.recipeList.RecipeList;
+import team30.recipeList.RecipeListUI;
+import team30.recipeList.VoiceRecorderUI;
 
 import java.io.*;
 import java.net.URISyntaxException;

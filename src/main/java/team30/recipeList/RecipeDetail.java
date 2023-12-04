@@ -91,7 +91,7 @@ class DetailRecipe extends VBox {
         this.setStyle("-fx-background-color: " + tanLight);
 
         // initial recipe info
-        recipe_name = new Label(recipe.getRecipeTitle().getText());
+        recipe_name = new Label(recipe.getRecipeTitle());
         ingredients = new TextArea(recipe.getIngredients());
         steps = new ArrayList<>();
         for (int i = 0; i < recipe.getSteps().size(); ++i) {
@@ -337,7 +337,8 @@ public class RecipeDetail {
 
         cancel.setOnAction(e -> {
             //don't save recipe to list
-            this.recipeListAF.getRecipeList().removeRecipe(this.recipe);
+            recipeListAF.getRecipeList().remove(this.recipe);
+            recipeListAF.update();
             recipeDB.deleteRecipe(this.recipe);
             closeDetailWindow();
         });
@@ -354,7 +355,8 @@ public class RecipeDetail {
     }
 
     public void deleteEvent(){
-        this.recipeListAF.getRecipeList().removeRecipe(this.recipe);
+        this.recipeListAF.getRecipeList().remove(this.recipe);
+        recipeListAF.update();
         recipeDB.deleteRecipe(this.recipe);
         this.recipeListAF.getDeleteButton().fire();
         closeDetailWindow();
@@ -365,16 +367,6 @@ public class RecipeDetail {
      * @param showAlert - a flag that says whether to show the alert or not.
      */
     public void saveEvent(boolean showAlert){
-        String validMealType = Recipe.validateMealType(dRecipe.getMealType().getText());
-        if(validMealType == null){
-            if(showAlert){
-                String warningMessage = "Only breakfast, lunch, or dinner are valid mealTypes.";
-                Alert e = new Alert(AlertType.ERROR,warningMessage);
-                e.show();
-            }
-            return;
-        }
-        dRecipe.getMealType().setText(validMealType);
         disableEdit();
         updateRecipeList();
         saveRecipe();

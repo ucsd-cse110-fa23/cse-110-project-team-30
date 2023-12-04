@@ -6,6 +6,9 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
+
+import java.util.ArrayList;
+
 import org.bson.types.ObjectId;
 
 // edited from public class Main
@@ -15,26 +18,30 @@ public class RecipeList extends Application {
     private Scene listScene;
     private Button postButton, getButton, putButton, deleteButton;
 
-    private Controller controller; 
-    private Model model;
-    private RecipeListUI root; //view
+    private Model model; //model
+    private RecipeListUI recipeListUI; //view
+    private Controller controller; //controller
+
+    private ArrayList<Recipe> recipes;
     
     @Override
     public void start(Stage primaryStage) throws Exception {
-        root = new RecipeListUI();
+        recipeListUI = new RecipeListUI();
         model = new Model();
-        listScene = new Scene(root, 500, 600);
+        listScene = new Scene(recipeListUI, 500, 600);
         
-        postButton = root.getPostButton();
-        getButton = root.getGetButton();
-        putButton = root.getPutButton();
-        deleteButton = root.getDeleteButton();
+        postButton = recipeListUI.getPostButton();
+        getButton = recipeListUI.getGetButton();
+        putButton = recipeListUI.getPutButton();
+        deleteButton = recipeListUI.getDeleteButton();
+
+        recipes = new ArrayList<>();
         
         controller = new Controller(this, model);
-        model.loadRecipes();
+        //model.loadRecipes();
 
         this.primStage = primaryStage;
-        root.setRecipeList(this);
+        recipeListUI.setRecipeList(this);
         primaryStage.setTitle("PantryPal");
         primaryStage.setScene(listScene);
         primaryStage.setResizable(false);
@@ -47,18 +54,18 @@ public class RecipeList extends Application {
 
     public Stage getPrimStage() {return primStage;}
     public Scene getScene() {return listScene;}
-    public void setAppFrame(RecipeListUI af) {root = af;}
+    public void setAppFrame(RecipeListUI af) {recipeListUI = af;}
 
     public void setPostButtonAction(EventHandler<ActionEvent> eventHandler) {postButton.setOnAction(eventHandler);}
     public void setGetButtonAction(EventHandler<ActionEvent> eventHandler) {getButton.setOnAction(eventHandler);}
     public void setPutButtonAction(EventHandler<ActionEvent> eventHandler) {putButton.setOnAction(eventHandler);}
     public void setDeleteButtonAction(EventHandler<ActionEvent> eventHandler) {deleteButton.setOnAction(eventHandler);}
 
-    public ObjectId getRecipeObjectID() {return root.getRecipeObjectID();}
-    public Recipe getRecipe() {return root.getRecipe();}
-    public String getQuery() {return root.getQuery();}
+    public ObjectId getRecipeObjectID() {return recipeListUI.getRecipeObjectID();}
+    public Recipe getRecipe() {return recipeListUI.getRecipe();}
+    public String getQuery() {return recipeListUI.getQuery();}
 
-    public RecipeListUI getRecipeListUI() {return root;}
+    public RecipeListUI getRecipeListUI() {return recipeListUI;}
     public Controller getController() {return controller;}
     public Model getModel() {return model;}
 

@@ -1,12 +1,6 @@
 package team30.recipeList;
 
-import org.bson.Document;
-
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCursor;
-
 import javafx.event.ActionEvent;
-import team30.server.RecipeDatabase;
 
 public class Controller {
     private RecipeList view;

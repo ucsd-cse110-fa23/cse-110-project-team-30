@@ -1,4 +1,4 @@
-package team30.recipeList;
+package team30.server;
 
 import java.io.IOException;
 import java.net.URI;
@@ -19,7 +19,7 @@ public class ChatGPT {
 
         //Our prompt for ChatGPT with our provided mealtype and ingredients
         String prompt = "Create a " + mealType + " recipe using only " + ingredientsRaw + "and common condiments, label the recipe name, ingredients, and instructions";
-        int maxTokens = 200;
+        int maxTokens = 300;
 
         // Create a request body which you will pass into request object
         JSONObject requestBody = new JSONObject();

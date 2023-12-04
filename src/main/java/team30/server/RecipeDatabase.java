@@ -60,7 +60,7 @@ public class RecipeDatabase {
     public void insertRecipe(Recipe r) {
         Document recipe = new Document("_id", r.getObjectID());
         //recipe.put("name", r.getRecipeTitle().getText());
-        recipe.append("name", r.getRecipeTitle().getText())
+        recipe.append("name", r.getRecipeTitle())
                 .append("meal_type", r.getMealType())
                 .append("ingredients", r.getIngredients())
                 .append("steps", stepsToString(r.getSteps()))
@@ -97,7 +97,6 @@ public class RecipeDatabase {
             System.out.println("failed to get recipe");
             return null;
         }
-        Recipe r = new Recipe();
         ArrayList<String> details = new ArrayList<>();
 
         details.add(d.get("name").toString());
@@ -105,6 +104,8 @@ public class RecipeDatabase {
         details.add(d.get("ingredients").toString());
         details.add(d.get("imageurl").toString());
         details.add(d.get("steps").toString());   
+        System.out.println(details.get(0));
+        Recipe r = new Recipe();
         r.setObjectID(id);   
         r.setRecipeDetails(details);
         return r;
@@ -176,6 +177,27 @@ public class RecipeDatabase {
 
     public FindIterable<Document> find() {
         return recipesCollection.find();
+    }
+
+    //load
+    public ArrayList<Recipe> loadRecipes() {
+        ArrayList<Recipe> rs = new ArrayList<>();
+        // try { 
+        //     long totalRecipes = countDocuments();
+        //     System.out.println("Total recipes: " + totalRecipes);
+  
+        //     FindIterable<Document> iterDoc = recipesCollection.find();
+        //     MongoCursor<Document> it = iterDoc.iterator();
+        //     while (it.hasNext()) {
+        //         Recipe cur = getRecipe(it.next());
+        //         rs.add(cur);
+        //     }
+        // }
+        // catch (Exception e) {
+        //     System.out.println("couldn't open database!");
+        //     e.printStackTrace();
+        // }
+        return rs;
     }
 
 }

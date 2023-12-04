@@ -4,7 +4,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 
-class VoiceRecorderUI extends DefaultBorderPane {
+public class VoiceRecorderUI extends DefaultBorderPane {
     private Button backButton;
     private Button startButton;
     private Button stopButton;
