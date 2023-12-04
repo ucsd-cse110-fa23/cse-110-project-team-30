@@ -188,11 +188,12 @@ public class Recipe extends HBox {
 
     /**
      * Takes an image from the recipe's url, and if the recipe has not had an image generated for it, 
-     * generate one to return.
+     * generate one to return. It also changes imageGenerated to true to reflect the changes.
      * @return the linked image if generatedImage is true, and a newly generated image if not.
      */
     public Image getImage(){
         imageurl = ImageManager.ensurePathExists(imageurl, this.getName(), !imageGenerated);
+        imageGenerated = true;
         return ImageManager.getImage(imageurl);
     }
 
