@@ -10,7 +10,6 @@ public class ImageManager {
 
 
     public static String path = preparepath("src" + File.separator + "main" + File.separator + "java" + File.separator + "team30" + File.separator + "recipeList" + File.separator + "images");
-
     /**
      * Returns the path
      * @return the path given
@@ -28,7 +27,7 @@ public class ImageManager {
      * Creates an image with the given name if the name is not taken.
      * If not, a new path will be made to hold the image.
      * @param name - the expected name for the image
-     * @return - a path in the files to the image
+     * @return - the name (not path) of the image
      */
     static String generateImage(String name){
         String imgurl = createUniqueURI(name);
@@ -57,7 +56,7 @@ public class ImageManager {
      * Meant to ensure that a given path is good for use.
      * If the path does not exist, or the regenerate flag is true,
      * a new Image will be created and a new path pointing to it added.
-     * @param path - expected path of the Image
+     * @param path - expected path of the Image, without the part defined in ImageManager.path
      * @param name - name to use when generating a path IF a new path must be generated
      * @param regenerate - flag that sets whether to regenerate the image or not.
      * @return the original path, if valid, and a path to a new image if not.
