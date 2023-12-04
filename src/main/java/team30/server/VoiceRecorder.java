@@ -16,7 +16,7 @@ import java.util.*;
 import org.json.JSONException;
 
 public class VoiceRecorder {
-    private VoiceRecorderUI voiceAF; //current app frame
+    private VoiceRecorderUI voiceUI; //current app frame
     private RecipeList rl;
 
     private Scene recipeListScene;
@@ -29,9 +29,6 @@ public class VoiceRecorder {
 
     private AudioFormat audioFormat;
     private TargetDataLine targetDataLine;
-    private Label recordingLabel;
-    private Label failedMealTypeLabel, successfulMealTypeLabel, instructionsMealTypeLabel;
-    private Label instructionsIngredientsLabel, successfulIngredientsLabel;
 
     private boolean startedRecording;
     private boolean completedRecording;
@@ -39,43 +36,25 @@ public class VoiceRecorder {
     private boolean completedIngredients;
 
     private String mealtype, ingredientsRaw;
-    String defaultLabelStyle = "-fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px";
 
     private Whisper audioProcessor;
     private RecordingCompletionListener completionListener;
 
-    ArrayList<Label> labels;
+    List<Label> labels;
 
     public VoiceRecorder(RecipeList rl, RecipeListUI af) {
         this.rl = rl;
         recipeListScene = rl.getScene();
 
-        voiceAF = new VoiceRecorderUI();
+        voiceUI = new VoiceRecorderUI();
         audioProcessor = new Whisper();
 
-        startButton = voiceAF.getStartButton();
-        stopButton = voiceAF.getStopButton();
-        backButton = voiceAF.getBackButton();
-        continueButton = voiceAF.getContinueButton();
-
-        //debug issue with colors later
+        startButton = voiceUI.getStartButton();
+        stopButton = voiceUI.getStopButton();
+        backButton = voiceUI.getBackButton();
+        continueButton = voiceUI.getContinueButton();
         
-        recordingLabel = new Label("Recording...");
-        instructionsMealTypeLabel = new Label("Please select your mealtype 'breakfast', 'lunch', or 'dinner'");
-        failedMealTypeLabel = new Label("Please say 'breakfast', 'lunch', or 'dinner'!");
-        successfulMealTypeLabel = new Label("You said: ");
-        instructionsIngredientsLabel = new Label("Please list the ingredients you have.");
-        successfulIngredientsLabel = new Label("You said: ");
-
-        labels = new ArrayList<>();
-        labels.add(recordingLabel);
-        labels.add(instructionsMealTypeLabel);
-        labels.add(failedMealTypeLabel);
-        labels.add(successfulMealTypeLabel);
-        labels.add(instructionsIngredientsLabel);
-        labels.add(successfulIngredientsLabel);
-
-        setLabelStyle(defaultLabelStyle);
+        labels = voiceUI.getLabels();
 
         audioFormat = getAudioFormat();
 
@@ -85,30 +64,13 @@ public class VoiceRecorder {
         completedIngredients = false;
         mealtype = "";
 
-        hideLabels();
-        instructionsMealTypeLabel.setVisible(true);
-
-        voiceAF.getMiddle().getChildren().addAll(recordingLabel, instructionsMealTypeLabel, failedMealTypeLabel, successfulMealTypeLabel, instructionsIngredientsLabel, successfulIngredientsLabel);
+        voiceUI.getMiddle().getChildren().addAll(labels);
         addListeners();
-        voiceScene = new Scene(voiceAF, 500, 600);
+        voiceScene = new Scene(voiceUI, 500, 600);
     };
-
-    private void hideLabels() {
-        for (Label l : labels) {
-            l.setVisible(false);
-        }
-    }
-
-    private void setLabelStyle(String labelStyle) {
-        for (Label l : labels) {
-            l.setStyle(labelStyle);
-            l.setWrapText(true);
-        }
-    }
 
     public void addListeners() {
         startButton.setOnAction(e -> {
-            hideLabels();
             startRecording();
             if (processingIngredients)
                 completedIngredients = false;
@@ -129,18 +91,15 @@ public class VoiceRecorder {
                     e1.printStackTrace();
                 }
 
-                hideLabels();
                 System.out.println(mealtype.toLowerCase());
                 //check mealtype validity
                 mealtype = mealtype.toLowerCase().replaceAll("[.]", "");
                 if (mealtype.equals("breakfast") || mealtype.equals("lunch") || mealtype.equals("dinner")) {
-                    //valid
-                    successfulMealTypeLabel.setText("You said: " + mealtype);
-                    successfulMealTypeLabel.setVisible(true);
+                    voiceUI.setMealType(mealtype);
                     completedRecording = true;
                 }
                 else {
-                    failedMealTypeLabel.setVisible(true);
+                    voiceUI.setFailedMealType();
                     mealtype = "";
                     completedRecording = false;
                 }
@@ -155,14 +114,12 @@ public class VoiceRecorder {
                 }
 
                 System.out.println(ingredientsRaw);
-                hideLabels();
-                successfulIngredientsLabel.setText("You said: " + ingredientsRaw);
-                successfulIngredientsLabel.setVisible(true);
+                voiceUI.setIngredients(ingredientsRaw);
                 completedIngredients = true;
             }
         });
         backButton.setOnAction(e -> {
-            hideLabels();
+            voiceUI.hideLabels();
             if (startedRecording == true) {
                 //cancel recording first
                 stopRecording();
@@ -173,14 +130,12 @@ public class VoiceRecorder {
         continueButton.setOnAction(e -> {
             if (completedRecording == false) {
                 //invalid recording
-                hideLabels();
-                failedMealTypeLabel.setVisible(true);
+                voiceUI.setFailedMealType();
             }
             else if (!processingIngredients) {
                 //if meal type is valid, process ingredients
                 processingIngredients = true;
-                hideLabels();
-                instructionsIngredientsLabel.setVisible(true);
+                voiceUI.setProcessingIngredients();
             }
             else if (completedIngredients) {
                 //go back to recipe, do ChatGPT 
@@ -219,7 +174,7 @@ public class VoiceRecorder {
                         targetDataLine.open(audioFormat);
                         targetDataLine.start();
                         startedRecording = true;
-                        recordingLabel.setVisible(true);
+                        voiceUI.setRecording();
 
                         // the AudioInputStream that will be used to write the audio data to a file
                         AudioInputStream audioInputStream = new AudioInputStream(
@@ -235,7 +190,6 @@ public class VoiceRecorder {
                                 audioInputStream,
                                 AudioFileFormat.Type.WAVE,
                                 audioFile);
-                        recordingLabel.setVisible(false);
                         startedRecording = false;
                     } catch (Exception ex) {
                         ex.printStackTrace();

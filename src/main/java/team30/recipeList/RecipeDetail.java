@@ -207,7 +207,7 @@ class Ingredient extends HBox {
 }
 
 public class RecipeDetail {
-    private RecipeListUI recipeListAF; //original app frame
+    private RecipeListUI recipeListUI; //original app frame
     private RecipeListUI recipeViewAF; //current app frame
     private RecipeList rl;
 
@@ -228,14 +228,17 @@ public class RecipeDetail {
     String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
     String magenta = "#a64d79", green = "#a64d79";
 
+    //HTTP buttons
+    private Button postButton, getButton, putButton, deleteButton;
+
     DetailFooter dfooter;
 
     RecipeDetail(RecipeList rl, RecipeListUI af, Recipe r) {
         this.rl = rl;
         this.recipe = r;
-        recipeListAF = af;
+        recipeListUI = af;
         recipeListScene = rl.getScene();
-        recipeDB = recipeListAF.getRecipeDB();
+        recipeDB = recipeListUI.getRecipeDB();
 
         recipeViewAF = new RecipeListUI();
 
@@ -260,6 +263,11 @@ public class RecipeDetail {
         recipeViewAF.setBottom(dfooter);
 
         addListeners(dfooter.getBack(), dfooter.getSave(), dfooter.getEdit(), dfooter.getDelete(), dfooter.getCancel());
+
+        postButton = recipeListUI.getPostButton();
+        getButton = recipeListUI.getGetButton();
+        putButton = recipeListUI.getPutButton();
+        deleteButton = recipeListUI.getDeleteButton();
 
         this.disableEdit();
 
@@ -308,12 +316,38 @@ public class RecipeDetail {
         }
     }
 
-    public void saveRecipe() {
-        rl.getModel().saveRecipe(recipe);
+    public void setCancellable(boolean b) { dfooter.getCancel().setVisible(b); }
+
+    /**
+     * Method holding what the edit button does.
+     */
+    public void editEvent(){
+        if(editMode)
+                disableEdit();
+            else
+                enableEdit();
     }
 
-    public void setCancellable(boolean b) {
-        dfooter.getCancel().setVisible(b);
+    public void deleteEvent(){
+        recipeListUI.getRecipeList().remove(this.recipe);
+        recipeListUI.update();
+        recipeDB.deleteRecipe(this.recipe);
+        deleteButton.fire(); //server delete
+        closeDetailWindow();
+    }
+
+    /**
+     * Runs the event that happens whenever save button is pressed.
+     * @param showAlert - a flag that says whether to show the alert or not.
+     */
+    public void saveEvent(boolean showAlert){
+        disableEdit();
+        updateRecipeList();
+        putButton.fire(); //server put
+    }
+
+    public Button getEditButton(){
+        return ((DetailFooter)recipeViewAF.getBottom()).getEdit();
     }
 
     public void addListeners(Button back, Button save, Button edit, Button delete, Button cancel) {
@@ -330,49 +364,17 @@ public class RecipeDetail {
         edit.setOnAction(e -> {
             editEvent();
         });
-
+        // listener for delete
         delete.setOnAction(e -> {
             deleteEvent();
         });
-
+        // listener for cancel
         cancel.setOnAction(e -> {
             //don't save recipe to list
-            recipeListAF.getRecipeList().remove(this.recipe);
-            recipeListAF.update();
+            recipeListUI.getRecipeList().remove(this.recipe);
+            recipeListUI.update();
             recipeDB.deleteRecipe(this.recipe);
             closeDetailWindow();
         });
-    }
-
-    /**
-     * Method holding what the edit button does.
-     */
-    public void editEvent(){
-        if(editMode)
-                disableEdit();
-            else
-                enableEdit();
-    }
-
-    public void deleteEvent(){
-        this.recipeListAF.getRecipeList().remove(this.recipe);
-        recipeListAF.update();
-        recipeDB.deleteRecipe(this.recipe);
-        this.recipeListAF.getDeleteButton().fire();
-        closeDetailWindow();
-    }
-
-    /**
-     * Runs the event that happens whenever save button is pressed.
-     * @param showAlert - a flag that says whether to show the alert or not.
-     */
-    public void saveEvent(boolean showAlert){
-        disableEdit();
-        updateRecipeList();
-        saveRecipe();
-    }
-
-    public Button getEditButton(){
-        return ((DetailFooter)recipeViewAF.getBottom()).getEdit();
     }
 }

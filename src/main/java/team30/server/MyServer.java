@@ -22,13 +22,16 @@ public class MyServer {
   static RecipeDatabase recipeDB;
   static RecipeList recipeList;
 
+  static Whisper audioProcessor;
+
   public static void main(String[] args) throws IOException {
     // create a thread pool to handle requests
     ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
 
     recipeDB = new RecipeDatabase();
     recipeList = new RecipeList();
-    loadRecipes();
+    audioProcessor = new Whisper();
+    //loadRecipes();
 
     // create a server
     HttpServer server = HttpServer.create(
@@ -36,19 +39,19 @@ public class MyServer {
         0);
 
     HttpContext contextRecipe = server.createContext("/recipe", new RecipeHandler(recipeDB));
-    //HttpContext contextVoice = server.createContext("/voice", new VoiceHandler(recipeDB));
+    HttpContext contextVoice = server.createContext("/voice", new VoiceHandler(audioProcessor));
     server.setExecutor(threadPoolExecutor);
     server.start();
 
     System.out.println("Server started on port " + SERVER_PORT);
   }
 
-  public static void loadRecipes() { //leave for account
-    RecipeListUI recipeListUI = recipeList.getRecipeListUI();
-    ArrayList<Recipe> rs = recipeDB.loadRecipes();
-    for (Recipe cur : rs)
-      recipeListUI.addRecipe(cur);
-  }
+  // public static void loadRecipes() { //leave for account
+  //   RecipeListUI recipeListUI = recipeList.getRecipeListUI();
+  //   ArrayList<Recipe> rs = recipeDB.loadRecipes();
+  //   for (Recipe cur : rs)
+  //     recipeListUI.addRecipe(cur);
+  // }
 
 }
 

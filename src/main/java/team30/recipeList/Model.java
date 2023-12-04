@@ -80,9 +80,9 @@ public class Model {
 //           e.printStackTrace();
 //       }
 //   }
-    public void saveRecipe(Recipe r) {
-        String objectID = r.getObjectID().toString();
-        performRequest("PUT", objectID, r, null);
-    }
+    // public void saveRecipe(Recipe r) {
+    //     String objectID = r.getObjectID().toString();
+    //     performRequest("PUT", objectID, r, null);
+    // }
 
 }

@@ -61,26 +61,34 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
         deleteButton = new Button("Delete");
         query = "";
 
+        recipeList = new ArrayList<Recipe>();
+
         addListeners();
     }
 
     //updates indices on recipes in list
     public void updateTaskIndices() {
-        int index = recipeListUI.getChildren().size();
+        int index = 1;
         for (int i = 0; i < recipeListUI.getChildren().size(); i++) {
-            if (this.getChildren().get(i) instanceof RecipeUI) {
+            if (recipeListUI.getChildren().get(i) instanceof RecipeUI) {
                 ((RecipeUI) recipeListUI.getChildren().get(i)).setTaskIndex(index);
-                index--;
+                index++;
             }
         }
     }
 
     public void update() {
         recipeListUI.getChildren().clear();
-        for (Recipe recipe : recipeList) {
-            RecipeUI recipeUI = new RecipeUI(recipe);
-            this.getChildren().add(recipeUI);
+        for (Recipe cur : recipeList) {
+            RecipeUI recipeUI = new RecipeUI(cur);
+            recipeListUI.getChildren().add(recipeUI);
+            recipeUI.getRecipeTitle().setOnAction(f -> {
+                recipe = cur;
+                RecipeDetail ord = new RecipeDetail(rl, this, cur);
+                ord.openDetailWindow(cur);
+            });
         }
+        this.updateTaskIndices();
     }
 
     public void getVoiceRecording() {
@@ -131,7 +139,6 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
                     recipeName = lines[i].substring(13).toLowerCase();
                     count = 100;
                 }
-
                 if (lines[i].contains("Ingredients:")) {
                     count = 1;
                     continue;
@@ -140,14 +147,12 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
                     count = 2;
                     continue;
                 }
-                
                 if (count == 1) {
                     //ingredients
                     if (!ingredients.equals("") && !(lines[i].replaceAll("\\n", "") == ""))
                         ingredients += ", ";
                     ingredients += lines[i].toLowerCase().replaceAll("-", "");
                 }
-
                 if (count == 2) {
                     //steps
                     if (!(lines[i].replaceAll("\\s", "") == "") && !(lines[i].replaceAll("\\n", "") == ""))
@@ -168,31 +173,22 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
 
     public void addRecipe(Recipe cur) {
         Collections.reverse(recipeList);
-        recipeListUI.getChildren().add(cur);
-        update();
-        this.updateTaskIndices();
-        recipe = cur;
-        //postButton.fire(); //click HTTP post button
-
-        getRecipeUI(cur).getRecipeTitle().setOnAction(f -> {
-            RecipeDetail ord = new RecipeDetail(rl, this, cur);
-            ord.openDetailWindow(cur);
-        });
-        
+        recipeList.add(cur);
         Collections.reverse(recipeList);
+        update();
     }
 
-    public RecipeUI getRecipeUI(Recipe cur) {
-        for (int i = 0; i < recipeListUI.getChildren().size(); i++) {
-            if (this.getChildren().get(i) instanceof RecipeUI) {
-                String uiID = ((RecipeUI) recipeListUI.getChildren().get(i)).getRecipe().getObjectID().toString();
-                if (uiID.equals(cur.getObjectID().toString())) {
-                    return (RecipeUI) recipeListUI.getChildren().get(i);
-                }
-            }
-        }
-        return null;
-    }
+    // public RecipeUI getRecipeUI(Recipe cur) {
+    //     for (int i = 0; i < recipeListUI.getChildren().size(); i++) {
+    //         if (this.getChildren().get(i) instanceof RecipeUI) {
+    //             String uiID = ((RecipeUI) recipeListUI.getChildren().get(i)).getRecipe().getObjectID().toString();
+    //             if (uiID.equals(cur.getObjectID().toString())) {
+    //                 return (RecipeUI) recipeListUI.getChildren().get(i);
+    //             }
+    //         }
+    //     }
+    //     return null;
+    // }
 
     public ObjectId getRecipeObjectID() {
         return recipe.getObjectID();
