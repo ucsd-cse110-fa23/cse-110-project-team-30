@@ -5,7 +5,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import team30.recipeList.RecipeListUI;
 import team30.recipeList.VoiceRecorderUI;
 import team30.recipeList.WindowChange;
 
@@ -50,16 +49,13 @@ public class VoiceRecorder {
 
         audioFormat = getAudioFormat();
 
-        startedRecording = false;
-        completedRecording = false;
-        processingIngredients = false;
-        completedIngredients = false;
+        resetBools();
         mealtype = "";
 
         voiceUI.getMiddle().getChildren().addAll(labels);
         addListeners();
         voiceScene = new Scene(voiceUI, 500, 600);
-        
+
         windowChange = new WindowChange();
         windowChange.setVoiceRecorder(this);
     };
@@ -82,12 +78,13 @@ public class VoiceRecorder {
             //process voice recording for meal type
             if (!processingIngredients) {
                 filename = "mealtype.wav";
-                processAudioButton.fire();
+                processAudioButton.fire(); //call server
                 mealtype = processedAudio;
-                //audioProcessor.setInputFile("src\\main\\java\\team30\\recipeList\\mealtype.wav");
-                //mealtype = audioProcessor.run();
 
-                System.out.println(mealtype.toLowerCase());
+                if (mealtype == null) {
+                    mealtype = "";
+                }
+
                 //check mealtype validity
                 mealtype = mealtype.toLowerCase().replaceAll("[.]", "");
                 if (mealtype.equals("breakfast") || mealtype.equals("lunch") || mealtype.equals("dinner")) {
@@ -103,25 +100,23 @@ public class VoiceRecorder {
             //process ingredients
             else {
                 filename = "ingredients.wav";
-                processAudioButton.fire();
+                processAudioButton.fire(); //call server
                 ingredientsRaw = processedAudio;
 
-                //how to get audio?
-                //audioProcessor.setInputFile("src\\main\\java\\team30\\recipeList\\ingredients.wav");
-                //ingredientsRaw = audioProcessor.run();
-                
-                System.out.println(ingredientsRaw);
+                if (ingredientsRaw == null) {
+                    mealtype = "";
+                }
+        
                 voiceUI.setIngredients(ingredientsRaw);
                 completedIngredients = true;
             }
         });
         backButton.setOnAction(e -> {
-            voiceUI.hideLabels();
+            voiceUI.setMealTypeInstructions();
             if (startedRecording == true) {
                 //cancel recording first
                 stopRecording();
             }
-            completedRecording = false;
             closeDetailWindow();
         });
         continueButton.setOnAction(e -> {
@@ -134,11 +129,19 @@ public class VoiceRecorder {
                 processingIngredients = true;
                 voiceUI.setProcessingIngredients();
             }
-            else if (completedIngredients) {
+            else if (successfulRecording()) {
                 //go back to recipe, do ChatGPT 
                 closeDetailWindow();
+                voiceUI.setMealTypeInstructions();
             }
         });
+    }
+
+    void resetBools() {
+        startedRecording = false;
+        completedRecording = false;
+        processingIngredients = false;
+        completedIngredients = false;
     }
 
     private AudioFormat getAudioFormat() {
@@ -210,8 +213,9 @@ public class VoiceRecorder {
             completionListener.onRecordingCompleted(mealtype, ingredientsRaw);
         }
         else {
-            windowChange.closeWindow(this);
+            windowChange.closeWindow();
         }
+        resetBools();
     }
 
     public boolean successfulRecording() { return completedIngredients && completedRecording; }

@@ -208,7 +208,7 @@ class Ingredient extends HBox {
 
 public class RecipeDetail {
     private RecipeListUI recipeListUI; //original app frame
-    private RecipeListUI recipeViewAF; //current app frame
+    private DefaultBorderPane recipeViewAF; //current app frame
     private RecipeList rl;
 
     private DetailRecipe dRecipe;
@@ -216,13 +216,9 @@ public class RecipeDetail {
 
     private RecipeDatabase recipeDB;
 
-    private Scene recipeListScene;
-    private Scene recipeViewScene;
-
     private boolean editMode;
 
-    private HBox header;
-    private Text titleText;
+    Scene recipeViewScene;
 
     String tanLight = "#f1eae0", tanDark = "#ede1cf";
     String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
@@ -230,6 +226,7 @@ public class RecipeDetail {
 
     //HTTP buttons
     private Button postButton, getButton, putButton, deleteButton;
+    private WindowChange windowChange;
 
     DetailFooter dfooter;
 
@@ -237,19 +234,9 @@ public class RecipeDetail {
         this.rl = rl;
         this.recipe = r;
         recipeListUI = af;
-        recipeListScene = rl.getScene();
         recipeDB = recipeListUI.getRecipeDB();
-
-        recipeViewAF = new RecipeListUI();
-
-        //header
-        header = new HBox();
-        titleText = new Text("PantryPal");
-        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 40; -fx-fill: " + magenta);
-        header.getChildren().add(titleText);
-        header.setAlignment(Pos.CENTER);
-        header.setStyle("-fx-background-color: " + tanLight);
-
+        recipeViewAF = new DefaultBorderPane();
+        
         //footer
         dfooter = new DetailFooter(); 
         ScrollPane scrollPane = new ScrollPane(new DetailRecipe(recipe));
@@ -258,7 +245,7 @@ public class RecipeDetail {
         scrollPane = new ScrollPane(dRecipe);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
-        recipeViewAF.setTop(header);
+        //recipeViewAF.setTop(header);
         recipeViewAF.setCenter(scrollPane);
         recipeViewAF.setBottom(dfooter);
 
@@ -272,17 +259,22 @@ public class RecipeDetail {
         this.disableEdit();
 
         recipeViewScene = new Scene(recipeViewAF, 500, 600);
+
+        windowChange = new WindowChange();
+        windowChange.setRecipeDetail(this);
     };
 
     public void openDetailWindow(Recipe recipe) {
-        rl.getPrimStage().setScene(recipeViewScene);
-        rl.getPrimStage().show();
+        windowChange.openWindow(this);
+    }
+
+    public Scene getScene() {
+        return recipeViewScene;
     }
 
     public void closeDetailWindow() {
         disableEdit();
-        rl.getPrimStage().setScene(recipeListScene);
-        rl.getPrimStage().show();
+        windowChange.closeWindow();
     }
 
     public void enableEdit() {

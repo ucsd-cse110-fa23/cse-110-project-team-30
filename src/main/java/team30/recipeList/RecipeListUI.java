@@ -39,6 +39,8 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
     //voice recorder popup
     VoiceRecorder voiceRecorder;
 
+    private static WindowChange windowChange;
+
     public RecipeListUI() {
         recipeListUI = new VBox();
         recipeListUI.setSpacing(10); // sets spacing between tasks   
@@ -67,6 +69,9 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
         voiceRecorder.setCompletionListener(this);
 
         recipeList = new ArrayList<Recipe>();
+
+        windowChange = new WindowChange();
+        windowChange.setVoiceRecorder(voiceRecorder);
 
         addListeners();
     }
@@ -97,7 +102,7 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
     }
 
     public void getVoiceRecording() {
-        voiceRecorder.openDetailWindow();
+        windowChange.openWindow(voiceRecorder);
     }
 
     public void addListeners() {
@@ -182,22 +187,7 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
         update();
     }
 
-    // public RecipeUI getRecipeUI(Recipe cur) {
-    //     for (int i = 0; i < recipeListUI.getChildren().size(); i++) {
-    //         if (this.getChildren().get(i) instanceof RecipeUI) {
-    //             String uiID = ((RecipeUI) recipeListUI.getChildren().get(i)).getRecipe().getObjectID().toString();
-    //             if (uiID.equals(cur.getObjectID().toString())) {
-    //                 return (RecipeUI) recipeListUI.getChildren().get(i);
-    //             }
-    //         }
-    //     }
-    //     return null;
-    // }
-
-    public ObjectId getRecipeObjectID() {
-        return recipe.getObjectID();
-    }
-
+    public ObjectId getRecipeObjectID() { return recipe.getObjectID(); }
     public Button getPostButton() {return postButton;}
     public Button getGetButton() {return getButton;}
     public Button getPutButton() {return putButton;}

@@ -52,8 +52,7 @@ public class VoiceRecorderUI extends DefaultBorderPane {
         labels.add(successfulIngredientsLabel);
         setLabelStyle(defaultLabelStyle);
 
-        hideLabels();
-        instructionsMealTypeLabel.setVisible(true);
+        setMealTypeInstructions();
     }
 
     
@@ -82,6 +81,10 @@ public class VoiceRecorderUI extends DefaultBorderPane {
         hideLabels();
         successfulIngredientsLabel.setText("You said: " + ingredientsRaw);
         successfulIngredientsLabel.setVisible(true);
+    }
+    public void setMealTypeInstructions() {
+        hideLabels();
+        instructionsMealTypeLabel.setVisible(true);
     }
     public void setFailedMealType() {
         hideLabels();
