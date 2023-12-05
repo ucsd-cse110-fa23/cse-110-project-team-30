@@ -23,6 +23,7 @@ public class MyServer {
   static RecipeList recipeList;
 
   static Whisper audioProcessor;
+  static ChatGPT chatGPT;
 
   public static void main(String[] args) throws IOException {
     // create a thread pool to handle requests
@@ -31,6 +32,7 @@ public class MyServer {
     recipeDB = new RecipeDatabase();
     recipeList = new RecipeList();
     audioProcessor = new Whisper();
+    chatGPT = new ChatGPT();
     //loadRecipes();
 
     // create a server
@@ -40,6 +42,7 @@ public class MyServer {
 
     HttpContext contextRecipe = server.createContext("/recipe", new RecipeHandler(recipeDB));
     HttpContext contextVoice = server.createContext("/voice", new VoiceHandler(audioProcessor));
+    HttpContext contextChatGPT = server.createContext("/chatGPT", new ChatGPTHandler(chatGPT));
     server.setExecutor(threadPoolExecutor);
     server.start();
 

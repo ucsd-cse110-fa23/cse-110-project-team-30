@@ -45,44 +45,47 @@ public class Model {
         }
     }
 
-// public void loadRecipes() {
-//     List<Recipe> fetchedRecipes = new ArrayList<>();
+    //for voice
+    public String performVoiceRequest(String method, String query) {
+        try {
+            String urlString = "http://localhost:8100/voice/";
+            if (query != null) {
+                urlString += "?=" + query;
+            }
+            URL url = new URI(urlString).toURL();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod(method);
+            conn.setDoOutput(true);
 
-//     // Perform iterative requests to fetch all recipes
-//     while (true) {
-//         String response = performRequest("GET", language, recipe, query);
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String response = in.readLine();
+            in.close();
+            return response;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "Error: " + ex.getMessage();
+        }
+    }
 
-//         // Parse the response and add fetched recipes to the list
-//         List<Recipe> parsedRecipes = parseRecipesFromDatabaseResponse(response);
-//         if (parsedRecipes.isEmpty()) {
-//             break;
-//         }
-
-//         fetchedRecipes.addAll(parsedRecipes);
-//     }
-
-//     recipes = fetchedRecipes; // Set the fetched recipes to your recipes list
-// }
-//   public static void loadRecipes() {
-//       try { 
-//           long totalRecipes = recipeDB.countDocuments();
-//           System.out.println("Total recipes: " + totalRecipes);
-
-//           FindIterable<Document> iterDoc = recipeDB.find();
-//           MongoCursor<Document> it = iterDoc.iterator();
-//           while (it.hasNext()) {
-//               Recipe cur = recipeDB.getRecipe(it.next());
-//               recipeListUI.addRecipe(cur);
-//           }
-//       }
-//       catch (Exception e) {
-//           System.out.println("couldn't open database!");
-//           e.printStackTrace();
-//       }
-//   }
-    // public void saveRecipe(Recipe r) {
-    //     String objectID = r.getObjectID().toString();
-    //     performRequest("PUT", objectID, r, null);
-    // }
-
+    //for chatgpt
+    public String performChatGPTRequest(String method, String objectID, Recipe recipe, String query) {
+        try {
+            String urlString = "http://localhost:8100/chatGPT/";
+            if (query != null) {
+                urlString += "?=" + query;
+            }
+            URL url = new URI(urlString).toURL();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod(method);
+            conn.setDoOutput(true);
+            
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String response = in.readLine();
+            in.close();
+            return response;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "Error: " + ex.getMessage();
+        }
+    }
 }

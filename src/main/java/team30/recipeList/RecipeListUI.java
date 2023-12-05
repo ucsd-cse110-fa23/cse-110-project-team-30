@@ -2,6 +2,8 @@ package team30.recipeList;
 
 import org.bson.types.ObjectId;
 
+import com.sun.glass.ui.Window;
+
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -61,6 +63,9 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
         deleteButton = new Button("Delete");
         query = "";
 
+        voiceRecorder = new VoiceRecorder();
+        voiceRecorder.setCompletionListener(this);
+
         recipeList = new ArrayList<Recipe>();
 
         addListeners();
@@ -92,8 +97,6 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
     }
 
     public void getVoiceRecording() {
-        voiceRecorder = new VoiceRecorder(rl, this);
-        voiceRecorder.setCompletionListener(this);
         voiceRecorder.openDetailWindow();
     }
 
@@ -117,6 +120,7 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
         System.out.println("Ingredients: " + ingredientsRaw);
 
         ChatGPT chatGPT = new ChatGPT();
+        //getButton.fire()
         try {
             // Generate recipe
             String generatedRecipe = chatGPT.generateRecipe(mealType, ingredientsRaw);
@@ -200,6 +204,7 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
     public Button getDeleteButton() {return deleteButton;}
     public String getQuery() {return query;}
     public RecipeDatabase getRecipeDB() {return recipeDB;}
+    public VoiceRecorder getVoiceRecorder() {return voiceRecorder; }
 
     public void setRecipeList(RecipeList rl) {this.rl = rl;}
     public HBox getHeader() {return header;}

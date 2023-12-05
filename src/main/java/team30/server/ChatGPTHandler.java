@@ -1,15 +1,21 @@
 package team30.server;
 
 import com.sun.net.httpserver.*;
+
+import team30.recipeList.Recipe;
+
 import java.io.*;
 import java.net.*;
+import java.util.*;
+
+import org.bson.types.ObjectId;
 import org.json.JSONException;
 
-public class VoiceHandler implements HttpHandler {
-    private Whisper audioProcessor;
+public class ChatGPTHandler implements HttpHandler {
+    private ChatGPT chatGPT;
 
-    VoiceHandler(Whisper w) {
-        audioProcessor = w;
+    ChatGPTHandler(ChatGPT c) {
+        chatGPT = c;
     }
 
     public void handle(HttpExchange httpExchange) throws IOException {
@@ -37,16 +43,18 @@ public class VoiceHandler implements HttpHandler {
         URI uri = httpExchange.getRequestURI();
         String query = uri.getRawQuery();
         if (query != null) {
-            String filename = query.substring(query.indexOf("=") + 1);
-            String filepath = "src\\main\\java\\team30\\recipeList\\" + filename;
-            System.out.println(filepath);
-            audioProcessor.setInputFile(filepath);
-            String spokentext = "";
+            String mealtype, ingredients;
+            //format: ?=dinner;;;apples
+            mealtype = query.substring(query.indexOf("=") + 1, query.indexOf(";;;"));
+            ingredients = query.substring(query.indexOf(";;;") + 1);
+            System.out.println(mealtype + ", " + ingredients);
+            String generatedRecipe;
             try {
-                spokentext = audioProcessor.run();
-                response = spokentext;
-            } catch (JSONException | IOException | URISyntaxException e1) {
-                response = "Unable to process " + filename;
+                generatedRecipe = chatGPT.generateRecipe(mealtype, ingredients);
+                response = "Processed " + mealtype + " and " + ingredients + " and got " + generatedRecipe;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                response = "Unable to process " + mealtype + " and " + ingredients;
             }
         }
         return response;

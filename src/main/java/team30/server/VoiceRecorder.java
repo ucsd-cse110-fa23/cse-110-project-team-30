@@ -1,58 +1,50 @@
 package team30.server;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import team30.recipeList.RecipeList;
 import team30.recipeList.RecipeListUI;
 import team30.recipeList.VoiceRecorderUI;
+import team30.recipeList.WindowChange;
 
 import java.io.*;
-import java.net.URISyntaxException;
-
 import javax.sound.sampled.*;
 import java.util.*;
 
-import org.json.JSONException;
-
 public class VoiceRecorder {
     private VoiceRecorderUI voiceUI; //current app frame
-    private RecipeList rl;
-
-    private Scene recipeListScene;
     private Scene voiceScene;
 
-    private Button startButton;
-    private Button stopButton;
-    private Button backButton;
-    private Button continueButton;
+    private Button startButton, stopButton, backButton, continueButton;
 
     private AudioFormat audioFormat;
     private TargetDataLine targetDataLine;
 
-    private boolean startedRecording;
-    private boolean completedRecording;
-    private boolean processingIngredients;
-    private boolean completedIngredients;
+    private boolean startedRecording, completedRecording;
+    private boolean processingIngredients, completedIngredients;
 
     private String mealtype, ingredientsRaw;
-
-    private Whisper audioProcessor;
     private RecordingCompletionListener completionListener;
+
+    private String processedAudio; //gotten from server
+    private Button processAudioButton; //HTTP 
+    private String filename;
+
+    private static WindowChange windowChange;
 
     List<Label> labels;
 
-    public VoiceRecorder(RecipeList rl, RecipeListUI af) {
-        this.rl = rl;
-        recipeListScene = rl.getScene();
-
+    public VoiceRecorder() {
         voiceUI = new VoiceRecorderUI();
-        audioProcessor = new Whisper();
 
         startButton = voiceUI.getStartButton();
         stopButton = voiceUI.getStopButton();
         backButton = voiceUI.getBackButton();
         continueButton = voiceUI.getContinueButton();
+
+        processAudioButton = new Button();
         
         labels = voiceUI.getLabels();
 
@@ -67,7 +59,12 @@ public class VoiceRecorder {
         voiceUI.getMiddle().getChildren().addAll(labels);
         addListeners();
         voiceScene = new Scene(voiceUI, 500, 600);
+        
+        windowChange = new WindowChange();
+        windowChange.setVoiceRecorder(this);
     };
+
+    public Scene getScene() {return voiceScene;}
 
     public void addListeners() {
         startButton.setOnAction(e -> {
@@ -84,12 +81,11 @@ public class VoiceRecorder {
             }
             //process voice recording for meal type
             if (!processingIngredients) {
-                audioProcessor.setInputFile("src\\main\\java\\team30\\recipeList\\mealtype.wav");
-                try {
-                    mealtype = audioProcessor.run();
-                } catch (JSONException | IOException | URISyntaxException e1) {
-                    e1.printStackTrace();
-                }
+                filename = "mealtype.wav";
+                processAudioButton.fire();
+                mealtype = processedAudio;
+                //audioProcessor.setInputFile("src\\main\\java\\team30\\recipeList\\mealtype.wav");
+                //mealtype = audioProcessor.run();
 
                 System.out.println(mealtype.toLowerCase());
                 //check mealtype validity
@@ -106,13 +102,14 @@ public class VoiceRecorder {
             }
             //process ingredients
             else {
-                audioProcessor.setInputFile("src\\main\\java\\team30\\recipeList\\ingredients.wav");
-                try {
-                    ingredientsRaw = audioProcessor.run();
-                } catch (JSONException | IOException | URISyntaxException e1) {
-                    e1.printStackTrace();
-                }
+                filename = "ingredients.wav";
+                processAudioButton.fire();
+                ingredientsRaw = processedAudio;
 
+                //how to get audio?
+                //audioProcessor.setInputFile("src\\main\\java\\team30\\recipeList\\ingredients.wav");
+                //ingredientsRaw = audioProcessor.run();
+                
                 System.out.println(ingredientsRaw);
                 voiceUI.setIngredients(ingredientsRaw);
                 completedIngredients = true;
@@ -205,31 +202,24 @@ public class VoiceRecorder {
     }
 
     public void openDetailWindow() {
-        rl.getPrimStage().setScene(voiceScene);
-        rl.getPrimStage().show();
+        windowChange.openWindow(this);
     }
 
     public void closeDetailWindow() {
-        rl.getPrimStage().setScene(recipeListScene);
         if (successfulRecording() && completionListener != null) {
             completionListener.onRecordingCompleted(mealtype, ingredientsRaw);
         }
         else {
-            rl.getPrimStage().show();
+            windowChange.closeWindow(this);
         }
     }
 
-    public boolean successfulRecording() {
-        return completedIngredients && completedRecording; //everything's completed
-    }
-
-    public String getIngredientAudio() {
-        return ingredientsRaw;
-    }
-
-    public String getMealType() {
-        return mealtype;
-    }
+    public boolean successfulRecording() { return completedIngredients && completedRecording; }
+    public String getIngredientAudio() { return ingredientsRaw; }
+    public String getMealType() { return mealtype; }
+    public void setAudioButtonAction(EventHandler<ActionEvent> eventHandler) {processAudioButton.setOnAction(eventHandler);}
+    public String getQuery() { return filename; }
+    public void setProcessedAudio(String text) { processedAudio = text; }
 
     public interface RecordingCompletionListener {
         void onRecordingCompleted(String mealType, String ingredientsRaw);

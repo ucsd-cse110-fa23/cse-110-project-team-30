@@ -11,6 +11,8 @@ import java.util.ArrayList;
 
 import org.bson.types.ObjectId;
 
+import com.sun.glass.ui.Window;
+
 // edited from public class Main
 // the "App" in MVC
 public class RecipeList extends Application {
@@ -22,7 +24,7 @@ public class RecipeList extends Application {
     private RecipeListUI recipeListUI; //view
     private Controller controller; //controller
 
-    private ArrayList<Recipe> recipes;
+    private static WindowChange windowChange;
     
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -34,10 +36,10 @@ public class RecipeList extends Application {
         getButton = recipeListUI.getGetButton();
         putButton = recipeListUI.getPutButton();
         deleteButton = recipeListUI.getDeleteButton();
-
-        recipes = new ArrayList<>();
         
         controller = new Controller(this, model);
+        windowChange = new WindowChange();
+        windowChange.setRecipeListMainApp(this);
         //model.loadRecipes();
 
         this.primStage = primaryStage;

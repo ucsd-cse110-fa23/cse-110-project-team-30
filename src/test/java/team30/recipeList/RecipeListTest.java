@@ -108,6 +108,14 @@ public class RecipeListTest {
     @Test void testHeaderInitialization() {
         assertNotEquals(null, header.getAddButton());
     }
+
+    @Test
+    void createRecipe() {
+        Recipe r = new Recipe();
+        r.setMealType("dinner");
+        assertNotEquals(r, null);
+        assertEquals("dinner", r.getMealType());
+    }
     
     // @Test
     // void testValidator(){
