@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.control.Label;
@@ -100,20 +101,19 @@ class Header extends HBox {
         titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 40;");
         this.getChildren().add(titleText);
         titleText.setFill(Color.GRAY); // Set the font color
-        
-        this.setMargin(this.getTitleText(), new Insets(0, 150, 0, 0));
+        this.setMargin(this.getTitleText(), new Insets(0, 80, 0, 0));
 
         addButton = new Button("Generate");
         setButtonStyle(addButton);
-        this.setMargin(this.getAddButton(), new Insets(0, 10, 0, 0));
+        addButton.setMinWidth(75);
         
-
         sortButton = new MenuButton("Sort");
-        sortButton.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10");
+        sortButton.setMinWidth(130);
+        sortButton.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 13 arial; -fx-background-radius: 10");
+        sortButton.setAlignment(Pos.CENTER);
         
-
         this.getChildren().addAll(sortButton, addButton);
-        this.setAlignment(Pos.CENTER_LEFT);
+        this.setAlignment(Pos.CENTER);
     }
 
    
@@ -172,8 +172,6 @@ class Footer extends HBox {
             return logoutButton;
         }
 
-        
-        
         public void setButtonStyle(ButtonBase button) {
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10";
         button.setStyle(defaultButtonStyle);
@@ -237,18 +235,15 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         this.setBottom(footer);
         this.setCenter(scrollPane);
 
+
         addButton = header.getAddButton();
-        
-        
         sortButton = header.getSortButton();
-        header.setSpacing(10);
-      
-        logoutButton = footer.getLogoutButton();
+        header.setSpacing(5);
         
+        logoutButton = footer.getLogoutButton();
         footer.setPadding(new Insets(10));
         footer.setSpacing(330);
         
-
         postButton = new Button("Post");
         getButton = new Button("Get");
         putButton = new Button("Put");
@@ -293,21 +288,25 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         });
         
         sortAZ.setOnAction(e -> {
+            sortButton.setText("A-Z");
             sortAtoZ();
             
         });
 
         sortZA.setOnAction(e -> {
+            sortButton.setText("Z-A");
             sortZtoA();
             
         });
 
         newOld.setOnAction(e -> {
+            sortButton.setText("Newest to Oldest");
             newToOld();
             
         });
 
         oldNew.setOnAction(e -> {
+            sortButton.setText("Oldest to Newest");
             oldToNew();
             
         });
