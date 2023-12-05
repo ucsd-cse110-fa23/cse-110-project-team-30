@@ -15,9 +15,7 @@ import team30.mock.*;
 public class mockChatGPT{
     public String generateRecipe(String mealType, String ingredientsRaw){
         // a sample real chatGPT generated recipe
-        return "\n" + //
-                "\n" + //
-                "Recipe Name: Tomato and Egg Skillet\n" + //
+        return  "Recipe Name: Tomato and Egg Skillet\n" + //
                 "\n" + //
                 "Ingredients:\n" + //
                 "2 eggs\n" + //
@@ -76,6 +74,7 @@ public class mockChatGPT{
                 steps.add(lines[i]);
             }
         }
+
         return new mockRecipe(recipeName, ingredients, steps, mealType);
     }
 }
