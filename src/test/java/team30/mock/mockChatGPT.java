@@ -16,13 +16,11 @@ public class mockChatGPT{
     public String generateRecipe(String mealType, String ingredientsRaw){
         // a sample real chatGPT generated recipe
         return  "Recipe Name: Tomato and Egg Skillet\n" + //
-                "\n" + //
                 "Ingredients:\n" + //
                 "2 eggs\n" + //
                 "1 tomato, sliced\n" + //
                 "Salt and pepper, to taste\n" + //
                 "2 teaspoons olive oil\n" + //
-                "\n" + //
                 "Instructions:\n" + //
                 "1. Heat the olive oil in a large skillet over medium heat.\n" + //
                 "2. Add the tomato slices and season with salt and pepper.\n" + //
