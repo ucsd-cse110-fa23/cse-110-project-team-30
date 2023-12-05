@@ -423,28 +423,24 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
     }
 
     public void sortAtoZ() {
-
         //get list of recipes nodes
         ArrayList<Recipe> list_of_recipes = new ArrayList<>();
         for (Node node : recipeList.getChildren()) {
             list_of_recipes.add((Recipe) node);
         }
-          
         // Clear the current list of recipes
         for (Recipe recipe : list_of_recipes) {
             recipeList.removeRecipe(recipe); // Remove the recipe from the list
             
         }
-    
         // Sort the list of recipes from A to Z
         Comparator<Recipe> compareAtoZ = new Comparator<Recipe>() {
             @Override
-            public int compare(Recipe r1, Recipe r2) {
-                return r1.getRecipeTitle().getText().compareTo(r2.getRecipeTitle().getText());
+            public int compare(Recipe rec1, Recipe rec2) {
+                return rec1.getRecipeTitle().getText().compareTo(rec2.getRecipeTitle().getText());
             }
         };
         Collections.sort(list_of_recipes, compareAtoZ);
-    
         // Add the sorted recipes back to the recipe list
         int num = 1;
         for (Recipe recipe : list_of_recipes) {
@@ -454,36 +450,29 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
             RecipeDetail ord = new RecipeDetail(rl, this, recipe);
             ord.openDetailWindow(recipe);
             });
-
             recipe.setTaskIndex(num);
             num++;
-        }
-         
+        } 
     }
 
     public void sortZtoA() {
-
         //get list of recipes nodes
         ArrayList<Recipe> list_of_recipes = new ArrayList<>();
         for (Node node : recipeList.getChildren()) {
             list_of_recipes.add((Recipe) node);
         }
-          
         // Clear the current list of recipes
         for (Recipe recipe : list_of_recipes) {
             recipeList.removeRecipe(recipe); // Remove the recipe from the list
-            
         }
-    
         // Sort the list of recipes from A to Z
         Comparator<Recipe> compareAtoZ = new Comparator<Recipe>() {
             @Override
-            public int compare(Recipe r1, Recipe r2) {
-                return r2.getRecipeTitle().getText().compareTo(r1.getRecipeTitle().getText());
+            public int compare(Recipe rec1, Recipe rec2) {
+                return rec2.getRecipeTitle().getText().compareTo(rec1.getRecipeTitle().getText());
             }
         };
         Collections.sort(list_of_recipes, compareAtoZ);
-    
         // Add the sorted recipes back to the recipe list
         int num = 1;
         for (Recipe recipe : list_of_recipes) {
@@ -493,47 +482,36 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
             RecipeDetail ord = new RecipeDetail(rl, this, recipe);
             ord.openDetailWindow(recipe);
             });
-
             recipe.setTaskIndex(num);
             num++;
         }
-        
     }
 
     public void oldToNew() {
-
         //get current list of recipes and save it
         ArrayList<Recipe> list_of_recipes = new ArrayList<>();
         for (Node node : recipeList.getChildren()) {
             list_of_recipes.add((Recipe) node);
         }
-
         //add new recipes to the top of the list
         if(!old_to_new_recipes.isEmpty()) {
             list_of_recipes.addAll(0, old_to_new_recipes);
         }
-
         // Clear the current list of recipes
         for (Recipe recipe : list_of_recipes) {
             recipeList.removeRecipe(recipe); // Remove the recipe from the list
-            
         }
-        
         // Add new to old recipes back to the recipe list
         int num = 1;
         for (Recipe recipe : list_of_recipes) {
             recipeList.getChildren().add(recipe);
-
             recipe.getRecipeTitle().setOnAction(f -> {
             RecipeDetail ord = new RecipeDetail(rl, this, recipe);
             ord.openDetailWindow(recipe);
             });
-
             recipe.setTaskIndex(num);
             num++;
-        }
-        
-        
+        }  
     }
 
     public void newToOld() {
@@ -543,33 +521,26 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         for (Node node : recipeList.getChildren()) {
             list_of_recipes.add((Recipe) node);
         }
-
         //add new recipes to the top of the list
         if(!old_to_new_recipes.isEmpty()) {
             list_of_recipes.addAll(old_to_new_recipes);
         }
-
         // Clear the current list of recipes
         for (Recipe recipe : list_of_recipes) {
             recipeList.removeRecipe(recipe); // Remove the recipe from the list
             
         }
-
         // Add new to old recipes back to the recipe list
         int num = 1;
         for (int i = list_of_recipes.size() - 1; i >= 0; i--) {
             recipeList.getChildren().add(list_of_recipes.get(i));
-
             recipe.getRecipeTitle().setOnAction(f -> {
             RecipeDetail ord = new RecipeDetail(rl, this, recipe);
             ord.openDetailWindow(recipe);
             });
-
             list_of_recipes.get(i).setTaskIndex(num);
             num++;
-            
         }
-
     }
 
 
