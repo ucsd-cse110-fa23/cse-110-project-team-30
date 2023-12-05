@@ -59,7 +59,7 @@ public class ChatGPT {
             // Generate recipe
             String generatedRecipe = generateRecipe(mealType, ingredientsRaw);
             System.out.println("Generated Recipe: ");
-            //System.out.println(generatedRecipe);
+            // System.out.println(generatedRecipe);
             
             String[] lines = generatedRecipe.split("\\r?\\n|\\r");
             String recipeName = "", ingredients = "", imgurl = "";
