@@ -71,6 +71,8 @@ class List extends VBox {
         
         this.setPrefSize(500, 560);
         this.setStyle("-fx-background-color: #f8f3c9;-fx-padding: 10;");
+
+        this.fullList = new ArrayList<Node>();
     }
 
     //updates indices on recipes in list
@@ -91,11 +93,20 @@ class List extends VBox {
         this.updateTaskIndices();
     }
 
+    ArrayList<Node> getFullList(){
+        return this.fullList;
+    }
+
     void setFilter(String setting){
         this.filter = FilterFactory.create(setting);
     }
 
+    boolean checkFilter(Recipe recipe){
+        return this.filter.checkFilter(recipe);
+    }
+
     void filter(){
+        this.getChildren().setAll(fullList);
         this.getChildren().retainAll(filter.filter(fullList));
     }
 }
@@ -354,19 +365,19 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
 
         breakfastFilterItem.setOnAction(e -> {
             filterButton.setText("Breakfast");
-            recipeList.setFilter("breakfast");
+            recipeList.setFilter("Breakfast");
             recipeList.filter();
         });
 
         lunchFilterItem.setOnAction(e -> {
             filterButton.setText("Lunch");
-            recipeList.setFilter("lunch");
+            recipeList.setFilter("Lunch");
             recipeList.filter();
         });
 
         dinnerFilterItem.setOnAction(e -> {
             filterButton.setText("Dinner");
-            recipeList.setFilter("dinner");
+            recipeList.setFilter("Dinner");
             recipeList.filter();
         });
     }
@@ -443,7 +454,10 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
     ArrayList<Recipe> old_to_new_recipes = new ArrayList<>();
     public void addRecipe(Recipe cur) {
         FXCollections.reverse(recipeList.getChildren());
-        recipeList.getChildren().add(cur);
+        Collections.reverse(recipeList.getFullList());
+        if(recipeList.checkFilter(cur))
+            recipeList.getChildren().add(cur);
+        recipeList.getFullList().add(cur);
         recipeList.updateTaskIndices();
         postButton.fire(); //click HTTP post button
 
@@ -453,6 +467,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         });
         
         FXCollections.reverse(recipeList.getChildren());
+        Collections.reverse(recipeList.getFullList());
 
         //keep track of new recipes added
         old_to_new_recipes.add(cur);
