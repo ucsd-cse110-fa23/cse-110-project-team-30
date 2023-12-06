@@ -47,9 +47,11 @@ public class RecipeUI extends HBox {
         this.getChildren().add(titleButton);
 
         recipe = r;
+        recipe.setRecipeUI(this);
     }
 
     public void setTaskIndex(int num) { this.index.setText(num + ""); }
     public Recipe getRecipe() { return recipe; }
     public Button getRecipeTitle() { return titleButton; }
+    public void setRecipe(Recipe r) {this.recipe = r;}
 } 

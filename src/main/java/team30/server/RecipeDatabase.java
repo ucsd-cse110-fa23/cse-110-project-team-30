@@ -29,6 +29,7 @@ public class RecipeDatabase {
     MongoClient mongoClient;
 
     String uri = "mongodb+srv://lil043:VA4U7rBgvZ0EqlNO@cse110.ltw8f69.mongodb.net/?retryWrites=true&w=majority";
+    // String uri = "mongodb+srv://m1ren:IHcPb6UPAHtXNQfK@cluster0.nybipuz.mongodb.net/?retryWrites=true&w=majority";
 
     //default constructor
     public RecipeDatabase() {
@@ -61,6 +62,7 @@ public class RecipeDatabase {
         Document recipe = new Document("_id", r.getObjectID());
         //recipe.put("name", r.getRecipeTitle().getText());
         recipe.append("name", r.getRecipeTitle())
+                .append("username", r.getUsername())
                 .append("meal_type", r.getMealType())
                 .append("ingredients", r.getIngredients())
                 .append("steps", stepsToString(r.getSteps()))
@@ -75,18 +77,19 @@ public class RecipeDatabase {
     }
 
     //gets recipe from document
-    public Recipe getRecipe(Document d) {
+    public Recipe getRecipe(Document d, String username) {
         String name, meal_type, ingredients, stepsString, imageurl;
         name = d.get("name").toString();
         meal_type = d.get("meal_type").toString();
         ingredients = d.get("ingredients").toString();
         stepsString = d.get("steps").toString();      
-        imageurl = d.get("steps").toString();       
+        imageurl = d.get("imageurl").toString();       
 
         ArrayList<String> steps = stepsFromString(stepsString);
 
-        Recipe r = new Recipe(name, meal_type, ingredients, steps, imageurl);
-        r.setObjectID(d.get("_id", ObjectId.class));
+        Recipe r = new Recipe(name, meal_type, ingredients, steps, imageurl, false, username);
+
+        r.setObjectID((ObjectId)d.get("_id"));
         return r;
     }
 
@@ -110,7 +113,7 @@ public class RecipeDatabase {
         r.setRecipeDetails(details);
         return r;
     }
-
+    
     //edits recipe document
     public void editRecipe(Recipe r) {
         ObjectId objectID = r.getObjectID();
@@ -179,25 +182,8 @@ public class RecipeDatabase {
         return recipesCollection.find();
     }
 
-    //load
-    public ArrayList<Recipe> loadRecipes() {
-        ArrayList<Recipe> rs = new ArrayList<>();
-        // try { 
-        //     long totalRecipes = countDocuments();
-        //     System.out.println("Total recipes: " + totalRecipes);
-  
-        //     FindIterable<Document> iterDoc = recipesCollection.find();
-        //     MongoCursor<Document> it = iterDoc.iterator();
-        //     while (it.hasNext()) {
-        //         Recipe cur = getRecipe(it.next());
-        //         rs.add(cur);
-        //     }
-        // }
-        // catch (Exception e) {
-        //     System.out.println("couldn't open database!");
-        //     e.printStackTrace();
-        // }
-        return rs;
+    public FindIterable<Document> find_by_user(String username) {
+        Document filter = new Document("username", username);
+        return recipesCollection.find(filter);
     }
-
 }

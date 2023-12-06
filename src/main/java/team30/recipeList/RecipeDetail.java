@@ -12,6 +12,14 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.geometry.Insets;
 import javafx.scene.text.*;
+import javafx.geometry.Rectangle2D;
+import java.io.*;
+import java.net.URI;
+import java.nio.file.StandardCopyOption;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+import javafx.util.Pair;
 import team30.server.RecipeDatabase;
 
 import java.util.ArrayList;
@@ -78,13 +86,14 @@ class DetailRecipe extends VBox {
     private TextArea ingredients;
     private ArrayList<TextArea> steps;
     private TextField mealtype;
+    private Image recipeImage;
 
     String tanLight = "#f1eae0", tanDark = "#ede1cf";
     String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
     String magenta = "#a64d79", green = "#a64d79";
 
     DetailRecipe (Recipe recipe) {
-        this.setPrefSize(500, 560); // sets size of task
+        this.setPrefSize(500, 800); // sets size of task
         this.setMaxHeight(VBox.USE_PREF_SIZE); 
         this.setMinHeight(VBox.USE_PREF_SIZE);
         this.setSpacing(15);
@@ -115,7 +124,23 @@ class DetailRecipe extends VBox {
         title_mealtype_HBox.getChildren().add(recipe_name);
         title_mealtype_HBox.getChildren().add(mealtype);
 
-        // adding second row: ingredients
+
+        //Add second row: Image
+        ImageView imageView = new ImageView();
+        recipeImage = recipe.getImage();
+        imageView.setImage(recipeImage);
+        imageView.setFitWidth(200);
+        imageView.setFitHeight(200);
+        imageView.setPreserveRatio(false);
+        VBox image_VBox = new VBox(imageView);
+        
+        image_VBox.setPrefSize(200, 200); // sets size of task
+        image_VBox.setMaxHeight(VBox.USE_PREF_SIZE);
+        image_VBox.setMinHeight(VBox.USE_PREF_SIZE);
+        image_VBox.setSpacing(15);
+        image_VBox.setAlignment(Pos.CENTER);
+
+        // adding third row: ingredients
         HBox ingredients_HBox = new HBox();
         ingredients_HBox.setPrefSize(450, 70);
         ingredients_HBox.setMaxHeight(HBox.USE_PREF_SIZE); 
@@ -177,6 +202,8 @@ class DetailRecipe extends VBox {
         }
 
         this.getChildren().add(title_mealtype_HBox);
+        //add image
+        this.getChildren().add(image_VBox);
         this.getChildren().add(ingredients_HBox);
         this.getChildren().add(steps_VBox);
         this.setSpacing(10);

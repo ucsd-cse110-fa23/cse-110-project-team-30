@@ -180,7 +180,7 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
                         steps.add(lines[i]);
                 }
             }
-            Recipe cur = new Recipe(recipeName, mealType, ingredients, steps, imgurl);
+            Recipe cur = new Recipe(recipeName, mealType, ingredients, steps, imgurl, true, rl.getUsername());
             addRecipe(cur);
 
             RecipeDetail tmp = new RecipeDetail(rl, this, cur);
