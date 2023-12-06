@@ -93,7 +93,7 @@ public class Recipe extends HBox {
         this.recipe_title_String = recipe_name;
         this.ingredients = ingredients;
         this.steps = steps;
-        this.meal_type = mealType;
+        this.meal_type = validateMealType(mealType);
         this.imageurl = imageurl;
         this.imageGenerated = imageGenerated;
         this.username = username;

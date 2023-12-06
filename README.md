@@ -10,3 +10,5 @@ Inside the Launch.jsonfile we will copy "vmArgs": "--module-path 'C:/Users/Chris
 replacing 'C:/Users/Chris Wu/Downloads/openjfx-21.0.1_windows-x64_bin-sdk/javafx-sdk-21.0.1/lib' with the path you downloaded JavaFx
 
 Now we will go to run and debug in vscode and run MyServer to start the server and then RecipeList to start the app
+
+When running the app, we must log in to access the recipe list, which contains recipes and images of the final food result created using voice generation. The recipes are tagged with different meal types, and can be filtered, sorted, and regenerated via the respective buttons on the UI.
