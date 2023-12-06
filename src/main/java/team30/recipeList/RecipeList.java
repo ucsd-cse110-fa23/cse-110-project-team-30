@@ -323,61 +323,14 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
 
         ChatGPT chatGPT = new ChatGPT();
         try {
-            // Generate recipe
-            String generatedRecipe = chatGPT.generateRecipe(mealType, ingredientsRaw);
-            System.out.println("Generated Recipe: ");
-            //System.out.println(generatedRecipe);
-
-            String[] lines = generatedRecipe.split("\\r?\\n|\\r");
-            String recipeName = "", ingredients = "", imgurl = "";
-            ArrayList<String> steps = new ArrayList<>();
-            int count = 0; //0- recipeName, 1- ingredients, 2- instructions
-            for (int i = 0; i < lines.length; i++) {
-                System.out.println(lines[i]);
-                if (!(lines[i].replaceAll("\\s", "") == "") && !(lines[i].replaceAll("\\n", "") == "") && count == 0) {
-                    //recipeName (unlabelled)
-                    recipeName = lines[i].toLowerCase();
-                    count = 100;
-                }
-                if (lines[i].contains("Recipe Name: ")) {
-                    //recipeName (labelled)
-                    recipeName = lines[i].substring(13).toLowerCase();
-                    count = 100;
-                }
-
-                if (lines[i].contains("Ingredients:")) {
-                    count = 1;
-                    continue;
-                }
-                else if (lines[i].contains("Instructions:")) {
-                    count = 2;
-                    continue;
-                }
-                
-                if (count == 1) {
-                    //ingredients
-                    if (!ingredients.equals("") && !(lines[i].replaceAll("\\n", "") == ""))
-                        ingredients += ", ";
-                    ingredients += lines[i].toLowerCase().replaceAll("-", "");
-                }
-
-                if (count == 2) {
-                    //steps
-                    if (!(lines[i].replaceAll("\\s", "") == "") && !(lines[i].replaceAll("\\n", "") == ""))
-                        steps.add(lines[i]);
-                }
-            }
-
-            imgurl = ImageManager.generateImage(recipeName);
-            
-            Recipe cur = new Recipe(recipeName, mealType, ingredients, steps, imgurl, true, rl.getUsername());
-
+            Recipe cur = chatGPT.makeRecipeByChatGPTResponse(mealType, ingredientsRaw, rl.getUsername());
             addRecipe(cur);
 
             RecipeDetail tmp = new RecipeDetail(rl, this, cur);
             tmp.setCancellable(true);
             System.out.println("OPENING NEW RECIPE...");
             tmp.openDetailWindow(cur);
+            tmp.enableRefresh();
         } catch (Exception err) {
             err.printStackTrace();
         }
@@ -393,6 +346,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         cur.getRecipeTitle().setOnAction(f -> {
             RecipeDetail ord = new RecipeDetail(rl, this, cur);
             ord.openDetailWindow(cur);
+            ord.disableRefresh();
         });
         
         FXCollections.reverse(recipeList.getChildren());
@@ -681,6 +635,7 @@ public class RecipeList extends Application {
     }
 
     public Stage getPrimStage() {return primStage;}
+    public void setPrimStage(Stage stg) {primStage = stg;}
     public Scene getScene() {return listScene;}
     public void setAppFrame(AppFrame af) {root = af;}
 
@@ -693,6 +648,7 @@ public class RecipeList extends Application {
     public String[] getRecipeDetails() {return root.getRecipeDetails();}
     public String getQuery() {return root.getQuery();}
     public String getUsername() {return username;}
+    public AppFrame getRoot() {return root;}
 
     public void showAlert(String title, String content) {
         // Alert alert = new Alert(Alert.AlertType.INFORMATION);

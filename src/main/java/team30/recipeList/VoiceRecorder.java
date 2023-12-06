@@ -259,7 +259,8 @@ public class VoiceRecorder {
     private AudioFormat getAudioFormat() {
         float sampleRate = 44100;
         int sampleSizeInBits = 16;
-        int channels = 2;
+        // int channels = 2;
+        int channels = 1;       // for mac user
         boolean signed = true;
         boolean bigEndian = false;
 
