@@ -22,14 +22,14 @@ public class ImageManager {
         }
         return path;
     }
-    //TODO: Once the Server is cleaned up, have this instead make a call to the server to generate the image.
+
     /**
      * Creates an image with the given name if the name is not taken.
      * If not, a new path will be made to hold the image.
      * @param name - the expected name for the image
      * @return - the name (not path) of the image
      */
-    static String generateImage(String name){
+    public static String generateImage(String name){
         String imgurl = createUniqueURI(name);
         try{
             dallE.generateImage(name, combinePathAndName(imgurl));
@@ -44,7 +44,7 @@ public class ImageManager {
      * Runs the generateImage function with the given DallE.
      * Intended for testing purposes only.
      */
-    public static String generateImage(String name, String path){
+    public static String generateImage2(String name, String path){
         IDallE hold = dallE;
         dallE = new MockDallE(path);
         String result = generateImage(name);
