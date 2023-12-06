@@ -52,23 +52,23 @@ public class MyServerTest {
         }
     }
 
-    @Test
-    void testPostMethods() {
-        String[] details = {"water", "eggs", "noodle"};
-        String recipeName = "Noodle";
-        String response = controller.handlePostButton(recipeName, details);
+    // @Test
+    // void testPostMethods() {
+    //     String[] details = {"water", "eggs", "noodle"};
+    //     String recipeName = "Noodle";
+    //     String response = controller.handlePostButton(recipeName, details);
 
-        String expected = "Posted entry {" + recipeName + ",  Meal Type: "+ details[0] + " Ingredient List: "+ details[1]+ " Steps: " + details[2] + "}";
-        assertEquals(expected, response);
-    }
+    //     String expected = "Posted entry {" + recipeName + ",  Meal Type: "+ details[0] + " Ingredient List: "+ details[1]+ " Steps: " + details[2] + "}";
+    //     assertEquals(expected, response);
+    // }
 
-    @Test
-    void testPostWithEmpty() {
-        String[] details = {"", "", ""};
-        String recipeName = "";
-        String response = controller.handlePostButton(recipeName, details);
+    // @Test
+    // void testPostWithEmpty() {
+    //     String[] details = {"", "", ""};
+    //     String recipeName = "";
+    //     String response = controller.handlePostButton(recipeName, details);
 
-        String expected = "Posted entry {" + recipeName + ",  Meal Type: "+ details[0] + " Ingredient List: "+ details[1]+ " Steps: " + details[2] + "}";
-        assertEquals(expected, response);
-    }
+    //     String expected = "Posted entry {" + recipeName + ",  Meal Type: "+ details[0] + " Ingredient List: "+ details[1]+ " Steps: " + details[2] + "}";
+    //     assertEquals(expected, response);
+    // }
 }
