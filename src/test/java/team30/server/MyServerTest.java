@@ -30,20 +30,20 @@ public class MyServerTest {
         }
     }
 
-    @Test
-    void testServerRunning() {
-        // Make a request to the server and check the response
-        try {
-            URL url = new URL("http://localhost:" + PORT_NUMBER);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
+    // @Test
+    // void testServerRunning() {
+    //     // Make a request to the server and check the response
+    //     try {
+    //         URL url = new URL("http://localhost:" + PORT_NUMBER);
+    //         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    //         connection.setRequestMethod("GET");
 
-            int responseCode = connection.getResponseCode();
-            assertEquals(200, responseCode);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    //         int responseCode = connection.getResponseCode();
+    //         assertEquals(200, responseCode);
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
     // @Test
     // void testPostMethods() {

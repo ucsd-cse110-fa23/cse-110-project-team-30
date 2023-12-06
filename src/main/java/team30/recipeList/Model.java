@@ -6,6 +6,8 @@ import java.io.OutputStreamWriter;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.net.URI;
 
@@ -123,6 +125,10 @@ public class Model {
             String urlString = "http://localhost:8100/chatGPT/";
             if (mealType == null) mealType = "";
             if (ingredients == null) ingredients = "";
+
+            mealType = URLEncoder.encode(mealType, StandardCharsets.UTF_8.toString());
+            ingredients = URLEncoder.encode(ingredients, StandardCharsets.UTF_8.toString());
+
             urlString += "?=" + mealType + "-" + ingredients;
 
             System.out.println("URL: " + urlString);
