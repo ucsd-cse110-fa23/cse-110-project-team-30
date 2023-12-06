@@ -14,6 +14,7 @@ public class RecipeUI extends HBox {
 
     Label index;
     Button titleButton;
+    Label meal_tag;
 
     Recipe recipe;
 
@@ -47,7 +48,44 @@ public class RecipeUI extends HBox {
         this.getChildren().add(titleButton);
 
         recipe = r;
-        recipe.setRecipeUI(this);
+        setMealTag(r.getMealType());
+    }
+
+    public void setMealTag(String mealType) {
+        //meal tag
+        boolean newMealTag = false;
+        boolean validMealTag = true;
+        if (meal_tag == null) {
+            newMealTag = true;
+            meal_tag = new Label();
+            meal_tag.setTextAlignment(TextAlignment.CENTER);
+            meal_tag.setPrefSize(100, 40);
+            meal_tag.setAlignment(Pos.CENTER);
+            //make space
+            titleButton.setPrefSize(300, 40);
+        }
+
+        if (mealType.toLowerCase().equals("breakfast")) {
+            meal_tag.setText("breakfast");
+            meal_tag.setStyle("-fx-background-color: " + pink + "; -fx-background-radius: 20; -fx-border-width: 1.5px; -fx-border-color: black; -fx-border-radius: 20");
+        }
+        else if (mealType.toLowerCase().equals("lunch")) {
+            meal_tag.setText("lunch");
+            meal_tag.setStyle("-fx-background-color: " + purple + "; -fx-background-radius: 20; -fx-border-width: 1.5px; -fx-border-color: black; -fx-border-radius: 20");
+        }
+        else if (mealType.toLowerCase().equals("dinner")) {
+            meal_tag.setText("dinner");
+            meal_tag.setStyle("-fx-background-color: " + blue + "; -fx-background-radius: 20; -fx-border-width: 1.5px; -fx-border-color: black; -fx-border-radius: 20");
+        }
+        else {
+            System.out.println("ERROR: invalid meal type: [" + mealType + "]");
+            validMealTag = false;
+        }
+
+        if (validMealTag && newMealTag) {
+            this.getChildren().add(meal_tag);
+        }
+
     }
 
     public void setTaskIndex(int num) { this.index.setText(num + ""); }

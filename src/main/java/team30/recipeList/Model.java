@@ -1,15 +1,13 @@
 package team30.recipeList;
 
-import static com.mongodb.client.model.Filters.in;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.File;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
 
 
 public class Model {
@@ -20,6 +18,7 @@ public class Model {
             if (query != null) {
                 urlString += "?=" + query;
             }
+            System.out.println(urlString);
             URL url = new URI(urlString).toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(method);
@@ -27,7 +26,7 @@ public class Model {
 
             if (method.equals("POST") || method.equals("PUT")) {
                 OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
-                out.write(objectID + "," + recipe);
+                out.write(objectID + "," + recipe.toJSON().toString());
                 out.flush();
                 out.close();
             }
@@ -36,6 +35,39 @@ public class Model {
             String response = in.readLine();
             in.close();
             return response;
+        } catch (ConnectException e) {
+            return "Connection error!";
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "Error: " + ex.getMessage();
+        }
+    }
+
+    //for accounts
+    public String performAccountRequest(String method, String accountName, String accountPassword, String query) {
+        try {
+            String urlString = "http://localhost:8100/account/";
+            if (query != null) {
+                urlString += "?=" + query;
+            }
+            URL url = new URI(urlString).toURL();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod(method);
+            conn.setDoOutput(true);
+
+            if (method.equals("POST") || method.equals("PUT")) {
+                OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
+                out.write(accountName + "," + accountPassword);
+                out.flush();
+                out.close();
+            }
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String response = in.readLine();
+            in.close();
+            return response;
+        } catch (ConnectException e) {
+            return "Connection error!";
         } catch (Exception ex) {
             ex.printStackTrace();
             return "Error: " + ex.getMessage();
@@ -112,6 +144,27 @@ public class Model {
             }
             in.close();
             return response.toString();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "Error: " + ex.getMessage();
+        }
+    }
+    
+    public String performShareRequest(String method, String objectID) {
+        try {
+            String urlString = "http://localhost:8100/share/";
+            if (objectID != null) {
+                urlString += "?=" + objectID;
+            }
+            URL url = new URI(urlString).toURL();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod(method);
+            conn.setDoOutput(true);
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String response = in.readLine();
+            in.close();
+            return response;
         } catch (Exception ex) {
             ex.printStackTrace();
             return "Error: " + ex.getMessage();

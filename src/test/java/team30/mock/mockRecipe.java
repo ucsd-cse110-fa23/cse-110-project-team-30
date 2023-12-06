@@ -50,5 +50,4 @@ public class mockRecipe {
     public String getMealType() {return mealtype;}
     public String getIngredients() {return ingredients;}
     public ArrayList<String> getSteps() {return steps;} 
-    public void setMealType(String s) {mealtype = s;}
 }

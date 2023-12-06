@@ -5,82 +5,19 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.geometry.Insets;
 import javafx.scene.text.*;
-import javafx.geometry.Rectangle2D;
-import java.io.*;
-import java.net.URI;
-import java.nio.file.StandardCopyOption;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import javafx.util.Pair;
-import team30.server.RecipeDatabase;
-
 import java.util.ArrayList;
 
-class DetailFooter extends HBox {
-
-    private Button edit;
-    private Button delete;
-    private Button save;
-    private Button back;
-
-    private Button cancel;
-
-    String tanLight = "#f1eae0", tanDark = "#ede1cf";
-    String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
-    String magenta = "#a64d79", green = "#a64d79";
-
-    DetailFooter() {
-        super();
-        this.setPrefSize(500, 40);
-
-        edit = new Button("Edit");
-        delete = new Button("Delete");
-        save = new Button("Save");
-        back = new Button("Back");
-        cancel = new Button("Cancel");
-        this.setButtonStyle(back);
-        this.setButtonStyle(edit);
-        this.setButtonStyle(delete);
-        this.setButtonStyle(save);
-        this.setButtonStyle(cancel);
-        cancel.setVisible(false);
-
-        this.setSpacing(10);
-
-        this.getChildren().addAll(back, edit, delete, save, cancel);
-        this.setAlignment(Pos.CENTER_RIGHT);
-        
-        this.setStyle("-fx-background-color: " + tanDark);
-    }
-
-    public void setButtonStyle(Button button) {
-        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10";
-        button.setStyle(defaultButtonStyle);
-        // Adding hover effect
-        button.setOnMouseEntered(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #7dedb3;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
-        button.setOnMouseExited(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
-        
-        // Adding click effect
-        button.setOnMousePressed(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #117e2c;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
-        button.setOnMouseReleased(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
-    }
-
-    public Button getEdit() {return edit;}
-    public Button getDelete() {return delete;}
-    public Button getSave() {return save;}
-    public Button getBack() {return back;}
-    public Button getCancel() {return cancel;}
-}
-
-class DetailRecipe extends VBox {
+//helper UI class for info in scroll pane
+class RecipeDetailUI extends VBox {
     // recipe info
     private Label recipe_name;
     private TextArea ingredients;
@@ -88,16 +25,26 @@ class DetailRecipe extends VBox {
     private TextField mealtype;
     private Image recipeImage;
 
-    String tanLight = "#f1eae0", tanDark = "#ede1cf";
-    String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
-    String magenta = "#a64d79", green = "#a64d79";
+    Recipe recipe;
 
-    DetailRecipe (Recipe recipe) {
+    /**
+     * Takes an image from the recipe's url, and if the recipe has not had an image generated for it, 
+     * generate one to return. It also changes imageGenerated to true to reflect the changes.
+     * @return the linked image if generatedImage is true, and a newly generated image if not.
+     */
+    public Image getImage(){
+        String imageurl = ImageManager.ensurePathExists(recipe.getImageURL(), recipe.getRecipeTitle(), !recipe.getImageGenerated());
+        recipe.setImageGenerated(true);
+        return ImageManager.getImage(imageurl);
+    }
+
+    RecipeDetailUI (Recipe r) {
+        this.recipe = r;
+        
         this.setPrefSize(500, 800); // sets size of task
         this.setMaxHeight(VBox.USE_PREF_SIZE); 
         this.setMinHeight(VBox.USE_PREF_SIZE);
         this.setSpacing(15);
-        this.setStyle("-fx-background-color: " + tanLight);
 
         // initial recipe info
         recipe_name = new Label(recipe.getRecipeTitle());
@@ -127,7 +74,7 @@ class DetailRecipe extends VBox {
 
         //Add second row: Image
         ImageView imageView = new ImageView();
-        recipeImage = recipe.getImage();
+        recipeImage = getImage();
         imageView.setImage(recipeImage);
         imageView.setFitWidth(200);
         imageView.setFitHeight(200);
@@ -215,98 +162,75 @@ class DetailRecipe extends VBox {
     public TextField getMealType() {return mealtype;}
 }
 
-class Ingredient extends HBox {
-    private TextField ingredient;
-
-    Ingredient(String string) {
-        ingredient = new TextField(string);
-        ingredient.setPrefSize(250, 20); // set size of text field
-        ingredient.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
-        //index.setTextAlignment(TextAlignment.LEFT); // set alignment of text field
-        ingredient.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
-        this.getChildren().add(ingredient); // add textlabel to contact
-
-        this.ingredient.setPromptText("Ingredient");
-    }
-
-    public TextField getIngredient() {return ingredient;}
-
-}
-
-public class RecipeDetail {
-    private RecipeListUI recipeListUI; //original app frame
-    private DefaultBorderPane recipeViewAF; //current app frame
-    private RecipeList rl;
-
-    private DetailRecipe dRecipe;
+//Recipe detail UI class
+public class RecipeDetail extends DefaultBorderPane {
+    RecipeListUI recipeListUI;
+    private RecipeDetailUI dRecipe;
     private Recipe recipe;
-
-    private RecipeDatabase recipeDB;
 
     private boolean editMode;
 
     Scene recipeViewScene;
 
-    String tanLight = "#f1eae0", tanDark = "#ede1cf";
-    String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
-    String magenta = "#a64d79", green = "#a64d79";
-
     //HTTP buttons
-    private Button postButton, getButton, putButton, deleteButton;
+    private Button postButton, getButton, putButton, deleteButton, shareButton;
     private WindowChange windowChange;
 
-    DetailFooter dfooter;
+    Button back, save, edit, delete, cancel, share;
 
-    RecipeDetail(RecipeList rl, RecipeListUI af, Recipe r) {
-        this.rl = rl;
-        this.recipe = r;
-        recipeListUI = af;
-        recipeDB = recipeListUI.getRecipeDB();
-        recipeViewAF = new DefaultBorderPane();
-        
-        //footer
-        dfooter = new DetailFooter(); 
-        ScrollPane scrollPane = new ScrollPane(new DetailRecipe(recipe));
+    RecipeDetail(Recipe r, RecipeListUI rlu) {
+        recipeListUI = rlu;
+        recipe = r;
 
-        dRecipe = new DetailRecipe(recipe);
+        ScrollPane scrollPane;
+
+        dRecipe = new RecipeDetailUI(recipe);
         scrollPane = new ScrollPane(dRecipe);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
-        //recipeViewAF.setTop(header);
-        recipeViewAF.setCenter(scrollPane);
-        recipeViewAF.setBottom(dfooter);
 
-        addListeners(dfooter.getBack(), dfooter.getSave(), dfooter.getEdit(), dfooter.getDelete(), dfooter.getCancel());
+        this.setCenter(scrollPane);
+
+        //footer
+        footer.setPrefSize(500, 40);
+        edit = new Button("Edit");
+        delete = new Button("Delete");
+        save = new Button("Save");
+        share = new Button("Share");
+        back = new Button("Back");
+        cancel = new Button("Cancel");
+        setButtonStyle(back);
+        setButtonStyle(edit);
+        setButtonStyle(delete);
+        setButtonStyle(share);
+        setButtonStyle(save);
+        setButtonStyle(cancel);
+        cancel.setVisible(false);
+        footer.setSpacing(10);
+        footer.getChildren().addAll(back, save, edit, delete, share, cancel);
+
+        addListeners(back, save, edit, delete, share, cancel);
 
         postButton = recipeListUI.getPostButton();
         getButton = recipeListUI.getGetButton();
         putButton = recipeListUI.getPutButton();
         deleteButton = recipeListUI.getDeleteButton();
+        shareButton = recipeListUI.getShareButton();
 
         this.disableEdit();
 
-        recipeViewScene = new Scene(recipeViewAF, 500, 600);
+        recipeViewScene = new Scene(this, 500, 600);
 
         windowChange = new WindowChange();
         windowChange.setRecipeDetail(this);
     };
 
-    public void openDetailWindow(Recipe recipe) {
-        windowChange.openWindow(this);
-    }
-
-    public Scene getScene() {
-        return recipeViewScene;
-    }
-
-    public void closeDetailWindow() {
-        disableEdit();
-        windowChange.closeWindow();
-    }
+    public void openDetailWindow() { windowChange.openWindow(this); }
+    public void closeDetailWindow() { disableEdit(); windowChange.closeWindow(); }
 
     public void enableEdit() {
         editMode = true;
-        ((DetailFooter)recipeViewAF.getBottom()).getEdit().setText("Stop");
+        edit.setText("Stop");
         dRecipe.getIngredients().setEditable(true);
         dRecipe.getMealType().setEditable(true);
         for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
@@ -317,7 +241,7 @@ public class RecipeDetail {
 
     public void disableEdit() {
         editMode = false;
-        ((DetailFooter)recipeViewAF.getBottom()).getEdit().setText("Edit");
+        edit.setText("Edit");
         dRecipe.getIngredients().setEditable(false);
         dRecipe.getMealType().setEditable(false);
         for (int i = 0; i < dRecipe.getSteps().size(); ++i) {
@@ -335,24 +259,34 @@ public class RecipeDetail {
         }
     }
 
-    public void setCancellable(boolean b) { dfooter.getCancel().setVisible(b); }
+    public void setCancellable(boolean b) { cancel.setVisible(b); }
 
-    /**
-     * Method holding what the edit button does.
-     */
     public void editEvent(){
-        if(editMode)
-                disableEdit();
-            else
-                enableEdit();
+        if (editMode) disableEdit();
+        else enableEdit();
     }
 
     public void deleteEvent(){
         recipeListUI.getRecipeList().remove(this.recipe);
         recipeListUI.update();
-        recipeDB.deleteRecipe(this.recipe);
+        recipeListUI.setQuery(this.recipe.getObjectID().toString());
         deleteButton.fire(); //server delete
         closeDetailWindow();
+    }
+
+    public void shareEvent() {
+        //set server vars
+        recipeListUI.setQuery(this.recipe.getObjectID().toString());
+        shareButton.fire(); //server share
+        showShareLink("http://localhost:8100/share/?=" + this.recipe.getObjectID().toString());
+    }
+
+    public void showShareLink(String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Share Link");
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     /**
@@ -364,12 +298,8 @@ public class RecipeDetail {
         updateRecipeList();
         putButton.fire(); //server put
     }
-
-    public Button getEditButton(){
-        return ((DetailFooter)recipeViewAF.getBottom()).getEdit();
-    }
-
-    public void addListeners(Button back, Button save, Button edit, Button delete, Button cancel) {
+    
+    public void addListeners(Button back, Button save, Button edit, Button delete, Button share, Button cancel) {
         // listener for Back
         back.setOnAction(e -> {
             setCancellable(false);
@@ -387,13 +317,21 @@ public class RecipeDetail {
         delete.setOnAction(e -> {
             deleteEvent();
         });
+        // listener for share
+        share.setOnAction(e -> {
+            shareEvent();
+        });
         // listener for cancel
         cancel.setOnAction(e -> {
             //don't save recipe to list
             recipeListUI.getRecipeList().remove(this.recipe);
             recipeListUI.update();
-            recipeDB.deleteRecipe(this.recipe);
             closeDetailWindow();
         });
     }
+
+    public Button getPostButton() {return postButton;}
+    public Button getGetButton() {return getButton;}
+    public Button getPutButton() {return putButton;}
+    public Button getDeleteButton() {return deleteButton;}
 }

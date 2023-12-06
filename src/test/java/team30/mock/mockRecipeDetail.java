@@ -8,7 +8,6 @@ public class mockRecipeDetail {
     private mockDetailFooter footer;
     private mockDetailRecipe dRecipe;
     private mockList list;
-    private mockRecipe recipe;
 
     public mockRecipeDetail(String af) {
         footer = new mockDetailFooter();
@@ -34,8 +33,6 @@ public class mockRecipeDetail {
     }
 
     public mockDetailRecipe getDRecipe() {return dRecipe;}
-
-    public mockRecipe getRecipe() {return recipe;}
 
     public String getAppFrame() {return currentScene;}
 
@@ -69,10 +66,6 @@ public class mockRecipeDetail {
 
     public void setDRecipe(mockRecipe recipe) {
         dRecipe = new mockDetailRecipe(recipe);
-    }
-
-    public void setRecipe(mockRecipe recipe) {
-        this.recipe = recipe;
     }
 
     public void enableEdit(int step_index, String update_msg) {

@@ -1,17 +1,12 @@
 package team30.server;
 
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCursor;
 import com.sun.net.httpserver.*;
 
 import team30.recipeList.*;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
 import java.util.concurrent.*;
-
-import org.bson.Document;
 
 public class MyServer {
 
@@ -21,6 +16,7 @@ public class MyServer {
 
   static RecipeDatabase recipeDB;
   static RecipeList recipeList;
+  static AccountDatabase accountDB;
 
   static Whisper audioProcessor;
   static ChatGPT chatGPT;
@@ -33,6 +29,7 @@ public class MyServer {
     recipeList = new RecipeList();
     audioProcessor = new Whisper();
     chatGPT = new ChatGPT();
+    accountDB = new AccountDatabase();
     //loadRecipes();
 
     // create a server
@@ -43,6 +40,8 @@ public class MyServer {
     HttpContext contextRecipe = server.createContext("/recipe", new RecipeHandler(recipeDB));
     HttpContext contextVoice = server.createContext("/voice", new VoiceHandler(audioProcessor));
     HttpContext contextChatGPT = server.createContext("/chatGPT", new ChatGPTHandler(chatGPT));
+    HttpContext contextAccount = server.createContext("/account", new AccountHandler(accountDB));
+    HttpContext contextShare = server.createContext("/share", new ShareHandler(recipeDB));
     server.setExecutor(threadPoolExecutor);
     server.start();
 

@@ -9,6 +9,7 @@ import java.net.*;
 import java.util.*;
 
 import org.bson.types.ObjectId;
+import org.json.JSONObject;
 
 public class RecipeHandler implements HttpHandler {
 
@@ -55,8 +56,8 @@ public class RecipeHandler implements HttpHandler {
             Recipe recipe = recipeDB.getRecipe(new ObjectId(objectID)); // Retrieve data from hashmap
             if (recipe != null) {
                 System.out.println("get successful!");
-                response = detailsToString(recipe.getRecipeDetails());
-                System.out.println("Queried for " + objectID + " and found " + detailsToString(recipe.getRecipeDetails()));
+                response = recipe.toJSON().toString();
+                System.out.println("Queried for " + objectID + " and found " + response);
             } else {
                 response = "No data found for " + objectID;
             }
@@ -72,10 +73,15 @@ public class RecipeHandler implements HttpHandler {
                 0,
                 postData.indexOf(",")), recipeDetails = postData.substring(postData.indexOf(",") + 1);
 
-        // Store data in hashmap
+        JSONObject json = new JSONObject();
+        try {
+            json = new JSONObject(recipeDetails);
+        } catch (Exception e) {
+            System.out.println("json failed to parse");
+        }
         Recipe recipe = new Recipe();
         recipe.setObjectID(new ObjectId(objectID));
-        recipe.setRecipeDetails(detailsToArray(recipeDetails));
+        recipe.setFromJSON(json);
         recipeDB.insertRecipe(recipe);
 
         String response = "Posted entry {" + objectID + ", " + recipeDetails + "}";
@@ -95,20 +101,26 @@ public class RecipeHandler implements HttpHandler {
 
         // Store data in hashmap
         String response;
+        System.out.println(recipeDetails);
+        JSONObject json = new JSONObject();
+        try {
+            json = new JSONObject(recipeDetails);
+        } catch (Exception e) {
+            System.out.println("json failed to parse");
+        }
 
+        Recipe recipe = new Recipe();;
         if (recipeDB.getRecipe(new ObjectId(objectID)) != null) {
             response = "Updated entry {" + objectID + ", " + recipeDetails + "}";
-            Recipe recipe = new Recipe();
+            recipe.setFromJSON(json);
             recipe.setObjectID(new ObjectId(objectID));
-            recipe.setRecipeDetails(detailsToArray(recipeDetails));
-            recipeDB.insertRecipe(recipe);
         } else {
             response = "Added entry {" + objectID + ", " + recipeDetails + "}";
-            Recipe recipe = new Recipe();
             recipe.setObjectID(new ObjectId(objectID));
-            recipe.setRecipeDetails(detailsToArray(recipeDetails));
-            recipeDB.editRecipe(recipe);
+            recipe.setFromJSON(json);
         }
+        recipeDB.upsertRecipe(recipe);
+        System.out.println(recipe.getIngredients());
 
         System.out.println(response);
         scanner.close();
@@ -122,40 +134,16 @@ public class RecipeHandler implements HttpHandler {
         String query = uri.getRawQuery();
         if (query != null) {
             String objectID = query.substring(query.indexOf("=") + 1);
+            System.out.println(objectID);
             Recipe recipe = recipeDB.getRecipe(new ObjectId(objectID));
             recipeDB.deleteRecipe(new ObjectId(objectID)); // Retrieve data from database
             if (recipe != null) {
-                response = "Deleted entry {" + objectID + ", " + detailsToString(recipe.getRecipeDetails()) + "}";
-                System.out.println("Queried for " + objectID + " and found " + detailsToString(recipe.getRecipeDetails()));
+                response = "Deleted entry {" + objectID + ", " + recipe.toJSON().toString() + "}";
+                System.out.println("Queried for " + objectID + " and found " + recipe.toJSON().toString());
             } else {
                 response = "No data found for " + objectID;
             }
         }
         return response;
     }
-
-    private String detailsToString(ArrayList<String> details) {
-        if (details.size() < 5) {
-            System.out.println("ERROR: recipe details doesn't have the right amount of information");
-        }
-        String s = "";
-        s += details.get(0) + ";; "; //name
-        s += details.get(1) + ";; "; //meal type
-        s += details.get(2) + ";; "; //ingredient list
-        s += details.get(3) + ";; "; //image url
-        for (int i = 4; i < details.size(); i++) { //steps
-            s += details.get(i) + ";; ";
-        }
-        return s;
-    }
-
-    private ArrayList<String> detailsToArray(String detailsString) {
-        ArrayList<String> details = new ArrayList<>();
-        String[] detailsArray = detailsString.split(";; ");
-        for (int i = 0; i < detailsArray.length; i++) {
-            details.add(detailsArray[i]);
-        }
-        return details;
-    }
-
 }

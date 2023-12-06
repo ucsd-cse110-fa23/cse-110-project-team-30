@@ -116,7 +116,7 @@ public class VoiceRecorder {
     private Whisper audioProcessor;
     private RecordingCompletionListener completionListener;
 
-    public VoiceRecorder(RecipeList rl, AppFrame af) {
+    public VoiceRecorder(RecipeList rl) {
         this.rl = rl;
         recipeListScene = rl.getScene();
 

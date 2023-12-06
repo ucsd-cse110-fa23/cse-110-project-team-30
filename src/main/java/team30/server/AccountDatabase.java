@@ -62,6 +62,16 @@ public class AccountDatabase {
         }
     }
 
+    public String getPassword(String username) {
+        Bson filter = eq("username", username);
+        MongoCursor<Document> cursor = accountCollection.find(filter).iterator();
+        if (cursor.hasNext()) {
+            Document account = cursor.next();
+            return account.getString("password");
+        } 
+        return "";
+    }
+
     /**
      * return true, username not repeated
      * return false, username already exists

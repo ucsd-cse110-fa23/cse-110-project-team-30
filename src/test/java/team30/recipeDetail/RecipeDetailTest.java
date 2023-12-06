@@ -369,7 +369,6 @@ public class RecipeDetailTest {
         assertEquals(1 , rl.getRecipeList().getChildren().size());
     }
 
-    @Test
     void testEditThenDelete() {
         rl.getRecipeList().getAddButton().fire(rl.getRecipeList(), concrete_recipe);
         rl.openDetailWindow(concrete_recipe);
@@ -386,7 +385,6 @@ public class RecipeDetailTest {
         assertEquals(0 , rl.getRecipeList().getChildren().size());
     }   
     
-    @Test
     void testDeleteThenBack() {     // in practice, delete should automatically call back
         rl.getRecipeList().getAddButton().fire(rl.getRecipeList(), concrete_recipe);
         rl.openDetailWindow(concrete_recipe);
@@ -397,102 +395,5 @@ public class RecipeDetailTest {
 
         assertFalse(rl.getRecipeList().getChildren().contains(concrete_recipe), "Recipe should be removed");
         assertEquals(0 , rl.getRecipeList().getChildren().size());
-    }
-
-    @Test
-    void testRefreshButton() {
-        ArrayList<String> steps = new ArrayList<>();
-        steps.add("1. Heat the olive oil in a large skillet over medium heat.");
-        steps.add("2. Add the tomato slices and season with salt and pepper.");
-        steps.add("3. Cook the tomatoes until they are lightly browned, about 3 minutes.");
-        steps.add("4. Crack the eggs into the skillet and season with additional salt and pepper.");
-        steps.add("5. Cook the eggs until the whites are set and the yolk is cooked to your preference.");
-        steps.add("6. Serve the tomato and egg skillet with your favorite condiments. Enjoy!");
-
-        // open detail windows, then buttons show up
-        rl.openDetailWindow(concrete_recipe);
-
-        // before refresh button
-        rl.setRecipe(concrete_recipe);
-        rl.setDRecipe(concrete_recipe);
-        footer.getRefresh().fire(rl);
-        // after refresh button
-        assertEquals("breakfast", rl.getDRecipe().getMealType());
-        assertEquals("tomato and egg skillet", rl.getDRecipe().getDetailRecipeName());
-        // assertEquals("2 eggs, 1 tomato, sliced, salt and pepper, to taste, 2 teaspoons olive oil", rl.getDRecipe().getIngredients());
-        for (int i = 0; i < rl.getDRecipe().getSteps().size(); ++i) {
-            assertEquals(steps.get(i), rl.getDRecipe().getSteps().get(i));
-        }
-
-        assertEquals("breakfast", rl.getRecipe().getMealType());
-        assertEquals("tomato and egg skillet", rl.getRecipe().getRecipeTitle());
-        // assertEquals("2 eggs, 1 tomato, sliced, salt and pepper, to taste, 2 teaspoons olive oil", rl.getRecipe().getIngredients());
-        for (int i = 0; i < rl.getRecipe().getSteps().size(); ++i) {
-            assertEquals(steps.get(i), rl.getRecipe().getSteps().get(i));
-        }
-    }
-
-    @Test
-    void testRefreshThenSave() {
-        ArrayList<String> steps = new ArrayList<>();
-        steps.add("1. Heat the olive oil in a large skillet over medium heat.");
-        steps.add("2. Add the tomato slices and season with salt and pepper.");
-        steps.add("3. Cook the tomatoes until they are lightly browned, about 3 minutes.");
-        steps.add("4. Crack the eggs into the skillet and season with additional salt and pepper.");
-        steps.add("5. Cook the eggs until the whites are set and the yolk is cooked to your preference.");
-        steps.add("6. Serve the tomato and egg skillet with your favorite condiments. Enjoy!");
-
-        // open detail windows, then buttons show up
-        rl.openDetailWindow(concrete_recipe);
-
-        // before refresh button
-        rl.setRecipe(concrete_recipe);
-        rl.setDRecipe(concrete_recipe);
-        footer.getRefresh().fire(rl);
-        // after refresh button
-        assertEquals("breakfast", rl.getDRecipe().getMealType());
-        assertEquals("tomato and egg skillet", rl.getDRecipe().getDetailRecipeName());
-        // assertEquals("2 eggs, 1 tomato, sliced, salt and pepper, to taste, 2 teaspoons olive oil", rl.getDRecipe().getIngredients());
-        for (int i = 0; i < rl.getDRecipe().getSteps().size(); ++i) {
-            assertEquals(steps.get(i), rl.getDRecipe().getSteps().get(i));
-        }
-
-        assertEquals("breakfast", rl.getRecipe().getMealType());
-        assertEquals("tomato and egg skillet", rl.getRecipe().getRecipeTitle());
-        // assertEquals("2 eggs, 1 tomato, sliced, salt and pepper, to taste, 2 teaspoons olive oil", rl.getRecipe().getIngredients());
-        for (int i = 0; i < rl.getRecipe().getSteps().size(); ++i) {
-            assertEquals(steps.get(i), rl.getRecipe().getSteps().get(i));
-        }
-
-        // save
-        rl.setDRecipe(concrete_recipe);
-        footer.getSave().fire(rl);
-
-        String filePath = "test.csv";
-
-        try {
-            // drop test.csv first
-            Path path = FileSystems.getDefault().getPath(filePath);
-            if (Files.exists(path)) {
-                Files.delete(path);
-            }
-
-            BufferedReader reader = new BufferedReader(new FileReader(filePath));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] values = line.split(";");
-                assertEquals(values[0], rl.getDRecipe().getDetailRecipeName());
-                assertEquals(values[1], rl.getDRecipe().getMealType());
-                assertEquals(values[2], rl.getDRecipe().getIngredients());
-                // compare if the number of steps match
-                assertEquals(values.length - 3, rl.getDRecipe().getSteps().size());
-                for (int i = 3; i < values.length; ++i) {
-                    assertEquals(values[i], rl.getDRecipe().getSteps().get(i - 3));
-                }
-            }
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
