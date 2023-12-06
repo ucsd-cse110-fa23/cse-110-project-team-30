@@ -111,7 +111,7 @@ public class RecipeListTest {
 
     @Test
     void createRecipe() {
-        Recipe r = new Recipe();
+        mockRecipe r = new mockRecipe();
         r.setMealType("dinner");
         assertNotEquals(r, null);
         assertEquals("dinner", r.getMealType());
