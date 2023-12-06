@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import javafx.scene.*;
 
 public class FilterFactory{
-    Filter create(String setting){
+    static Filter create(String setting){
         switch(setting.toLowerCase()){
             case "breakfast":
                 return new FilterMealType("Breakfast");
