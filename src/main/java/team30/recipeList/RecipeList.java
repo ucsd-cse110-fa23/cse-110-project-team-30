@@ -108,6 +108,7 @@ class List extends VBox {
     void filter(){
         this.getChildren().setAll(fullList);
         this.getChildren().retainAll(filter.filter(fullList));
+        this.updateTaskIndices();
     }
 }
 
@@ -188,13 +189,15 @@ class Footer extends HBox {
 
 
         logoutButton = new Button("Log Out");
+        logoutButton.setMinWidth(90);
         filterButton = new MenuButton("Filter");
         setButtonStyle(logoutButton);
-        filterButton.setMinWidth(130);
+        filterButton.setMinWidth(120);
+        filterButton.setMaxWidth(120);
         filterButton.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 13 arial; -fx-background-radius: 10");
         filterButton.setAlignment(Pos.CENTER);
         this.getChildren().addAll(filterButton, logoutButton);
-        this.setAlignment(Pos.CENTER_RIGHT);        
+        this.setAlignment(Pos.CENTER);        
     }
 
         public Button getLogoutButton() {
@@ -276,7 +279,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         logoutButton = footer.getLogoutButton();
         filterButton = footer.getFilterButton();
         footer.setPadding(new Insets(10));
-        footer.setSpacing(330);
+        footer.setSpacing(260);
         
         postButton = new Button("Post");
         getButton = new Button("Get");
