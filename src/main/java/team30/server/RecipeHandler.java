@@ -65,7 +65,6 @@ public class RecipeHandler implements HttpHandler {
     }
 
     private String handlePost(HttpExchange httpExchange) throws IOException {
-        System.out.println("Handling post...");
         InputStream inStream = httpExchange.getRequestBody();
         Scanner scanner = new Scanner(inStream);
         String postData = scanner.nextLine();

@@ -2,13 +2,8 @@ package team30.server;
 
 import com.sun.net.httpserver.*;
 
-import team30.recipeList.Recipe;
-
 import java.io.*;
 import java.net.*;
-import java.util.*;
-
-import org.bson.types.ObjectId;
 import org.json.JSONException;
 
 public class ChatGPTHandler implements HttpHandler {
@@ -44,14 +39,17 @@ public class ChatGPTHandler implements HttpHandler {
         String query = uri.getRawQuery();
         if (query != null) {
             String mealtype, ingredients;
-            //format: ?=dinner;;;apples
-            mealtype = query.substring(query.indexOf("=") + 1, query.indexOf(";;;"));
-            ingredients = query.substring(query.indexOf(";;;") + 1);
-            System.out.println(mealtype + ", " + ingredients);
+            //format: ?=dinner=apples
+            mealtype = query.substring(query.indexOf("=") + 1, query.indexOf("-"));
+            if (query.indexOf("-") + 1 < query.length())
+                ingredients = query.substring(query.indexOf("-") + 1);
+            else
+                ingredients = "";
+            System.out.println("ChatGPT: " + mealtype + ", " + ingredients);
             String generatedRecipe;
             try {
                 generatedRecipe = chatGPT.generateRecipe(mealtype, ingredients);
-                response = "Processed " + mealtype + " and " + ingredients + " and got " + generatedRecipe;
+                response = generatedRecipe;
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 response = "Unable to process " + mealtype + " and " + ingredients;

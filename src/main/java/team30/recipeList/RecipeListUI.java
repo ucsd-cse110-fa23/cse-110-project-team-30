@@ -30,11 +30,15 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
 
     //unseen buttons for HTTP functions
     private Button postButton, getButton, putButton, deleteButton;
+    private Button chatGPTButton;
     private String query;
 
     //loaded when server starts
     private RecipeDatabase recipeDB; 
     private List<Recipe> recipeList;
+
+    private String endMealType, endIngredients;
+    private String recipeRaw;
 
     //voice recorder popup
     VoiceRecorder voiceRecorder;
@@ -63,6 +67,7 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
         getButton = new Button("Get");
         putButton = new Button("Put");
         deleteButton = new Button("Delete");
+        chatGPTButton = new Button();
         query = "";
 
         voiceRecorder = new VoiceRecorder();
@@ -124,13 +129,15 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
         System.out.println("Meal Type: " + mealType);
         System.out.println("Ingredients: " + ingredientsRaw);
 
-        ChatGPT chatGPT = new ChatGPT();
         //getButton.fire()
         try {
             // Generate recipe
-            String generatedRecipe = chatGPT.generateRecipe(mealType, ingredientsRaw);
-            //System.out.println("Generated Recipe: ");
-            //System.out.println(generatedRecipe);
+            endMealType = mealType;
+            endIngredients = ingredientsRaw;
+            chatGPTButton.fire();
+            String generatedRecipe = recipeRaw;
+            System.out.println("Generated Recipe: ");
+            System.out.println(recipeRaw);
 
             String[] lines = generatedRecipe.split("\\r?\\n|\\r");
             String recipeName = "", ingredients = "", imgurl = "";
@@ -143,9 +150,14 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
                     recipeName = lines[i].toLowerCase();
                     count = 100;
                 }
-                if (lines[i].contains("Recipe Name: ")) {
+                if (lines[i].toLowerCase().contains("recipe name: ")) {
                     //recipeName (labelled)
                     recipeName = lines[i].substring(13).toLowerCase();
+                    count = 100;
+                }
+                else if (lines[i].toLowerCase().contains("recipe title: ")) {
+                    //recipeName (labelled)
+                    recipeName = lines[i].substring(14).toLowerCase();
                     count = 100;
                 }
                 if (lines[i].contains("Ingredients:")) {
@@ -192,7 +204,11 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
     public Button getGetButton() {return getButton;}
     public Button getPutButton() {return putButton;}
     public Button getDeleteButton() {return deleteButton;}
+    public Button getChatGPTButton() {return chatGPTButton;}
     public String getQuery() {return query;}
+    public String getMealType() {return endMealType;}
+    public String getIngredients() {return endIngredients;}
+    public void setRecipeRaw(String s) {recipeRaw = s;}
     public RecipeDatabase getRecipeDB() {return recipeDB;}
     public VoiceRecorder getVoiceRecorder() {return voiceRecorder; }
 

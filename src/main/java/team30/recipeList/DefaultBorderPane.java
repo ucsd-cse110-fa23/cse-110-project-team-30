@@ -21,14 +21,14 @@ public class DefaultBorderPane extends BorderPane {
     DefaultBorderPane() {
         header = new HBox();
         titleText = new Text("PantryPal");
-        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 40; -fx-fill: " + magenta);
+        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 40; -fx-fill: " + magenta + ";");
         header.getChildren().add(titleText);
         header.setAlignment(Pos.CENTER);
         
         middle = new VBox();
         footer = new HBox();
 
-        this.setStyle("-fx-background-color: " + tanLight);
+        this.setStyle("-fx-background-color: " + tanLight + ";");
 
         this.setTop(header);
         this.setCenter(middle);
@@ -36,15 +36,15 @@ public class DefaultBorderPane extends BorderPane {
     }
 
     public void setButtonStyle(Button button) {
-        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: " + lightgreen + ";  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10";
+        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: " + lightgreen + ";  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10;";
         button.setStyle(defaultButtonStyle);
         // Adding hover effect
-        button.setOnMouseEntered(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: " + mintgreen + ";  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
-        button.setOnMouseExited(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: " + lightgreen + ";  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
+        button.setOnMouseEntered(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: " + mintgreen + ";  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10;"));
+        button.setOnMouseExited(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: " + lightgreen + ";  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10;"));
         
         // Adding click effect
-        button.setOnMousePressed(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: " + darkgreen + ";  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
-        button.setOnMouseReleased(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: " + lightgreen + ";  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10"));
+        button.setOnMousePressed(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: " + darkgreen + ";  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10;"));
+        button.setOnMouseReleased(e -> button.setStyle("-fx-font-style: italic; -fx-background-color: " + lightgreen + ";  -fx-font-weight: bold; -fx-font: 15 arial; -fx-background-radius: 10;"));
     }
     
 }

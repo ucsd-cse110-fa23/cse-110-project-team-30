@@ -3,16 +3,11 @@ package team30.recipeList;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.*;
-
-import org.bson.Document;
-
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCursor;
-
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 
 public class Model {
@@ -45,7 +40,28 @@ public class Model {
         }
     }
 
-    //for voice
+    //TODO: for multi-device voice
+    // public String performVoiceRequest(String method, String fileName, File file, String query) {
+    //     try {
+    //         String urlString = "http://localhost:8100/voice/";
+    //         if (query != null) {
+    //             urlString += "?=" + query;
+    //         }
+    //         URL url = new URI(urlString).toURL();
+    //         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+    //         conn.setRequestMethod(method);
+    //         conn.setDoOutput(true);
+
+    //         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+    //         String response = in.readLine();
+    //         in.close();
+    //         return response;
+    //     } catch (Exception ex) {
+    //         ex.printStackTrace();
+    //         return "Error: " + ex.getMessage();
+    //     }
+    // }
+
     public String performVoiceRequest(String method, String query) {
         try {
             String urlString = "http://localhost:8100/voice/";
@@ -56,7 +72,6 @@ public class Model {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(method);
             conn.setDoOutput(true);
-            System.out.println("performing voice: " + query);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String response = in.readLine();
@@ -69,17 +84,20 @@ public class Model {
     }
 
     //for chatgpt
-    public String performChatGPTRequest(String method, String objectID, Recipe recipe, String query) {
+    public String performChatGPTRequest(String method, String mealType, String ingredients) {
         try {
             String urlString = "http://localhost:8100/chatGPT/";
-            if (query != null) {
-                urlString += "?=" + query;
-            }
+            if (mealType == null) mealType = "";
+            if (ingredients == null) ingredients = "";
+            urlString += "?=" + mealType + "-" + ingredients;
+
+            System.out.println("URL: " + urlString);
+
             URL url = new URI(urlString).toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(method);
             conn.setDoOutput(true);
-            
+
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String response = in.readLine();
             in.close();

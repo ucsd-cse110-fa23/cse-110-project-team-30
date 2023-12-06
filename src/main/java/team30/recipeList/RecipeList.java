@@ -19,6 +19,7 @@ public class RecipeList extends Application {
     private Stage primStage;
     private Scene listScene;
     private Button postButton, getButton, putButton, deleteButton;
+    private Button chatGPTButton;
 
     private Model model; //model
     private RecipeListUI recipeListUI; //view
@@ -36,7 +37,8 @@ public class RecipeList extends Application {
         getButton = recipeListUI.getGetButton();
         putButton = recipeListUI.getPutButton();
         deleteButton = recipeListUI.getDeleteButton();
-        
+        chatGPTButton = recipeListUI.getChatGPTButton();
+
         controller = new Controller(this, model);
         windowChange = new WindowChange();
         windowChange.setRecipeListMainApp(this);
@@ -62,6 +64,7 @@ public class RecipeList extends Application {
     public void setGetButtonAction(EventHandler<ActionEvent> eventHandler) {getButton.setOnAction(eventHandler);}
     public void setPutButtonAction(EventHandler<ActionEvent> eventHandler) {putButton.setOnAction(eventHandler);}
     public void setDeleteButtonAction(EventHandler<ActionEvent> eventHandler) {deleteButton.setOnAction(eventHandler);}
+    public void setChatGPTButtonAction(EventHandler<ActionEvent> eventHandler) {chatGPTButton.setOnAction(eventHandler);}
 
     public ObjectId getRecipeObjectID() {return recipeListUI.getRecipeObjectID();}
     public Recipe getRecipe() {return recipeListUI.getRecipe();}

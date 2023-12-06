@@ -1,8 +1,13 @@
 package team30.server;
 
 import com.sun.net.httpserver.*;
+
+import team30.recipeList.Recipe;
+
 import java.io.*;
 import java.net.*;
+
+import org.bson.types.ObjectId;
 import org.json.JSONException;
 
 public class VoiceHandler implements HttpHandler {
@@ -18,8 +23,11 @@ public class VoiceHandler implements HttpHandler {
         try {
             if (method.equals("GET")) {
                 response = handleGet(httpExchange);
-            } else {
-                throw new Exception("Not Valid Request Method");
+            } //if (method.equals("POST")) {
+            //     response = handlePost(httpExchange);
+            // } 
+            else {
+                throw new Exception("Not Valid Request Method " + method);
             }
         } catch (Exception e) {
             System.out.println("An erroneous request");
@@ -38,6 +46,8 @@ public class VoiceHandler implements HttpHandler {
         String query = uri.getRawQuery();
         if (query != null) {
             String filename = query.substring(query.indexOf("=") + 1);
+            //TODO: pass in file directly
+            //rn: passing in filename (only works for local)
             String filepath = "src\\main\\java\\team30\\recipeList\\" + filename;
             System.out.println(filepath);
             audioProcessor.setInputFile(filepath);
@@ -51,5 +61,10 @@ public class VoiceHandler implements HttpHandler {
         }
         return response;
     }
+
+    //TODO: with filename, post file
+    // private String handlePost(HttpExchange httpExchange) throws IOException, JSONException, URISyntaxException {
+    //     return "";
+    // }
 
 }

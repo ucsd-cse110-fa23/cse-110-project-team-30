@@ -30,6 +30,7 @@ public class VoiceRecorder {
     private String processedAudio; //gotten from server
     private Button processAudioButton; //HTTP 
     private String filename;
+    private File file;
 
     private static WindowChange windowChange;
 
@@ -78,6 +79,7 @@ public class VoiceRecorder {
             //process voice recording for meal type
             if (!processingIngredients) {
                 filename = "mealtype.wav";
+                file = new File("src\\main\\java\\team30\\recipeList\\" + filename);
                 processAudioButton.fire(); //call server
                 mealtype = processedAudio;
 
@@ -223,6 +225,7 @@ public class VoiceRecorder {
     public String getMealType() { return mealtype; }
     public void setAudioButtonAction(EventHandler<ActionEvent> eventHandler) {processAudioButton.setOnAction(eventHandler);}
     public String getQuery() { return filename; }
+    public File getFile() { return file; }
     public void setProcessedAudio(String text) { processedAudio = text; }
 
     public interface RecordingCompletionListener {
