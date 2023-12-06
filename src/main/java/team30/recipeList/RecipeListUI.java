@@ -78,6 +78,8 @@ public class RecipeListUI extends DefaultBorderPane /*implements Observer*/ impl
         windowChange = new WindowChange();
         windowChange.setVoiceRecorder(voiceRecorder);
 
+        recipeDB = new RecipeDatabase();
+
         addListeners();
     }
 
