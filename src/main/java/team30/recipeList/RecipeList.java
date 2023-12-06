@@ -25,6 +25,8 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.geometry.Insets;
 import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
+import javafx.geometry.Side;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -61,11 +63,16 @@ import javafx.scene.Node;
 
 class List extends VBox {
 
+    ArrayList<Node> fullList;
+    Filter filter = FilterFactory.create("all");
+
     List() {
         this.setSpacing(10); // sets spacing between tasks
         
         this.setPrefSize(500, 560);
         this.setStyle("-fx-background-color: #f8f3c9;-fx-padding: 10;");
+
+        this.fullList = new ArrayList<Node>();
     }
 
     //updates indices on recipes in list
@@ -82,6 +89,25 @@ class List extends VBox {
     //removes recipe from list
     void removeRecipe(Recipe recipeToRemove){
         this.getChildren().removeIf(recipe -> recipe instanceof Recipe && ((Recipe)recipe).equals(recipeToRemove));
+        this.fullList.removeIf(recipe -> recipe instanceof Recipe && ((Recipe)recipe).equals(recipeToRemove));
+        this.updateTaskIndices();
+    }
+
+    ArrayList<Node> getFullList(){
+        return this.fullList;
+    }
+
+    void setFilter(String setting){
+        this.filter = FilterFactory.create(setting);
+    }
+
+    boolean checkFilter(Recipe recipe){
+        return this.filter.checkFilter(recipe);
+    }
+
+    void filter(){
+        this.getChildren().setAll(fullList);
+        this.getChildren().retainAll(filter.filter(fullList));
         this.updateTaskIndices();
     }
 }
@@ -155,7 +181,7 @@ class Header extends HBox {
 
 class Footer extends HBox {
     private Button logoutButton;
-    //private MenuButton sortButton;
+    private MenuButton filterButton;
 
         Footer() {
         this.setPrefSize(500, 60);
@@ -163,13 +189,23 @@ class Footer extends HBox {
 
 
         logoutButton = new Button("Log Out");
+        logoutButton.setMinWidth(90);
+        filterButton = new MenuButton("Filter");
         setButtonStyle(logoutButton);
-        this.getChildren().addAll(logoutButton);
-        this.setAlignment(Pos.CENTER_RIGHT);        
+        filterButton.setMinWidth(120);
+        filterButton.setMaxWidth(120);
+        filterButton.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 13 arial; -fx-background-radius: 10");
+        filterButton.setAlignment(Pos.CENTER);
+        this.getChildren().addAll(filterButton, logoutButton);
+        this.setAlignment(Pos.CENTER);        
     }
 
         public Button getLogoutButton() {
             return logoutButton;
+        }
+
+        public MenuButton getFilterButton(){
+            return this.filterButton;
         }
 
         public void setButtonStyle(ButtonBase button) {
@@ -210,7 +246,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
     private Recipe recipe;
     private Button addButton;
     private Button logoutButton;
-    private MenuButton sortButton;
+    private MenuButton sortButton, filterButton;
     private RecipeList rl;
 
     //unseen buttons for HTTP functions
@@ -241,8 +277,9 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         header.setSpacing(5);
         
         logoutButton = footer.getLogoutButton();
+        filterButton = footer.getFilterButton();
         footer.setPadding(new Insets(10));
-        footer.setSpacing(330);
+        footer.setSpacing(260);
         
         postButton = new Button("Post");
         getButton = new Button("Get");
@@ -267,7 +304,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
     }
 
     public Button getLogoutButton() {return logoutButton;}
-
+//TODO: This is a good inspiration
     public void addListeners() {
         MenuItem sortAZ = new MenuItem("A-Z");
         MenuItem sortZA = new MenuItem("Z-A");
@@ -311,7 +348,41 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
             
         });
 
-        
+        MenuItem all = new MenuItem("All");
+        MenuItem breakfastFilterItem = new MenuItem("Breakfast");
+        MenuItem lunchFilterItem = new MenuItem("Lunch");
+        MenuItem dinnerFilterItem = new MenuItem("Dinner");
+
+        filterButton.getItems().addAll(all, breakfastFilterItem, lunchFilterItem, dinnerFilterItem);
+        filterButton.setPopupSide(Side.TOP);
+
+        filterButton.setOnAction(e -> {
+            filterButton.show();
+        });
+
+        all.setOnAction(e -> {
+            filterButton.setText("All");
+            recipeList.setFilter("All");
+            recipeList.filter();
+        });
+
+        breakfastFilterItem.setOnAction(e -> {
+            filterButton.setText("Breakfast");
+            recipeList.setFilter("Breakfast");
+            recipeList.filter();
+        });
+
+        lunchFilterItem.setOnAction(e -> {
+            filterButton.setText("Lunch");
+            recipeList.setFilter("Lunch");
+            recipeList.filter();
+        });
+
+        dinnerFilterItem.setOnAction(e -> {
+            filterButton.setText("Dinner");
+            recipeList.setFilter("Dinner");
+            recipeList.filter();
+        });
     }
 
     public void onRecordingCompleted(String mealType, String ingredientsRaw) {
@@ -339,7 +410,10 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
     ArrayList<Recipe> old_to_new_recipes = new ArrayList<>();
     public void addRecipe(Recipe cur) {
         FXCollections.reverse(recipeList.getChildren());
-        recipeList.getChildren().add(cur);
+        Collections.reverse(recipeList.getFullList());
+        if(recipeList.checkFilter(cur))
+            recipeList.getChildren().add(cur);
+        recipeList.getFullList().add(cur);
         recipeList.updateTaskIndices();
         postButton.fire(); //click HTTP post button
 
@@ -350,6 +424,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         });
         
         FXCollections.reverse(recipeList.getChildren());
+        Collections.reverse(recipeList.getFullList());
 
         //keep track of new recipes added
         old_to_new_recipes.add(cur);
