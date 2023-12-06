@@ -1,4 +1,4 @@
-package team30.recipeList;
+package team30.server;
 
 import java.io.IOException;
 import java.net.URI;
@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import team30.recipeList.ImageManager;
+import team30.recipeList.Recipe;
+
 public class ChatGPT {
     private static final String API_ENDPOINT = "https://api.openai.com/v1/completions";
     private static final String API_KEY = "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";
@@ -18,9 +21,10 @@ public class ChatGPT {
     
     public String generateRecipe(String mealType, String ingredientsRaw) throws IOException, InterruptedException, URISyntaxException {
 
+        System.out.println("Generating recipe...");
         //Our prompt for ChatGPT with our provided mealtype and ingredients
         String prompt = "Create a " + mealType + " recipe using only " + ingredientsRaw + "and common condiments, label the recipe name, ingredients, and instructions";
-        int maxTokens = 200;
+        int maxTokens = 300;
 
         // Create a request body which you will pass into request object
         JSONObject requestBody = new JSONObject();

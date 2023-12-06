@@ -46,8 +46,8 @@ public class Recipe extends HBox {
     private String imageurl;
     private boolean imageGenerated;
     private String username;
-
-    private String objectID; //mongodb id
+    private RecipeUI recipeUI;
+    private ObjectId objectID; //mongodb id
 
     private Label meal_tag;
 
@@ -82,7 +82,7 @@ public class Recipe extends HBox {
         this.getChildren().add(recipe_title);
 
         steps = new ArrayList<>();
-        objectID = "";
+        objectID = new ObjectId();
 
     }
 
@@ -90,7 +90,7 @@ public class Recipe extends HBox {
 
         this();
 
-        this.recipe_title.setText(recipe_name);
+        this.recipe_title_String = recipe_name;
         this.ingredients = ingredients;
         this.steps = steps;
         this.meal_type = validateMealType(mealType);
@@ -137,32 +137,30 @@ public class Recipe extends HBox {
 
     }
 
-    public void setTaskIndex(int num) {
-        this.index.setText(num + ""); // num to String
-    }
+    public void setObjectID(ObjectId id) { this.objectID = id; }
+    public ObjectId getObjectID() { return this.objectID; }
+    public String getRecipeTitle() { return this.recipe_title_String; }
+    public String getMealType() { return this.meal_type; }
+    public void setMealType(String meal_type) { this.meal_type = meal_type; }
+    public String getIngredients() { return this.ingredients; }
+    public void setIngredients(String ingredients) { this.ingredients = ingredients; }
+    public ArrayList<String> getSteps() { return this.steps; }
+    public String getImageURL() { return this.imageurl; }
+    public boolean equals(Recipe other) { return this.getObjectID().equals(other.getObjectID()); }
+    public Button getTitleButton() {return recipe_title;}
+    public RecipeUI getRecipeUI() {return recipeUI;}
+    public void setRecipeUI(RecipeUI UI) {this.recipeUI = UI;}
 
-    public void setObjectID(String id) {
-        this.objectID = id;
-    }
-
-    public String getObjectID() {
-        return this.objectID;
-    }
-
-    public Button getRecipeTitle() {
-        return this.recipe_title;
-    }
-
-    public String getMealType() {
-        return this.meal_type;
-    }
-
-    public void setMealType(String meal_type) {
-        this.meal_type = meal_type;
-    }
-
-    public String getIngredients() {
-        return this.ingredients;
+    public ArrayList<String> getRecipeDetails() {
+        ArrayList<String> details = new ArrayList<>();
+        details.add(this.getRecipeTitle()); //0 - name
+        details.add(this.getMealType()); //1 - meal type
+        details.add(this.getIngredients()); //2 - ingredients
+        details.add(this.getImageURL()); //3 - imageurl
+        for (int i = 0; i < this.getSteps().size(); ++i) { //4 - inf: recipe steps
+            details.add(this.getSteps().get(i));
+        }
+        return details;
     }
 
     public String getUsername() {
@@ -172,18 +170,6 @@ public class Recipe extends HBox {
     public void setUsername(String username) {
         this.username = username;
     } 
-
-    public void setIngredients(String ingredients){
-        this.ingredients = ingredients;
-    }
-
-    public ArrayList<String> getSteps() {
-        return this.steps;
-    }
-
-    public String getImageURL() {
-        return this.imageurl;
-    }
 
     public boolean getImageGenerated(){
         return this.imageGenerated;
@@ -208,15 +194,19 @@ public class Recipe extends HBox {
         return ImageManager.getImage(imageurl);
     }
 
-    public boolean equals(Recipe other){
-        if(!(this.index.getText().equals(other.index.getText()))) return false;
-        if(!(this.ingredients.equals(other.ingredients))) return false;
-        if(!(this.recipe_title.getText().equals(other.recipe_title.getText()))) return false;
-        if(!this.meal_type.equals(other.meal_type)) return false;
-        if(this.steps.size() != other.steps.size()) return false;
-        for(int i = 0 ; i < steps.size() ; i++){
-            if(!(this.steps.get(i).equals(other.steps.get(i)))) return false;
+    public void setRecipeDetails(ArrayList<String> details) {
+        if (details.size() < 5) {
+            System.out.println("ERROR: recipe details doesn't have the right amount of information");
+            return;
         }
-        return true;
+        recipe_title_String = details.get(0);
+        meal_type = details.get(1);
+        ingredients = details.get(2);
+        imageurl = details.get(3);
+        steps = new ArrayList<>();
+        for (int i = 4; i < details.size(); i++) {
+            steps.add(details.get(i));
+        }
     }
+    
 } 

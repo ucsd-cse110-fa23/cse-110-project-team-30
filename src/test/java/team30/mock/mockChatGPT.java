@@ -3,7 +3,6 @@ package team30.mock;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import team30.recipeList.ChatGPT;
 import team30.recipeList.ImageManager;
 import team30.recipeList.Recipe;
 import java.io.IOException;

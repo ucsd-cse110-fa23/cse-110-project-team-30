@@ -21,6 +21,8 @@ import javax.sound.sampled.*;
 
 import org.json.JSONException;
 
+import team30.server.*;
+
 class RecorderBorderPane extends BorderPane {
     String tanLight = "#f1eae0", tanDark = "#ede1cf";
     String pink = "#ead1dc", purple = "#d9d2e9", blue = "#cfe2f3";
@@ -260,7 +262,7 @@ public class VoiceRecorder {
         float sampleRate = 44100;
         int sampleSizeInBits = 16;
         // int channels = 2;
-        int channels = 1;       // for mac user
+        int channels = 1;       // 1 for mac
         boolean signed = true;
         boolean bigEndian = false;
 

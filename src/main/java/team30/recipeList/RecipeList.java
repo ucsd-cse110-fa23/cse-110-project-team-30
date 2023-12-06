@@ -3,12 +3,8 @@ package team30.recipeList;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.collections.ArrayChangeListener;
-import javafx.collections.FXCollections;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ContentDisplay;
@@ -25,36 +21,31 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.geometry.Insets;
 import javafx.scene.text.*;
 import javafx.geometry.Rectangle2D;
-import javafx.geometry.Side;
-
+import javafx.collections.FXCollections;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.util.Arrays;
+import javafx.geometry.Pos;
+import java.util.Iterator;
+import java.util.Comparator;
 
 import javafx.util.Pair;
 import team30.account.CreateAccount;
 import team30.account.Login;
 import team30.recipeList.VoiceRecorder.RecordingCompletionListener;
-import team30.server.RecipeDatabase;
+import team30.server.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.TargetDataLine;
+import org.bson.types.ObjectId;
 
+import com.sun.glass.ui.Window;
 import javafx.scene.paint.Color;
 
 import com.mongodb.client.FindIterable;
@@ -63,24 +54,19 @@ import javafx.scene.Node;
 
 class List extends VBox {
 
-    ArrayList<Node> fullList;
-    Filter filter = FilterFactory.create("all");
-
     List() {
         this.setSpacing(10); // sets spacing between tasks
         
         this.setPrefSize(500, 560);
         this.setStyle("-fx-background-color: #f8f3c9;-fx-padding: 10;");
-
-        this.fullList = new ArrayList<Node>();
     }
 
     //updates indices on recipes in list
     public void updateTaskIndices() {
         int index = this.getChildren().size();
         for (int i = 0; i < this.getChildren().size(); i++) {
-            if (this.getChildren().get(i) instanceof Recipe) {
-                ((Recipe) this.getChildren().get(i)).setTaskIndex(index);
+            if (this.getChildren().get(i) instanceof RecipeUI) {
+                ((RecipeUI) this.getChildren().get(i)).setTaskIndex(index);
                 index--;
             }
         }
@@ -88,26 +74,7 @@ class List extends VBox {
 
     //removes recipe from list
     void removeRecipe(Recipe recipeToRemove){
-        this.getChildren().removeIf(recipe -> recipe instanceof Recipe && ((Recipe)recipe).equals(recipeToRemove));
-        this.fullList.removeIf(recipe -> recipe instanceof Recipe && ((Recipe)recipe).equals(recipeToRemove));
-        this.updateTaskIndices();
-    }
-
-    ArrayList<Node> getFullList(){
-        return this.fullList;
-    }
-
-    void setFilter(String setting){
-        this.filter = FilterFactory.create(setting);
-    }
-
-    boolean checkFilter(Recipe recipe){
-        return this.filter.checkFilter(recipe);
-    }
-
-    void filter(){
-        this.getChildren().setAll(fullList);
-        this.getChildren().retainAll(filter.filter(fullList));
+        this.getChildren().removeIf(recipe -> recipe instanceof RecipeUI && (((RecipeUI)recipe).getRecipe()).equals(recipeToRemove));
         this.updateTaskIndices();
     }
 }
@@ -181,7 +148,7 @@ class Header extends HBox {
 
 class Footer extends HBox {
     private Button logoutButton;
-    private MenuButton filterButton;
+    //private MenuButton sortButton;
 
         Footer() {
         this.setPrefSize(500, 60);
@@ -189,23 +156,13 @@ class Footer extends HBox {
 
 
         logoutButton = new Button("Log Out");
-        logoutButton.setMinWidth(90);
-        filterButton = new MenuButton("Filter");
         setButtonStyle(logoutButton);
-        filterButton.setMinWidth(120);
-        filterButton.setMaxWidth(120);
-        filterButton.setStyle("-fx-font-style: italic; -fx-background-color: #a1f2c8;  -fx-font-weight: bold; -fx-font: 13 arial; -fx-background-radius: 10");
-        filterButton.setAlignment(Pos.CENTER);
-        this.getChildren().addAll(filterButton, logoutButton);
-        this.setAlignment(Pos.CENTER);        
+        this.getChildren().addAll(logoutButton);
+        this.setAlignment(Pos.CENTER_RIGHT);        
     }
 
         public Button getLogoutButton() {
             return logoutButton;
-        }
-
-        public MenuButton getFilterButton(){
-            return this.filterButton;
         }
 
         public void setButtonStyle(ButtonBase button) {
@@ -246,7 +203,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
     private Recipe recipe;
     private Button addButton;
     private Button logoutButton;
-    private MenuButton sortButton, filterButton;
+    private MenuButton sortButton;
     private RecipeList rl;
 
     //unseen buttons for HTTP functions
@@ -277,9 +234,8 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         header.setSpacing(5);
         
         logoutButton = footer.getLogoutButton();
-        filterButton = footer.getFilterButton();
         footer.setPadding(new Insets(10));
-        footer.setSpacing(260);
+        footer.setSpacing(330);
         
         postButton = new Button("Post");
         getButton = new Button("Get");
@@ -304,7 +260,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
     }
 
     public Button getLogoutButton() {return logoutButton;}
-//TODO: This is a good inspiration
+
     public void addListeners() {
         MenuItem sortAZ = new MenuItem("A-Z");
         MenuItem sortZA = new MenuItem("Z-A");
@@ -348,41 +304,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
             
         });
 
-        MenuItem all = new MenuItem("All");
-        MenuItem breakfastFilterItem = new MenuItem("Breakfast");
-        MenuItem lunchFilterItem = new MenuItem("Lunch");
-        MenuItem dinnerFilterItem = new MenuItem("Dinner");
-
-        filterButton.getItems().addAll(all, breakfastFilterItem, lunchFilterItem, dinnerFilterItem);
-        filterButton.setPopupSide(Side.TOP);
-
-        filterButton.setOnAction(e -> {
-            filterButton.show();
-        });
-
-        all.setOnAction(e -> {
-            filterButton.setText("All");
-            recipeList.setFilter("All");
-            recipeList.filter();
-        });
-
-        breakfastFilterItem.setOnAction(e -> {
-            filterButton.setText("Breakfast");
-            recipeList.setFilter("Breakfast");
-            recipeList.filter();
-        });
-
-        lunchFilterItem.setOnAction(e -> {
-            filterButton.setText("Lunch");
-            recipeList.setFilter("Lunch");
-            recipeList.filter();
-        });
-
-        dinnerFilterItem.setOnAction(e -> {
-            filterButton.setText("Dinner");
-            recipeList.setFilter("Dinner");
-            recipeList.filter();
-        });
+        
     }
 
     public void onRecordingCompleted(String mealType, String ingredientsRaw) {
@@ -394,40 +316,82 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
 
         ChatGPT chatGPT = new ChatGPT();
         try {
-            Recipe cur = chatGPT.makeRecipeByChatGPTResponse(mealType, ingredientsRaw, rl.getUsername());
-            addRecipe(cur);
+            // Generate recipe
+            String generatedRecipe = chatGPT.generateRecipe(mealType, ingredientsRaw);
+            System.out.println("Generated Recipe: ");
+            //System.out.println(generatedRecipe);
 
-            RecipeDetail tmp = new RecipeDetail(rl, this, cur);
+            String[] lines = generatedRecipe.split("\\r?\\n|\\r");
+            String recipeName = "", ingredients = "", imgurl = "";
+            ArrayList<String> steps = new ArrayList<>();
+            int count = 0; //0- recipeName, 1- ingredients, 2- instructions
+            for (int i = 0; i < lines.length; i++) {
+                System.out.println(lines[i]);
+                if (!(lines[i].replaceAll("\\s", "") == "") && !(lines[i].replaceAll("\\n", "") == "") && count == 0) {
+                    //recipeName (unlabelled)
+                    recipeName = lines[i].toLowerCase();
+                    count = 100;
+                }
+                if (lines[i].contains("Recipe Name: ")) {
+                    //recipeName (labelled)
+                    recipeName = lines[i].substring(13).toLowerCase();
+                    count = 100;
+                }
+
+                if (lines[i].contains("Ingredients:")) {
+                    count = 1;
+                    continue;
+                }
+                else if (lines[i].contains("Instructions:")) {
+                    count = 2;
+                    continue;
+                }
+                
+                if (count == 1) {
+                    //ingredients
+                    if (!ingredients.equals("") && !(lines[i].replaceAll("\\n", "") == ""))
+                        ingredients += ", ";
+                    ingredients += lines[i].toLowerCase().replaceAll("-", "");
+                }
+
+                if (count == 2) {
+                    //steps
+                    if (!(lines[i].replaceAll("\\s", "") == "") && !(lines[i].replaceAll("\\n", "") == ""))
+                        steps.add(lines[i]);
+                }
+            }
+
+            imgurl = ImageManager.generateImage(recipeName);
+            
+            Recipe cur = new Recipe(recipeName, mealType, ingredients, steps, imgurl, true, rl.getUsername());
+            RecipeUI curUI = new RecipeUI(cur);
+            addRecipe(curUI);
+
+            RecipeDetail tmp = new RecipeDetail(rl, rl.getRecipeListUI(), cur);
             tmp.setCancellable(true);
             System.out.println("OPENING NEW RECIPE...");
             tmp.openDetailWindow(cur);
-            tmp.enableRefresh();
         } catch (Exception err) {
             err.printStackTrace();
         }
     }
 
     ArrayList<Recipe> old_to_new_recipes = new ArrayList<>();
-    public void addRecipe(Recipe cur) {
+    public void addRecipe(RecipeUI cur) {
         FXCollections.reverse(recipeList.getChildren());
-        Collections.reverse(recipeList.getFullList());
-        if(recipeList.checkFilter(cur))
-            recipeList.getChildren().add(cur);
-        recipeList.getFullList().add(cur);
+        recipeList.getChildren().add(cur);
         recipeList.updateTaskIndices();
         postButton.fire(); //click HTTP post button
 
         cur.getRecipeTitle().setOnAction(f -> {
-            RecipeDetail ord = new RecipeDetail(rl, this, cur);
-            ord.openDetailWindow(cur);
-            ord.disableRefresh();
+            RecipeDetail ord = new RecipeDetail(rl, rl.getRecipeListUI(), cur.getRecipe());
+            ord.openDetailWindow(cur.getRecipe());
         });
         
         FXCollections.reverse(recipeList.getChildren());
-        Collections.reverse(recipeList.getFullList());
 
         //keep track of new recipes added
-        old_to_new_recipes.add(cur);
+        old_to_new_recipes.add(cur.getRecipe());
 
     }
 
@@ -442,8 +406,8 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
             Iterator<Document> it = iterDoc.iterator();
             while (it.hasNext()) {
                 Recipe cur = recipeDB.getRecipe(it.next(), username);
-                
-                addRecipe(cur);
+                RecipeUI curUI = new RecipeUI(cur);
+                addRecipe(curUI);
             }
         }
         catch (Exception e) {
@@ -455,8 +419,10 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
 
         //get list of recipes nodes
         ArrayList<Recipe> list_of_recipes = new ArrayList<>();
-        for (Node node : recipeList.getChildren()) {
-            list_of_recipes.add((Recipe) node);
+        for (int i = 0; i < recipeList.getChildren().size(); ++i) {
+            if (recipeList.getChildren().get(i) instanceof RecipeUI) {
+                list_of_recipes.add(((RecipeUI)recipeList.getChildren().get(i)).getRecipe());
+            }
         }
           
         // Clear the current list of recipes
@@ -469,7 +435,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         Comparator<Recipe> compareAtoZ = new Comparator<Recipe>() {
             @Override
             public int compare(Recipe r1, Recipe r2) {
-                return r1.getRecipeTitle().getText().compareTo(r2.getRecipeTitle().getText());
+                return r1.getRecipeTitle().compareTo(r2.getRecipeTitle());
             }
         };
         Collections.sort(list_of_recipes, compareAtoZ);
@@ -477,14 +443,14 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         // Add the sorted recipes back to the recipe list
         int num = 1;
         for (Recipe recipe : list_of_recipes) {
-            recipeList.getChildren().add(recipe);
+            recipeList.getChildren().add(recipe.getRecipeUI());
 
-            recipe.getRecipeTitle().setOnAction(f -> {
-            RecipeDetail ord = new RecipeDetail(rl, this, recipe);
-            ord.openDetailWindow(recipe);
+            recipe.getTitleButton().setOnAction(f -> {
+                RecipeDetail ord = new RecipeDetail(rl, rl.getRecipeListUI(), recipe);
+                ord.openDetailWindow(recipe);
             });
 
-            recipe.setTaskIndex(num);
+            recipe.getRecipeUI().setTaskIndex(num);
             num++;
         }
          
@@ -494,8 +460,10 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
 
         //get list of recipes nodes
         ArrayList<Recipe> list_of_recipes = new ArrayList<>();
-        for (Node node : recipeList.getChildren()) {
-            list_of_recipes.add((Recipe) node);
+        for (int i = 0; i < recipeList.getChildren().size(); ++i) {
+            if (recipeList.getChildren().get(i) instanceof RecipeUI) {
+                list_of_recipes.add(((RecipeUI)recipeList.getChildren().get(i)).getRecipe());
+            }
         }
           
         // Clear the current list of recipes
@@ -508,7 +476,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         Comparator<Recipe> compareAtoZ = new Comparator<Recipe>() {
             @Override
             public int compare(Recipe r1, Recipe r2) {
-                return r2.getRecipeTitle().getText().compareTo(r1.getRecipeTitle().getText());
+                return r2.getRecipeTitle().compareTo(r1.getRecipeTitle());
             }
         };
         Collections.sort(list_of_recipes, compareAtoZ);
@@ -516,14 +484,14 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         // Add the sorted recipes back to the recipe list
         int num = 1;
         for (Recipe recipe : list_of_recipes) {
-            recipeList.getChildren().add(recipe);
+            recipeList.getChildren().add(recipe.getRecipeUI());
 
-            recipe.getRecipeTitle().setOnAction(f -> {
-            RecipeDetail ord = new RecipeDetail(rl, this, recipe);
-            ord.openDetailWindow(recipe);
+            recipe.getTitleButton().setOnAction(f -> {
+                RecipeDetail ord = new RecipeDetail(rl, rl.getRecipeListUI(), recipe);
+                ord.openDetailWindow(recipe);
             });
 
-            recipe.setTaskIndex(num);
+            recipe.getRecipeUI().setTaskIndex(num);
             num++;
         }
         
@@ -533,8 +501,10 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
 
         //get current list of recipes and save it
         ArrayList<Recipe> list_of_recipes = new ArrayList<>();
-        for (Node node : recipeList.getChildren()) {
-            list_of_recipes.add((Recipe) node);
+        for (int i = 0; i < recipeList.getChildren().size(); ++i) {
+            if (recipeList.getChildren().get(i) instanceof RecipeUI) {
+                list_of_recipes.add(((RecipeUI)recipeList.getChildren().get(i)).getRecipe());
+            }
         }
 
         //add new recipes to the top of the list
@@ -551,14 +521,14 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         // Add new to old recipes back to the recipe list
         int num = 1;
         for (Recipe recipe : list_of_recipes) {
-            recipeList.getChildren().add(recipe);
+            recipeList.getChildren().add(recipe.getRecipeUI());
 
-            recipe.getRecipeTitle().setOnAction(f -> {
-            RecipeDetail ord = new RecipeDetail(rl, this, recipe);
-            ord.openDetailWindow(recipe);
+            recipe.getTitleButton().setOnAction(f -> {
+                RecipeDetail ord = new RecipeDetail(rl, rl.getRecipeListUI(), recipe);
+                ord.openDetailWindow(recipe);
             });
 
-            recipe.setTaskIndex(num);
+            recipe.getRecipeUI().setTaskIndex(num);
             num++;
         }
         
@@ -569,8 +539,10 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         //get current list of recipes and save it
         ArrayList<Recipe> list_of_recipes = new ArrayList<>();
         Collections.reverse(list_of_recipes);
-        for (Node node : recipeList.getChildren()) {
-            list_of_recipes.add((Recipe) node);
+        for (int i = 0; i < recipeList.getChildren().size(); ++i) {
+            if (recipeList.getChildren().get(i) instanceof RecipeUI) {
+                list_of_recipes.add(((RecipeUI)recipeList.getChildren().get(i)).getRecipe());
+            }
         }
 
         //add new recipes to the top of the list
@@ -587,14 +559,14 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
         // Add new to old recipes back to the recipe list
         int num = 1;
         for (int i = list_of_recipes.size() - 1; i >= 0; i--) {
-            recipeList.getChildren().add(list_of_recipes.get(i));
+            recipeList.getChildren().add(list_of_recipes.get(i).getRecipeUI());
 
-            recipe.getRecipeTitle().setOnAction(f -> {
-            RecipeDetail ord = new RecipeDetail(rl, this, recipe);
+            recipe.getTitleButton().setOnAction(f -> {
+                RecipeDetail ord = new RecipeDetail(rl, rl.getRecipeListUI(), recipe);
             ord.openDetailWindow(recipe);
             });
 
-            list_of_recipes.get(i).setTaskIndex(num);
+            list_of_recipes.get(i).getRecipeUI().setTaskIndex(num);
             num++;
             
         }
@@ -603,7 +575,7 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
 
 
     public String getRecipeName() {
-        return recipe.getRecipeTitle().getText();
+        return recipe.getRecipeTitle();
     }
 
     public String[] getRecipeDetails() {
@@ -633,12 +605,20 @@ class AppFrame extends BorderPane implements RecordingCompletionListener {
 }
 
 // edited from public class Main
+// the "App" in MVC
 public class RecipeList extends Application {
-    private AppFrame root;
     private Stage primStage;
     private Scene listScene;
     private Button postButton, getButton, putButton, deleteButton;
-    Controller controller;
+    private Button chatGPTButton;
+
+    private Model model; //model
+    private RecipeListUI recipeListUI; //view
+    private Controller controller; //controller
+
+    private static WindowChange windowChange;
+    
+    private AppFrame root;
     private Login login;
     private CreateAccount createAccount;
     private Scene loginScene;
@@ -652,7 +632,11 @@ public class RecipeList extends Application {
     
     @Override
     public void start(Stage primaryStage) throws Exception {
+        recipeListUI = new RecipeListUI();
+        model = new Model();
+        listScene = new Scene(recipeListUI, 500, 600);
         root = new AppFrame();
+        root.setRecipeList(this);
         Model model = new Model();
         listScene = new Scene(root, 500, 600);
         login = new Login();
@@ -666,7 +650,16 @@ public class RecipeList extends Application {
         deleteButton = root.getDeleteButton();
         logoutButton = root.getLogoutButton();
         
+        postButton = recipeListUI.getPostButton();
+        getButton = recipeListUI.getGetButton();
+        putButton = recipeListUI.getPutButton();
+        deleteButton = recipeListUI.getDeleteButton();
+        chatGPTButton = recipeListUI.getChatGPTButton();
+
         controller = new Controller(this, model);
+        windowChange = new WindowChange();
+        windowChange.setRecipeListMainApp(this);
+        //model.loadRecipes();
         
         loginButton = login.getLoginButton();
         loginCreateButton = login.getCreateButton();
@@ -676,7 +669,7 @@ public class RecipeList extends Application {
         addLoginListeners();
 
         this.primStage = primaryStage;
-        root.setRecipeList(this);
+        recipeListUI.setRecipeList(this);
         primaryStage.setTitle("PantryPal");
         // primaryStage.setScene(listScene);
 
@@ -710,20 +703,25 @@ public class RecipeList extends Application {
     }
 
     public Stage getPrimStage() {return primStage;}
-    public void setPrimStage(Stage stg) {primStage = stg;}
     public Scene getScene() {return listScene;}
-    public void setAppFrame(AppFrame af) {root = af;}
+    public void setAppFrame(RecipeListUI af) {recipeListUI = af;}
 
     public void setPostButtonAction(EventHandler<ActionEvent> eventHandler) {postButton.setOnAction(eventHandler);}
     public void setGetButtonAction(EventHandler<ActionEvent> eventHandler) {getButton.setOnAction(eventHandler);}
     public void setPutButtonAction(EventHandler<ActionEvent> eventHandler) {putButton.setOnAction(eventHandler);}
     public void setDeleteButtonAction(EventHandler<ActionEvent> eventHandler) {deleteButton.setOnAction(eventHandler);}
+    public void setChatGPTButtonAction(EventHandler<ActionEvent> eventHandler) {chatGPTButton.setOnAction(eventHandler);}
 
+    public ObjectId getRecipeObjectID() {return recipeListUI.getRecipeObjectID();}
+    public Recipe getRecipe() {return recipeListUI.getRecipe();}
+
+    public RecipeListUI getRecipeListUI() {return recipeListUI;}
+    public Controller getController() {return controller;}
+    public Model getModel() {return model;}
     public String getRecipeName() {return root.getRecipeName();}
     public String[] getRecipeDetails() {return root.getRecipeDetails();}
     public String getQuery() {return root.getQuery();}
     public String getUsername() {return username;}
-    public AppFrame getRoot() {return root;}
 
     public void showAlert(String title, String content) {
         // Alert alert = new Alert(Alert.AlertType.INFORMATION);

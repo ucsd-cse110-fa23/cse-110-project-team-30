@@ -10,8 +10,9 @@ public class mockController {
     }
 
     public String handlePostButton(String recipeName, String[] recipeDetails) {
-        String response = model.performRequest("POST", recipeName, detailsToString(recipeDetails), null);
-        return response;
+        // String response = model.performRequest("POST", recipeName, detailsToString(recipeDetails), null);
+        // return response;
+        return "";
     }
 
     public String handleGetButton(/*TODO: figure out arguments */) {
