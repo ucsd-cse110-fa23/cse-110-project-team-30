@@ -1,9 +1,9 @@
 package team30.recipeList;
 
 import javafx.event.ActionEvent;
-import team30.server.ChatGPT;
+import team30.account.CreateAccount;
+import team30.account.Login;
 import team30.server.VoiceRecorder;
-import java.io.File;
 
 public class Controller {
     private RecipeList view;
@@ -11,27 +11,66 @@ public class Controller {
 
     private RecipeListUI recipeListUI; //part of view
     private VoiceRecorder voiceRecorder;
+    private Login login;
+    private CreateAccount createAcc;
 
-    public Controller(RecipeList view, Model model) {
+    public Controller(RecipeList view, Model model, Login login, CreateAccount ca) {
         this.view = view;
         this.recipeListUI = view.getRecipeListUI();
         this.model = model;
+        this.login = login;
+        this.createAcc = ca;
         
         this.view.setPostButtonAction(this::handleRecipePostButton);
         this.view.setGetButtonAction(this::handleRecipeGetButton);
         this.view.setPutButtonAction(this::handleRecipePutButton);
         this.view.setDeleteButtonAction(this::handleRecipeDeleteButton);
         this.view.setChatGPTButtonAction(this::handleChatGPTButton);
+        this.view.setShareButtonAction(this::handleShareButton);
+
+        this.createAcc.setPostButtonAction(this::handleAccPostButton);
+        this.createAcc.setGetButtonAction(this::handleRegGetButton);
+        this.login.setGetButtonAction(this::handleAccGetButton);
 
         voiceRecorder = recipeListUI.getVoiceRecorder();
         voiceRecorder.setAudioButtonAction(this::handleVoiceButton);
     }   
+
+    private void handleAccPostButton(ActionEvent event) {
+        String accName = createAcc.getAccName();
+        String accPass = createAcc.getAccPass();
+        String response = model.performAccountRequest("POST", accName, accPass, null);
+        view.showAlert("Response", response);
+        if (response.equals("Connection error!"))
+            view.showError("Connection error", "server down, please try again later");
+        System.out.println("POST ACC");
+    }
+    private void handleRegGetButton(ActionEvent event) {
+        String accName = createAcc.getAccName();
+        String response = model.performAccountRequest("GET", null, null, accName);
+        createAcc.setTmpAccPass(response); //update login object
+        view.showAlert("Response", response);
+        if (response.equals("Connection error!"))
+            view.showError("Connection error", "server down, please try again later");
+        System.out.println("GET REG");
+    }
+    private void handleAccGetButton(ActionEvent event) {
+        String accName = login.getAccName();
+        String response = model.performAccountRequest("GET", null, null, accName);
+        login.setTmpAccPass(response); //update login object
+        view.showAlert("Response", response);
+        if (response.equals("Connection error!"))
+            view.showError("Connection error", "server down, please try again later");
+        System.out.println("GET ACC");
+    }
 
     private void handleRecipePostButton(ActionEvent event) {
         String objectID = view.getRecipeObjectID().toString();
         Recipe recipe = view.getRecipe();
         String response = model.performRequest("POST", objectID, recipe, null);
         view.showAlert("Response", response);
+        if (response.equals("Connection error!"))
+            view.showError("Connection error", "server down, please try again later");
         System.out.println("POST");
     }
 
@@ -39,6 +78,8 @@ public class Controller {
         String objectID = view.getQuery();
         String response = model.performRequest("GET", null, null, objectID);
         view.showAlert("Response", response);
+        if (response.equals("Connection error!"))
+            view.showError("Connection error", "server down, please try again later");
         System.out.println("GET");
     }
 
@@ -47,6 +88,8 @@ public class Controller {
         Recipe recipe = view.getRecipe();
         String response = model.performRequest("PUT", objectID, recipe, null);
         view.showAlert("Response", response);
+        if (response.equals("Connection error!"))
+            view.showError("Connection error", "server down, please try again later");
         System.out.println("PUT");
     }
 
@@ -54,6 +97,8 @@ public class Controller {
         String objectID = view.getQuery();
         String response = model.performRequest("DELETE", null, null, objectID);
         view.showAlert("Response", response);
+        if (response.equals("Connection error!"))
+            view.showError("Connection error", "server down, please try again later");
         System.out.println("DELETE");
     }
 
@@ -80,6 +125,8 @@ public class Controller {
         String fileName = voiceRecorder.getQuery();
         String response = model.performVoiceRequest("GET", fileName);
         view.showAlert("Response", response);
+        if (response.equals("Connection error!"))
+            view.showError("Connection error", "server down, please try again later");
         voiceRecorder.setProcessedAudio(response);
     }
 
@@ -88,8 +135,18 @@ public class Controller {
         String ingredients = view.getRecipeListUI().getIngredients();
         String response = model.performChatGPTRequest("GET", mealtype, ingredients);
         // view.showAlert("Response", response);
-        System.out.println("///");
+        if (response.equals("Connection error!"))
+            view.showError("Connection error", "server down, please try again later");
         System.out.println(response);
         view.getRecipeListUI().setRecipeRaw(response);
+    }
+
+    private void handleShareButton(ActionEvent event) {
+        String objectID = view.getQuery();
+        String response = model.performShareRequest("GET", objectID);
+        view.showAlert("Response", response);
+        if (response.equals("Connection error!"))
+            view.showError("Connection error", "server down, please try again later");
+        System.out.println("GET");
     }
 }

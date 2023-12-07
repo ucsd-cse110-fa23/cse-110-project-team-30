@@ -1,5 +1,7 @@
 package team30.account;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -94,19 +96,23 @@ public class CreateAccount extends BorderPane {
     private CreateAccountFooter CreateAccountFooter;
     private Button createButton;
     private Button backButton;
-    private AccountDatabase db;
+    
+    private String accName, accPass, tmpAccPass;
+    private Button postButton, getButton;
 
     public CreateAccount() {
         CreateAccountCenter = new CreateAccountCenter();
         CreateAccountFooter = new CreateAccountFooter();
         createButton = CreateAccountFooter.getCreateButton();
         backButton = CreateAccountFooter.getBackButton();
-        db = new AccountDatabase();
 
         this.setCenter(CreateAccountCenter);
         this.setBottom(CreateAccountFooter);
         this.setWidth(250);
         this.setHeight(300);
+
+        postButton = new Button();
+        getButton = new Button();
     }
 
     public CreateAccountCenter CreateAccountCenter() {return CreateAccountCenter;}
@@ -118,7 +124,12 @@ public class CreateAccount extends BorderPane {
         String username = CreateAccountCenter.getUserNameTextField().getText();
         String password = CreateAccountCenter.getPasswordTextField().getText();
 
-        boolean exist = db.accountExist(username);
+        boolean exist = false;
+        accName = username;
+        tmpAccPass = null;
+        getButton.fire();
+        if (tmpAccPass != null)
+            exist = true;
 
         if (exist) {
             CreateAccountCenter.showInvalidPrompt();
@@ -126,8 +137,18 @@ public class CreateAccount extends BorderPane {
             return null;
         }
         else {
-            db.createAccount(username, password);
+            accName = username;
+            accPass = password;
+            postButton.fire();
             return username;
         }
     }
+
+
+    public String getAccName() {return accName;}
+    public String getAccPass() {return accPass;}
+    public Button getPostButton() {return postButton;}
+    public void setTmpAccPass(String pass) {tmpAccPass = pass;}
+    public void setPostButtonAction(EventHandler<ActionEvent> eventHandler) {postButton.setOnAction(eventHandler);}
+    public void setGetButtonAction(EventHandler<ActionEvent> eventHandler) {getButton.setOnAction(eventHandler);}
 }

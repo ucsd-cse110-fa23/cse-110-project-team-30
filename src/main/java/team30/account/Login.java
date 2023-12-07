@@ -1,5 +1,7 @@
 package team30.account;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -116,20 +118,23 @@ public class Login extends BorderPane{
     private Button createButton;
     private String username;
     private CheckBox isAutoLogin;
-    private AccountDatabase db;
+
+    private String accName, accPass, tmpAccPass;
+    private Button getButton;
 
     public Login() {
         loginCenter = new LoginCenter();
         loginFooter = new LoginFooter();
         loginButton = loginFooter.getLoginButton();
         createButton = loginFooter.getCreateButton();
-        db = new AccountDatabase();
         isAutoLogin = loginCenter.getAutoLoginBox();
 
         this.setCenter(loginCenter);
         this.setBottom(loginFooter);
         this.setWidth(250);
         this.setHeight(300);
+        
+        getButton = new Button();
     }
 
     public LoginCenter getLoginCenter() {return loginCenter;}
@@ -141,16 +146,20 @@ public class Login extends BorderPane{
         String username = loginCenter.getUserNameTextField().getText();
         String password = loginCenter.getPasswordTextField().getText();
 
-        int match = db.validUser(username, password);
-        if (match == 1) {
-            loginCenter.setInvalidPassword();
-            loginCenter.showInvalidPrompt();
-            loginCenter.getPasswordTextField().setText("");
-        }
-        else if (match == -1) {
+        accName = username;
+        getButton.fire();
+        int match = 0;
+        if (tmpAccPass == null) {
             loginCenter.setInvalidUsername();
             loginCenter.showInvalidPrompt();
             loginCenter.getPasswordTextField().setText("");
+            match = -1;
+        }
+        else if (!tmpAccPass.equals(password)) {
+            loginCenter.setInvalidPassword();
+            loginCenter.showInvalidPrompt();
+            loginCenter.getPasswordTextField().setText("");
+            match = 1;
         }
 
         username = loginCenter.getUserNameTextField().getText();
@@ -160,6 +169,11 @@ public class Login extends BorderPane{
     public boolean isAutoLogin() {return isAutoLogin.isSelected();}
     public String getUsername() {return loginCenter.getUserNameTextField().getText();}
     public String getPassword() {return loginCenter.getPasswordTextField().getText();}
+    public String getAccName() {return accName;}
+    public String getAccPass() {return accPass;}
+    public void setTmpAccPass(String pass) {tmpAccPass = pass;}
+    public Button getGetButton() {return getButton;}
+    public void setGetButtonAction(EventHandler<ActionEvent> eventHandler) {getButton.setOnAction(eventHandler);}
     public void setUsername(String username) {this.username = username;}
     public void hideInvalidPrompt() {loginCenter.hideInvalidPrompt();}
 }

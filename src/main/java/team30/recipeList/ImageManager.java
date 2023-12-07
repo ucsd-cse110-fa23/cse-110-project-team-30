@@ -22,14 +22,14 @@ public class ImageManager {
         }
         return path;
     }
-
+    //TODO: Once the Server is cleaned up, have this instead make a call to the server to generate the image.
     /**
      * Creates an image with the given name if the name is not taken.
      * If not, a new path will be made to hold the image.
      * @param name - the expected name for the image
      * @return - the name (not path) of the image
      */
-    public static String generateImage(String name){
+    static String generateImage(String name){
         String imgurl = createUniqueURI(name);
         try{
             dallE.generateImage(name, combinePathAndName(imgurl));
@@ -44,7 +44,7 @@ public class ImageManager {
      * Runs the generateImage function with the given DallE.
      * Intended for testing purposes only.
      */
-    public static String generateImage2(String name, String path){
+    public static String generateIImage(String name, String path){
         IDallE hold = dallE;
         dallE = new MockDallE(path);
         String result = generateImage(name);
@@ -61,7 +61,7 @@ public class ImageManager {
      * @param regenerate - flag that sets whether to regenerate the image or not.
      * @return the original path, if valid, and a path to a new image if not.
      */
-    static String ensurePathExists(String path, String name, boolean regenerate){
+    public static String ensurePathExists(String path, String name, boolean regenerate){
         String imgurl = path;
         if(regenerate || !(new File(combinePathAndName(path)).exists())){
             imgurl = generateImage(name);
@@ -87,7 +87,7 @@ public class ImageManager {
      * @param path - path of the image.
      * @return image in the given path.
      */
-    static Image getImage(String imagePath){
+    public static Image getImage(String imagePath){
         File file = new File(combinePathAndName(imagePath));
         URI fileURI = file.toURI();
         return new Image(fileURI.toString());

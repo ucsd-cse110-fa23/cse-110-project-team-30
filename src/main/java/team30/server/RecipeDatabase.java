@@ -66,7 +66,8 @@ public class RecipeDatabase {
                 .append("meal_type", r.getMealType())
                 .append("ingredients", r.getIngredients())
                 .append("steps", stepsToString(r.getSteps()))
-                .append("imageurl", r.getImageURL());
+                .append("imageurl", r.getImageURL())
+                .append("username", r.getUsername());
         try {
             recipesCollection.insertOne(recipe);
             System.out.println("inserted new recipe!");
@@ -84,11 +85,8 @@ public class RecipeDatabase {
         ingredients = d.get("ingredients").toString();
         stepsString = d.get("steps").toString();      
         imageurl = d.get("imageurl").toString();       
-
         ArrayList<String> steps = stepsFromString(stepsString);
-
         Recipe r = new Recipe(name, meal_type, ingredients, steps, imageurl, false, username);
-
         r.setObjectID((ObjectId)d.get("_id"));
         return r;
     }
@@ -100,17 +98,15 @@ public class RecipeDatabase {
             System.out.println("failed to get recipe");
             return null;
         }
-        ArrayList<String> details = new ArrayList<>();
 
-        details.add(d.get("name").toString());
-        details.add(d.get("meal_type").toString());
-        details.add(d.get("ingredients").toString());
-        details.add(d.get("imageurl").toString());
-        details.add(d.get("steps").toString());   
-        System.out.println(details.get(0));
         Recipe r = new Recipe();
+        r.setRecipeName(d.get("name").toString());
+        r.setUsername(d.get("username").toString());
+        r.setMealType(d.get("meal_type").toString());
+        r.setIngredients(d.get("ingredients").toString());
+        r.setImageURL(d.get("imageurl").toString());
+        r.setSteps(stepsFromString(d.get("steps").toString())); 
         r.setObjectID(id);   
-        r.setRecipeDetails(details);
         return r;
     }
     
@@ -158,7 +154,7 @@ public class RecipeDatabase {
         String s = "";
         for (String step : steps) {
             if (s != "") 
-                s += ";; "; //separate steps with ;;
+                s += ";;"; //separate steps with ;;
             s += step;
         }
         return s;
@@ -167,7 +163,7 @@ public class RecipeDatabase {
     //convert steps from string form to arraylist form
     ArrayList<String> stepsFromString(String steps) {
         ArrayList<String> al = new ArrayList<>();
-        String[] stepsArray = steps.split(";; ");
+        String[] stepsArray = steps.split(";;");
         for (int i = 0; i < stepsArray.length; i++) {
             al.add(stepsArray[i]);
         }

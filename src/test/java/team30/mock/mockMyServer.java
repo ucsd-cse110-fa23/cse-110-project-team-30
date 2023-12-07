@@ -19,7 +19,7 @@ import java.net.URL;
 public class mockMyServer {
     
   // initialize server port and hostname
-  private static final int SERVER_PORT = 8110;
+  private static final int SERVER_PORT = 8100;
   private static final String SERVER_HOSTNAME = "localhost";
 
   public void start() throws IOException {

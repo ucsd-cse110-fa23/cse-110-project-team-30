@@ -50,7 +50,7 @@ public class ImageManagerTest{
         String pathOrigin = "src" + File.separator + "test" + File.separator + "java" + File.separator + "team30" + File.separator + "ImageManager" + File.separator + "genEx";
         String pathEnd = "src" + File.separator + "test" + File.separator + "java" + File.separator + "team30" + File.separator + "ImageManager";
         ImageManager.path = pathEnd;
-        ImageManager.generateImage2("image", pathOrigin);
+        ImageManager.generateIImage("image", pathOrigin);
 
         assertTrue(new File(pathEnd + File.separator + "image.png").exists());
     }

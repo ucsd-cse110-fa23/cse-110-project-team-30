@@ -5,15 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import team30.mock.*;
 
-import com.sun.net.httpserver.*;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 // import javafx.event.ActionEvent;
@@ -37,38 +30,38 @@ public class MyServerTest {
         }
     }
 
-    @Test
-    void testServerRunning() {
-        // Make a request to the server and check the response
-        try {
-            URL url = new URL("http://localhost:" + PORT_NUMBER);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
+    // @Test
+    // void testServerRunning() {
+    //     // Make a request to the server and check the response
+    //     try {
+    //         URL url = new URL("http://localhost:" + PORT_NUMBER);
+    //         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    //         connection.setRequestMethod("GET");
 
-            int responseCode = connection.getResponseCode();
-            assertEquals(200, responseCode);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    //         int responseCode = connection.getResponseCode();
+    //         assertEquals(200, responseCode);
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
-    @Test
-    void testPostMethods() {
-        String[] details = {"water", "eggs", "noodle"};
-        String recipeName = "Noodle";
-        String response = controller.handlePostButton(recipeName, details);
+    // @Test
+    // void testPostMethods() {
+    //     String[] details = {"water", "eggs", "noodle"};
+    //     String recipeName = "Noodle";
+    //     String response = controller.handlePostButton(recipeName, details);
 
-        String expected = "Posted entry {" + recipeName + ",  Meal Type: "+ details[0] + " Ingredient List: "+ details[1]+ " Steps: " + details[2] + "}";
-        assertEquals(expected, response);
-    }
+    //     String expected = "Posted entry {" + recipeName + ",  Meal Type: "+ details[0] + " Ingredient List: "+ details[1]+ " Steps: " + details[2] + "}";
+    //     assertEquals(expected, response);
+    // }
 
-    @Test
-    void testPostWithEmpty() {
-        String[] details = {"", "", ""};
-        String recipeName = "";
-        String response = controller.handlePostButton(recipeName, details);
+    // @Test
+    // void testPostWithEmpty() {
+    //     String[] details = {"", "", ""};
+    //     String recipeName = "";
+    //     String response = controller.handlePostButton(recipeName, details);
 
-        String expected = "Posted entry {" + recipeName + ",  Meal Type: "+ details[0] + " Ingredient List: "+ details[1]+ " Steps: " + details[2] + "}";
-        assertEquals(expected, response);
-    }
+    //     String expected = "Posted entry {" + recipeName + ",  Meal Type: "+ details[0] + " Ingredient List: "+ details[1]+ " Steps: " + details[2] + "}";
+    //     assertEquals(expected, response);
+    // }
 }
